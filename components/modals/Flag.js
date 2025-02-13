@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { Modal, Radio, Input, Space, Card, Alert, Button } from "antd";
 import {
+  InfoCircleBoldDuotone,
   KeyBoldDuotone,
   Pen2BoldDuotone,
   QuestionCircleBoldDuotone,
+  SettingsBoldDuotone,
 } from "solar-icons";
 
 const FlagModal = ({ open, onClose }) => {
@@ -19,12 +21,12 @@ const FlagModal = ({ open, onClose }) => {
     {
       id: "answer",
       label: "Хариулттай холбоотой",
-      icon: <QuestionCircleBoldDuotone width={22} />,
+      icon: <InfoCircleBoldDuotone width={22} />,
     },
     {
       id: "technical",
       label: "Техникийн асуудал",
-      icon: <KeyBoldDuotone width={22} />,
+      icon: <SettingsBoldDuotone width={22} />,
     },
     {
       id: "other",
@@ -71,8 +73,10 @@ const FlagModal = ({ open, onClose }) => {
             {issues.map((issue) => (
               <Card
                 key={issue.id}
-                className={`w-full cursor-pointer transition-all hover:border-orange-200 rounded-2xl px-2 py-1 ${
-                  selected === issue.id ? "border-orange-500" : ""
+                className={`w-full cursor-pointer transition-all hover:border-orange-500 rounded-2xl px-2 py-1 ${
+                  selected === issue.id
+                    ? "border-orange-500"
+                    : "border-[#d9d9d9]"
                 }`}
                 bodyStyle={{ padding: "12px" }}
                 onClick={() => setSelected(issue.id)}

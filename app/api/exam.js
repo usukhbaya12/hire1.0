@@ -30,10 +30,6 @@ export const getExamQuestions = async (id, category = null) => {
     };
   } catch (error) {
     console.error(error);
-    return {
-      success: false,
-      message: "Сервертэй холбогдоход алдаа гарлаа.",
-    };
   }
 };
 

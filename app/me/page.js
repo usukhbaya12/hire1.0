@@ -3,13 +3,37 @@
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import {
+  KeyBoldDuotone,
   RoundDoubleAltArrowRightBoldDuotone,
+  UserIdBoldDuotone,
+  VerifiedCheckBoldDuotone,
   Wallet2BoldDuotone,
 } from "solar-icons";
 import Image from "next/image";
 
 const Profile = () => {
   const { data: session } = useSession();
+  const [activeTab, setActiveTab] = useState("history");
+
+  if (!session) return null;
+
+  const menuItems = [
+    {
+      key: "history",
+      icon: <VerifiedCheckBoldDuotone width={20} height={20} />,
+      label: session.user.role === 20 ? "Өгсөн тестүүд" : "Миний тестүүд",
+    },
+    {
+      key: "information",
+      icon: <UserIdBoldDuotone width={20} height={20} />,
+      label: "Хувийн мэдээлэл",
+    },
+    {
+      key: "password",
+      icon: <KeyBoldDuotone width={20} height={20} />,
+      label: "Нууц үг солих",
+    },
+  ];
 
   return (
     <>
@@ -51,34 +75,60 @@ const Profile = () => {
               </div>
             </div>
           </div>
-          <div className="w-full md:w-1/2 relative p-6 bg-white/70 backdrop-blur-md rounded-3xl shadow shadow-slate-200 overflow-hidden">
-            <div className="relative flex justify-between items-center gap-4 sm:gap-5">
-              <div className="relative flex items-center gap-4 sm:gap-5">
-                <div className="relative group">
-                  <div className="absolute -inset-0.5 bg-gradient-to-br from-main/50 to-secondary/50 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-                  <div className="relative min-w-16 min-h-16 sm:min-w-24 sm:min-h-24 bg-gradient-to-br from-main/10 to-secondary/10 rounded-full flex items-center justify-center border border-main/10">
-                    <div className="text-main pt-1.5">
-                      <Wallet2BoldDuotone width={40} height={40} />
+          {session?.user?.role === 30 && (
+            <div className="w-full md:w-1/2 relative p-6 bg-white/70 backdrop-blur-md rounded-3xl shadow shadow-slate-200 overflow-hidden">
+              <div className="relative flex justify-between items-center gap-4 sm:gap-5">
+                <div className="relative flex items-center gap-4 sm:gap-5">
+                  <div className="relative group">
+                    <div className="absolute -inset-0.5 bg-gradient-to-br from-main/50 to-secondary/50 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+                    <div className="relative min-w-16 min-h-16 sm:min-w-24 sm:min-h-24 bg-gradient-to-br from-main/10 to-secondary/10 rounded-full flex items-center justify-center border border-main/10">
+                      <div className="text-main pt-1.5">
+                        <Wallet2BoldDuotone width={40} height={40} />
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="-mt-0.5 sm:mt-0 flex items-center gap-2 text-gray-700">
+                      <span className="font-medium">Үлдэгдэл</span>
+                    </div>
+                    <div className="font-extrabold text-xl bg-gradient-to-br from-gray-800 to-gray-600 bg-clip-text text-transparent">
+                      {session?.user?.wallet}₮
                     </div>
                   </div>
                 </div>
-                <div>
-                  <div className="-mt-0.5 sm:mt-0 flex items-center gap-2 text-gray-700">
-                    <span className="font-medium">Үлдэгдэл</span>
+                <button className="relative group pl-5 pr-3.5 py-2 bg-gradient-to-br from-main to-secondary rounded-xl text-white font-bold shadow-lg shadow-main/20 hover:shadow-main/30 transition-all duration-300 hover:scale-105 active:scale-95">
+                  <div className="absolute inset-0 bg-white/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="relative flex items-center gap-1">
+                    <span>Цэнэглэх</span>
+                    <RoundDoubleAltArrowRightBoldDuotone
+                      width={20}
+                      height={20}
+                    />
                   </div>
-                  <div className="font-extrabold text-xl bg-gradient-to-br from-gray-800 to-gray-600 bg-clip-text text-transparent">
-                    {session?.user?.wallet}₮
-                  </div>
-                </div>
+                </button>
               </div>
-              <button className="relative group pl-5 pr-3.5 py-2 bg-gradient-to-br from-main to-secondary rounded-xl text-white font-bold shadow-lg shadow-main/20 hover:shadow-main/30 transition-all duration-300 hover:scale-105 active:scale-95">
-                <div className="absolute inset-0 bg-white/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div className="relative flex items-center gap-1">
-                  <span>Цэнэглэх</span>
-                  <RoundDoubleAltArrowRightBoldDuotone width={20} height={20} />
-                </div>
-              </button>
             </div>
+          )}
+        </div>
+        <div className="bg-white/70 backdrop-blur-md rounded-2xl p-3 shadow shadow-slate-200 mt-4">
+          <div className="flex flex-wrap gap-2">
+            {menuItems.map((item, index) => (
+              <div
+                key={item.key}
+                onClick={() => setActiveTab(item.key)}
+                className={`flex cursor-pointer items-center gap-2 px-3 py-1.5 rounded-xl font-semibold transition-colors ${
+                  activeTab === item.key
+                    ? "bg-main text-white"
+                    : "text-gray-600 hover:bg-gray-100"
+                }`}
+              >
+                {item.icon}
+                {activeTab === item.key && (
+                  <span className="font-medium sm:hidden">{item.label}</span>
+                )}
+                <span className="hidden sm:block">{item.label}</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>

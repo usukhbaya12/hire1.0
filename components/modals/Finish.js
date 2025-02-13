@@ -1,10 +1,6 @@
 import React, { useState } from "react";
 import { Modal, Input, Button } from "antd";
-import {
-  ExpressionlessCircleLineDuotone,
-  SadCircleLineDuotone,
-  SmileCircleLineDuotone,
-} from "solar-icons";
+import { ExpressionlessCircle, SadCircle, SmileCircle } from "solar-icons";
 
 const { TextArea } = Input;
 
@@ -15,17 +11,17 @@ const FinishModal = ({ open, onClose, onSubmit }) => {
   const faces = [
     {
       value: 1,
-      emoji: <SadCircleLineDuotone size={30} />,
+      emoji: <SadCircle width={32} height={32} />,
       label: "Сэтгэл ханамжгүй",
     },
     {
       value: 2,
-      emoji: <ExpressionlessCircleLineDuotone size={30} />,
+      emoji: <ExpressionlessCircle width={32} height={32} />,
       label: "Дунд зэрэг",
     },
     {
       value: 3,
-      emoji: <SmileCircleLineDuotone size={30} />,
+      emoji: <SmileCircle width={32} height={32} />,
       label: "Сэтгэл ханамжтай",
     },
   ];
@@ -50,7 +46,7 @@ const FinishModal = ({ open, onClose, onSubmit }) => {
         </Button>,
       ]}
     >
-      <div className="flex flex-col items-center pt-5 pb-2">
+      <div className="flex flex-col items-center pt-4 pb-2">
         <div className="pb-4">Тестэд өгөх таны үнэлгээ:</div>
 
         <div className="flex justify-center gap-6 pb-4">

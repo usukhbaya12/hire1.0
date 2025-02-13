@@ -1,6 +1,5 @@
 "use client";
 
-import Header from "@/components/Header";
 import { Button, Spin } from "antd";
 import { getAssessmentById, getUserTestHistory } from "@/app/api/assessment";
 import { useParams } from "next/navigation";
@@ -11,7 +10,6 @@ import InfoModal from "@/components/modals/Info";
 import { getCode } from "@/app/api/main";
 import {
   AlarmBoldDuotone,
-  FileLineDuotone,
   Flag2BoldDuotone,
   FolderCloudBoldDuotone,
   QuestionCircleBoldDuotone,
@@ -207,14 +205,9 @@ export default function TestDesc() {
     try {
       setShowModal(false);
 
-      const startDate = new Date().toISOString();
-      const endDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
-
       const examResponse = await getCode({
         service: serviceId,
         count: 1,
-        startDate,
-        endDate,
       });
 
       if (examResponse.success) {

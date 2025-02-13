@@ -21,7 +21,7 @@ const Completion = ({ examId, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-white z-50 flex items-center justify-center">
+    <div className="fixed inset-0 bg-gray-100 z-50 flex items-center justify-center">
       <div className="w-full max-w-lg text-center space-y-8 px-6">
         <div className="mx-auto w-64 h-64 relative">
           <svg viewBox="0 0 100 100" className="w-full h-full">

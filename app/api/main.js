@@ -118,13 +118,13 @@ export const checkPayment = async (serviceId, invoiceId) => {
   }
 };
 
-export const getCode = async ({ service, count, startDate, endDate }) => {
+export const getCode = async ({ service, count }) => {
   try {
     const token = await getAuthToken();
     if (!token) return { token: false };
     const { data } = await axios.post(
       `${api}userService/exam`,
-      { service, count, startDate, endDate },
+      { service, count },
       {
         headers: {
           Authorization: `Bearer ${token}`,

@@ -122,6 +122,8 @@ const QuestionCard = ({
 
   const renderConstantSum = () => {
     const targetSum = parseInt(question.question.point) || 10;
+    const maxValue = parseInt(question.question.maxValue);
+    const minValue = parseInt(question.question.minValue);
     const currentAnswers = answers[question.question.id] || {};
     const currentSum = Object.values(currentAnswers).reduce(
       (sum, val) => sum + (val || 0),
@@ -178,12 +180,22 @@ const QuestionCard = ({
           {question.answers.map((answer, index) => (
             <div key={index}>
               <div className="flex items-center justify-between gap-8 py-2">
-                <div className="flex-1">
-                  <div className="text-gray-700">{answer.value}</div>
+                <div className="py-1 rounded-xl">
+                  {answer.file ? (
+                    <img
+                      draggable="false"
+                      src={answer.file}
+                      alt={`Option ${index + 1}`}
+                      className="max-h-[100px] h-auto rounded-lg"
+                    />
+                  ) : (
+                    <span className="text-gray-600">{answer.value}</span>
+                  )}
                 </div>
                 <InputNumber
-                  min={0}
-                  max={targetSum}
+                  className="min-w-16 max-w-16 w-16"
+                  min={minValue}
+                  max={maxValue}
                   value={currentAnswers[answer.id] || 0}
                   onChange={(value) => {
                     const newValue = value === null ? 0 : value;
@@ -237,7 +249,16 @@ const QuestionCard = ({
               <div key={index}>
                 <Radio value={answer.id} className="w-full">
                   <div className="py-[6px] px-4 rounded-xl hover:bg-gray-50 transition-colors duration-200">
-                    <span className="text-gray-600">{answer.value}</span>
+                    {answer.file ? (
+                      <img
+                        draggable="false"
+                        src={answer.file}
+                        alt={`Option ${index + 1}`}
+                        className="max-h-[100px] h-auto rounded-lg"
+                      />
+                    ) : (
+                      <span className="text-gray-600">{answer.value}</span>
+                    )}
                   </div>
                 </Radio>
               </div>
@@ -323,7 +344,7 @@ const QuestionCard = ({
   return (
     <Card
       id={`question-${question.question.id}`}
-      className="rounded-2xl duration-200 sm:px-1"
+      className="rounded-3xl duration-200 sm:px-1"
     >
       <div className="flex gap-5 items-center">
         <div className="relative">

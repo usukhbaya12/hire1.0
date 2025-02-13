@@ -301,180 +301,204 @@ export default function Exam() {
   const totalBlocks =
     questionData?.categories.length + questionData?.category.orderNumber;
 
-  return (
-    <>
-      {contextHolder}
+  const renderContent = () => {
+    const renderHeader = () => (
+      <>
+        <div className="fixed top-0 sm:top-4 w-full sm:w-fit 2xl:px-60 xl:px-24 lg:px-16 md:px-12 z-[100]">
+          <Header assessment={questionData?.assessment.timeout} />
+        </div>
 
-      <div className="fixed top-0 sm:top-4 w-full sm:w-fit 2xl:px-60 xl:px-24 lg:px-16 md:px-12 z-[100]">
-        <Header assessment={questionData?.assessment.timeout} />
-      </div>
+        <div className="max-w-3xl mx-auto px-6 sm:px-0 pt-[92px] sm:pt-4">
+          <div className="md:bg-white/70 md:py-[22px] relative rounded-full md:shadow md:shadow-slate-200 backdrop-blur-md md:px-8">
+            <div className="flex items-center justify-between">
+              <h1 className="text-lg font-black bg-gradient-to-r from-main to-secondary bg-clip-text text-transparent">
+                {questionData.assessment.name}
+              </h1>
+              {totalBlocks > 1 && (
+                <div className="hidden sm:block">
+                  <Progress
+                    percent={
+                      showCompletion || showFeedbackModal
+                        ? 100
+                        : Math.round(
+                            (questionData.category.orderNumber / totalBlocks) *
+                              100
+                          )
+                    }
+                    steps={totalBlocks}
+                    strokeColor="#f36421"
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </>
+    );
 
-      <div className="fixed top-0 sm:top-4 right-0 2xl:px-60 xl:px-24 lg:px-16 md:px-12 z-[100]">
-        {questionData.assessment.timeout && (
-          <div className="flex items-center gap-2">
-            {questionData.category.duration > 0 && (
-              <Timer
-                key={questionData.category.id}
-                totalDuration={null}
-                duration={questionData.category.duration}
-                startTime={null}
-                onTimeUp={handleTimeUp}
-              />
-            )}
-            {questionData.assessment.duration > 0 &&
-              questionData.category.duration === 0 && (
+    if (showCompletion) {
+      return (
+        <>
+          {renderHeader()}
+          <div className="fixed inset-0 bg-gray-100 z-10 pt-[200px]">
+            <Completion
+              examId={params.id}
+              onClose={() => {
+                router.push("/");
+              }}
+            />
+          </div>
+        </>
+      );
+    }
+
+    if (showFeedbackModal) {
+      return (
+        <>
+          {renderHeader()}
+          <div className="fixed inset-0 bg-white/50 backdrop-blur-sm z-10 pt-[200px]">
+            <FinishModal
+              open={showFeedbackModal}
+              onClose={() => setShowFeedbackModal(false)}
+              onSubmit={() => {
+                setShowFeedbackModal(false);
+                setShowCompletion(true);
+              }}
+            />
+          </div>
+        </>
+      );
+    }
+
+    return (
+      <>
+        {renderHeader()}
+
+        <div className="fixed top-0 sm:top-4 right-0 2xl:px-60 xl:px-24 lg:px-16 md:px-12 z-[100]">
+          {questionData.assessment.timeout && (
+            <div className="flex items-center gap-2">
+              {questionData.category.duration > 0 && (
                 <Timer
-                  key={null}
-                  duration={null}
-                  totalDuration={questionData.assessment.duration}
-                  startTime={examStartTime}
+                  key={questionData.category.id}
+                  totalDuration={null}
+                  duration={questionData.category.duration}
+                  startTime={null}
                   onTimeUp={handleTimeUp}
                 />
               )}
-          </div>
-        )}
-      </div>
-
-      <div className="max-w-3xl mx-auto px-6 sm:px-0 pt-[92px] sm:pt-4">
-        <div className="flex sm:justify-end relative hidden sm:block">
-          <div className="fixed -top-40 sm:-top-60 right-12 w-[300px] h-[300px] sm:w-[500px] sm:h-[500px]">
-            <Image
-              preview={false}
-              src="/brain-home.png"
-              alt="Brain icon"
-              className="object-contain opacity-20"
-              draggable={false}
-            />
-          </div>
-        </div>
-        <div className="md:bg-white/70 md:py-[22px] relative rounded-full md:shadow md:shadow-slate-200 backdrop-blur-md md:px-8 mb-1">
-          <div className="flex items-center justify-between">
-            <h1 className="text-lg font-black bg-gradient-to-r from-main to-secondary bg-clip-text text-transparent">
-              {questionData.assessment.name}
-            </h1>
-            {totalBlocks > 1 && (
-              <div className="hidden sm:block">
-                <Progress
-                  percent={Math.round(
-                    (questionData.category.orderNumber / totalBlocks) * 100
-                  )}
-                  steps={totalBlocks}
-                  strokeColor="#f36421"
-                />
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className="sticky top-[72px] sm:top-0 z-10 pt-3 md:pt-4 rounded-b-2xl bg-gradient-to-r from-gray-100 from-100% md:from-60% to-transparent">
-          <div className="bg-white backdrop-blur-md rounded-3xl shadow-lg shadow-slate-200">
-            <div className="px-4 py-[15px] px-7 md:px-8">
-              <div className="justify-between gap-3 flex items-center">
-                <div>
-                  <h2 className="font-bold">{questionData.category.name}</h2>
-                </div>
-                <div className="font-medium text-sm text-gray-500">
-                  <div className="w-[120px] text-end flex justify-end items-center gap-3">
-                    {questionData.category.orderNumber}-р хэсэг / {totalBlocks}
-                    -c
-                  </div>
-                  <Progress
-                    percent={getProgress()}
-                    size="small"
-                    format={(percent) => `${Math.round(percent)}%`}
+              {questionData.assessment.duration > 0 &&
+                questionData.category.duration === 0 && (
+                  <Timer
+                    key={null}
+                    duration={null}
+                    totalDuration={questionData.assessment.duration}
+                    startTime={examStartTime}
+                    onTimeUp={handleTimeUp}
                   />
+                )}
+            </div>
+          )}
+        </div>
+
+        <div className="max-w-3xl mx-auto px-6 sm:px-0">
+          <div className="sticky top-[72px] sm:top-0 z-10 pt-3 md:pt-4 rounded-b-2xl bg-gradient-to-r from-gray-100 from-100% md:from-60% to-transparent">
+            <div className="bg-white backdrop-blur-md rounded-3xl shadow-lg shadow-slate-200">
+              <div className="px-4 py-[15px] px-7 md:px-8">
+                <div className="justify-between gap-3 flex items-center">
+                  <div>
+                    <h2 className="font-bold">{questionData.category.name}</h2>
+                  </div>
+                  <div className="font-medium text-sm text-gray-500">
+                    <div className="w-[120px] text-end flex justify-end items-center gap-3">
+                      {questionData.category.orderNumber}-р хэсэг /{" "}
+                      {totalBlocks}-c
+                    </div>
+                    <Progress
+                      percent={getProgress()}
+                      size="small"
+                      format={(percent) => `${Math.round(percent)}%`}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <div className="space-y-4 mt-4 pb-24">
-          {questionData.questions.map((question, index) => (
-            <QuestionCard
-              key={question.question.id}
-              question={question}
-              index={index}
-              answers={answers}
-              handleAnswer={handleAnswer}
-              answeredQuestions={answeredQuestions}
-              flaggedQuestions={flaggedQuestions}
-              handleFlag={handleFlag}
-              setAnsweredQuestions={setAnsweredQuestions}
-            />
-          ))}
-        </div>
 
-        <ExamFooter
-          onFlagClick={() => setIsFlagModalOpen(true)}
-          hasAdvice={!!questionData?.assessment.advice}
-          advice={questionData?.assessment.advice}
-          isDropdownOpen={isDropdownOpen}
-          setIsDropdownOpen={setIsDropdownOpen}
-          questions={questionData.questions}
-          answeredQuestions={answeredQuestions}
-          flaggedQuestions={flaggedQuestions}
-          onQuestionClick={handleQuestionClick}
-          onSectionChange={() => handleSectionChange()}
-          hasMoreCategories={questionData.categories?.length > 0}
-        />
+          <div className="space-y-4 mt-4 pb-24">
+            {questionData.questions.map((question, index) => (
+              <QuestionCard
+                key={question.question.id}
+                question={question}
+                index={index}
+                answers={answers}
+                handleAnswer={handleAnswer}
+                answeredQuestions={answeredQuestions}
+                flaggedQuestions={flaggedQuestions}
+                handleFlag={handleFlag}
+                setAnsweredQuestions={setAnsweredQuestions}
+              />
+            ))}
+          </div>
 
-        <FlagModal
-          open={isFlagModalOpen}
-          onClose={() => setIsFlagModalOpen(false)}
-        />
-
-        <FinishModal
-          open={showFeedbackModal}
-          onClose={() => setShowFeedbackModal(false)}
-          onSubmit={() => {
-            setShowFeedbackModal(false);
-            setShowCompletion(true);
-          }}
-        />
-
-        {showCompletion && (
-          <Completion
-            examId={params.id}
-            onClose={() => {
-              router.push("/");
-            }}
+          <ExamFooter
+            onFlagClick={() => setIsFlagModalOpen(true)}
+            hasAdvice={!!questionData?.assessment.advice}
+            advice={questionData?.assessment.advice}
+            isDropdownOpen={isDropdownOpen}
+            setIsDropdownOpen={setIsDropdownOpen}
+            questions={questionData.questions}
+            answeredQuestions={answeredQuestions}
+            flaggedQuestions={flaggedQuestions}
+            onQuestionClick={handleQuestionClick}
+            onSectionChange={() => handleSectionChange()}
+            hasMoreCategories={questionData.categories?.length > 0}
           />
-        )}
-      </div>
 
-      {questionData?.assessment.advice && (
+          <FlagModal
+            open={isFlagModalOpen}
+            onClose={() => setIsFlagModalOpen(false)}
+          />
+        </div>
+
+        {questionData?.assessment.advice && (
+          <SidePanel
+            isOpen={isAdviceOpen}
+            setIsOpen={setIsAdviceOpen}
+            title="Асуумжид хариулах заавар"
+            position="left"
+            icon={<InfoCircleBoldDuotone width={20} height={20} />}
+          >
+            <div
+              className="prose prose-sm max-w-none text-justify"
+              dangerouslySetInnerHTML={{
+                __html: questionData?.assessment.advice,
+              }}
+            />
+          </SidePanel>
+        )}
+
         <SidePanel
-          isOpen={isAdviceOpen}
-          setIsOpen={setIsAdviceOpen}
-          title="Асуумжид хариулах заавар"
-          position="left"
-          icon={<InfoCircleBoldDuotone width={20} height={20} />}
+          isOpen={isNavOpen}
+          setIsOpen={setIsNavOpen}
+          title="Асуултууд"
+          position="right"
+          icon={<LibraryBoldDuotone width={20} height={20} />}
         >
-          <div
-            className="prose prose-sm max-w-none text-justify"
-            dangerouslySetInnerHTML={{
-              __html: questionData?.assessment.advice,
-            }}
+          <QuestionNavigation
+            questions={questionData.questions}
+            answeredQuestions={answeredQuestions}
+            flaggedQuestions={flaggedQuestions}
+            onQuestionClick={handleQuestionClick}
           />
         </SidePanel>
-      )}
+      </>
+    );
+  };
 
-      <SidePanel
-        isOpen={isNavOpen}
-        setIsOpen={setIsNavOpen}
-        title="Асуултууд"
-        position="right"
-        icon={<LibraryBoldDuotone width={20} height={20} />}
-      >
-        <QuestionNavigation
-          questions={questionData.questions}
-          answeredQuestions={answeredQuestions}
-          flaggedQuestions={flaggedQuestions}
-          onQuestionClick={handleQuestionClick}
-        />
-      </SidePanel>
-
-      <div className="max-w-3xl mx-auto px-6 sm:px-0"></div>
+  return (
+    <>
+      {contextHolder}
+      {renderContent()}
     </>
   );
 }
