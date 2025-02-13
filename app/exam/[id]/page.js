@@ -216,7 +216,11 @@ export default function Exam() {
         return payload;
       });
 
-      await postUserAnswers(body);
+      await postUserAnswers(
+        body,
+        new Date(),
+        questionData.categories?.length == 0
+      );
     } catch (error) {
       console.error("Error while publishing answers:", error);
     }
