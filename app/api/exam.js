@@ -33,14 +33,14 @@ export const getExamQuestions = async (id, category = null) => {
   }
 };
 
-export const postUserAnswers = async (data, startDate) => {
+export const postUserAnswers = async (data, startDate, end) => {
   const token = await getAuthToken();
   if (!token) return { token: false };
 
   try {
     const response = await axios.post(
       `${api}userAnswer`,
-      { data, startDate },
+      { data, startDate, end },
       {
         headers: {
           Authorization: `Bearer ${token}`,
