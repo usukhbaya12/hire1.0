@@ -9,9 +9,21 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.0",
+    "@react-oauth/google": "^0.12.1",
+    "@shadcn/ui": "^0.0.4",
+    "antd": "^5.23.4",
+    "axios": "^1.7.9",
+    "dayjs": "^1.11.13",
+    "framer-motion": "^12.4.0",
+    "jspdf": "^2.5.2",
+    "next": "15.1.6",
+    "next-auth": "^4.24.11",
+    "next-cloudinary": "^6.16.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "next": "15.1.6"
+    "solar-icons": "^0.0.15",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "postcss": "^8",
