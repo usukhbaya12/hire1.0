@@ -311,6 +311,15 @@ export default function Exam() {
         <div className="fixed top-0 sm:top-4 w-full sm:w-fit 2xl:px-60 xl:px-24 lg:px-16 md:px-12 z-[100]">
           <Header assessment={questionData?.assessment.timeout} />
         </div>
+        <div className="hidden sm:block fixed -top-48 w-[500px] h-[500px] 2xl:right-60 xl:right-24 lg:right-16 md:right-12">
+          <Image
+            src="/brain-home.png"
+            alt="Brain icon"
+            className="object-contain opacity-10 sm:opacity-20"
+            draggable={false}
+            preview={false}
+          />
+        </div>
 
         <div className="max-w-3xl mx-auto px-6 sm:px-0 pt-[92px] sm:pt-4">
           <div className="md:bg-white/70 md:py-[22px] relative rounded-full md:shadow md:shadow-slate-200 backdrop-blur-md md:px-8">

@@ -118,20 +118,21 @@ export const checkPayment = async (serviceId, invoiceId) => {
   }
 };
 
-export const getCode = async ({ service, count }) => {
+export const getCode = async ({ service, count, startDate, endDate }) => {
   try {
     const token = await getAuthToken();
     if (!token) return { token: false };
-    const { data } = await axios.post(
-      `${api}userService/exam`,
-      { service, count },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+
+    const payload = { service, count };
+    if (startDate) payload.startDate = startDate;
+    if (endDate) payload.endDate = endDate;
+
+    const { data } = await axios.post(`${api}userService/exam`, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
 
     return {
       data: data.payload,
@@ -163,6 +164,38 @@ export const emailVerify = async (email) => {
 
     return {
       data: response.data.payload,
+      message: response.data?.message,
+      status: response.data?.status,
+      success: response.data.succeed,
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      success: false,
+      message: "Сервертэй холбогдоход алдаа гарлаа.",
+    };
+  }
+};
+
+export const sendInvite = async (links) => {
+  const token = await getAuthToken();
+  if (!token) return { token: false };
+
+  try {
+    const response = await axios.post(
+      `${api}userService/send`,
+      { links },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return {
+      data: response.data.payload,
+      token: true,
       message: response.data?.message,
       status: response.data?.status,
       success: response.data.succeed,

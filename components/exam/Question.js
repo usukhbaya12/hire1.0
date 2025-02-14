@@ -64,11 +64,11 @@ const QuestionCard = ({
       <table className="min-w-full border-separate border-spacing-0">
         <thead>
           <tr>
-            <th className="bg-gray-50/50 rounded-t-xl p-3 w-[200px] text-left text-gray-600 text-sm font-medium"></th>
+            <th className="bg-gray-50/50 rounded-t-xl p-3 w-[200px] text-left text-gray-700 text-sm font-medium"></th>
             {question.answers[0].matrix.map((point, index) => (
               <th
                 key={index}
-                className="text-center bg-gray-50/50 last:rounded-t-xl p-3 text-gray-600 text-sm font-medium"
+                className="text-center bg-gray-50/50 last:rounded-t-xl p-3 text-gray-700 text-sm font-medium"
               >
                 {point.value}
               </th>
@@ -88,7 +88,7 @@ const QuestionCard = ({
                 >
                   <Radio
                     checked={
-                      answers[question.question.id]?.[answer.id] === _.id
+                      answers[question.question.id]?.[answer.id]?.[0] === _.id
                     }
                     onChange={() => {
                       const newAnswer = {
@@ -189,7 +189,7 @@ const QuestionCard = ({
                       className="max-h-[100px] h-auto rounded-lg"
                     />
                   ) : (
-                    <span className="text-gray-600">{answer.value}</span>
+                    <span className="text-gray-700">{answer.value}</span>
                   )}
                 </div>
                 <InputNumber
@@ -257,7 +257,7 @@ const QuestionCard = ({
                         className="max-h-[100px] h-auto rounded-lg"
                       />
                     ) : (
-                      <span className="text-gray-600">{answer.value}</span>
+                      <span className="text-gray-700">{answer.value}</span>
                     )}
                   </div>
                 </Radio>
@@ -285,7 +285,7 @@ const QuestionCard = ({
                         className="max-h-[100px] h-auto rounded-lg"
                       />
                     ) : (
-                      <span className="text-gray-600">{answer.value}</span>
+                      <span className="text-gray-700">{answer.value}</span>
                     )}
                   </div>
                 </Checkbox>
@@ -304,12 +304,12 @@ const QuestionCard = ({
             <div>
               <Radio value={true} className="w-full">
                 <div className="py-[6px] px-4 rounded-xl hover:bg-gray-50 transition-colors duration-200">
-                  <span className="text-gray-600">Үнэн</span>
+                  <span className="text-gray-700">Үнэн</span>
                 </div>
               </Radio>
               <Radio value={false} className="w-full">
                 <div className="py-[6px] px-4 rounded-xl hover:bg-gray-50 transition-colors duration-200">
-                  <span className="text-gray-600">Худал</span>
+                  <span className="text-gray-700">Худал</span>
                 </div>
               </Radio>
             </div>
@@ -349,7 +349,7 @@ const QuestionCard = ({
       <div className="flex gap-5 items-center">
         <div className="relative">
           <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center relative">
-            <span className="text-gray-600 font-medium">{index + 1}</span>
+            <span className="text-gray-700 font-medium">{index + 1}</span>
             <div className="absolute -top-1 -right-1">
               <div
                 onClick={() => handleFlag(question.question.id)}

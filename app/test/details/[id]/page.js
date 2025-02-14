@@ -79,7 +79,7 @@ const Cards = ({ icon, title, value, index }) => {
       </div>
 
       <div className="relative z-10">
-        <div className="text-sm text-gray-600 pt-1.5">{title}</div>
+        <div className="text-sm text-gray-700 pt-1.5">{title}</div>
         <div className="text-xl font-extrabold -mt-0.5">{value}</div>
       </div>
     </div>
@@ -94,7 +94,7 @@ const Blocks = ({ number, title, duration, questions }) => (
       </div>
       <div className="flex-1">
         <div className="font-semibold">{title}</div>
-        <div className="flex gap-4 mt-1 text-sm text-gray-600">
+        <div className="flex gap-4 mt-1 text-sm text-gray-700">
           {duration > 0 && (
             <div className="flex items-center gap-2">
               <AlarmBoldDuotone className="w-4 h-4" />
@@ -249,7 +249,7 @@ export default function TestDesc() {
                 <h2 className="text-2xl font-black text-center mb-4 bg-gradient-to-r from-main to-secondary bg-clip-text text-transparent leading-7">
                   {assessmentData.data?.name}
                 </h2>
-                <p className="text-gray-600 text-center leading-4">
+                <p className="text-gray-700 text-center leading-4">
                   Тестийг эхлүүлэхээс өмнө та дараах шаардлагатай мэдээлэлтэй
                   танилцаарай!
                 </p>
@@ -284,7 +284,7 @@ export default function TestDesc() {
                   </div>
                   <h3 className="font-bold">Анхаарах зүйлс</h3>
                 </div>
-                <p className="mt-4 text-gray-600 pr-3 text-justify pl-1">
+                <p className="mt-4 text-gray-700 pr-3 text-justify pl-1">
                   Хэсэг тус бүрийг тасалдуулахгүйгээр тестэд бүрэн хариулж
                   дуусгах хангалттай цаг гаргах хэрэгтэйг анхаараарай. Анхаарлаа
                   сайн төвлөрүүлэхийн тулд хэсгүүдийн хооронд түр хугацаанд

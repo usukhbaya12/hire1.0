@@ -106,7 +106,7 @@ const Completion = ({ examId, onClose }) => {
             Таны хариулт амжилттай илгээгдлээ.
           </h1>
 
-          <p className="text-gray-600 leading-4">
+          <p className="text-gray-700 leading-4">
             Таны тестийн үр дүнг боловсруулсан тайланг харахын тулд{" "}
             <span className="font-extrabold px-0.5">Тайлан татах</span> товч
             дээр дарна уу.
