@@ -1,4 +1,6 @@
+import { Button } from "antd";
 import Header from "./Header";
+import { useRouter } from "next/navigation";
 
 const ErrorIcon = () => (
   <svg
@@ -187,9 +189,10 @@ const ErrorIcon = () => (
 );
 
 const Error = ({ message }) => {
+  const router = useRouter();
   return (
     <div>
-      <div className="fixed w-full bg-white border-b z-[100] mb-[74px]">
+      <div className="fixed top-0 sm:top-4 w-full sm:w-fit 2xl:px-60 xl:px-24 lg:px-16 md:px-12 z-[100]">
         <Header />
       </div>
       <div className="h-screen flex flex-col items-center justify-center px-6">
@@ -200,6 +203,17 @@ const Error = ({ message }) => {
           <h1 className="text-xl font-extrabold text-gray-900 mb-3 text-center">
             {message || "Сервертэй холбогдоход алдаа гарлаа."}
           </h1>
+          <div
+            className="relative group cursor-pointer mt-3"
+            onClick={() => router.push("/")}
+          >
+            <div className="absolute -inset-0.5 bg-gradient-to-br from-main/50 to-secondary/50 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+            <div className="relative bg-gradient-to-br from-main/10 to-secondary/10 rounded-full flex items-center justify-center border border-main/10">
+              <div className="text-base font-extrabold bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent py-1.5 px-4">
+                Нүүр хуудас
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

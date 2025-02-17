@@ -497,3 +497,24 @@ textarea.ant-input {
 .ant-switch.ant-switch-checked:hover:not(.ant-switch-disabled) {
   background: #f26522;
 }
+
+.ant-pagination .ant-pagination-item-active a {
+  color: #f26522;
+}
+
+.ant-pagination .ant-pagination-item-active {
+  border-color: #f26522;
+  border-radius: 8px;
+}
+
+.ant-pagination .ant-pagination-item-active:hover {
+  border-color: #f26522;
+}
+
+.ant-pagination .ant-pagination-item-active:hover a {
+  color: #f26522;
+}
+
+.ant-pagination .ant-pagination-item {
+  margin-inline-end: 8px !important;
+}

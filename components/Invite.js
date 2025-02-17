@@ -283,7 +283,7 @@ const InviteTable = ({ testData, onSuccess }) => {
         firstname: item.firstname,
         phone: item.phone,
         code: examCodes[index],
-        show: show,
+        visible: show,
       }));
 
       const response = await sendInvite(links);

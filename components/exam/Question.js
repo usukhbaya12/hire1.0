@@ -88,7 +88,7 @@ const QuestionCard = ({
                 >
                   <Radio
                     checked={
-                      answers[question.question.id]?.[answer.id]?.[0] === _.id
+                      answers[question.question.id]?.[answer.id] === _.id
                     }
                     onChange={() => {
                       const newAnswer = {

@@ -10,6 +10,7 @@ import {
 } from "@/app/api/exam";
 import { InfoCircleBoldDuotone, LibraryBoldDuotone } from "solar-icons";
 import Timer from "@/components/Timer";
+import { useSession, signIn } from "next-auth/react";
 
 import QuestionCard from "@/components/exam/Question";
 import QuestionNavigation from "@/components/exam/Navigation";
@@ -25,6 +26,7 @@ import Completion from "@/components/Completion";
 export default function Exam() {
   const params = useParams();
   const router = useRouter();
+  const { data: session, status } = useSession();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [questionData, setQuestionData] = useState(null);
@@ -72,22 +74,59 @@ export default function Exam() {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        requested.current = true;
-        const response = await getExamQuestions(params.id);
-        if (response.success) {
-          setQuestionData(response.data);
-          setExamStartTime(
-            response.data.assessment.duration > 0 ? Date.now() : null
-          );
-        } else {
-          setError(response.message || "Тест олдсонгүй");
+    const authenticate = async () => {
+      if (status === "unauthenticated") {
+        try {
+          const response = await getExamQuestions(params.id);
+          console.log("Exam questions response:", response);
+
+          if (response.success && response.data.token) {
+            console.log("Token before signing in:", response.data.token);
+
+            // Decode token to check structure
+            try {
+              const tokenParts = response.data.token.split(".");
+              const decodedPayload = JSON.parse(atob(tokenParts[1]));
+              console.log("Decoded token payload:", decodedPayload);
+            } catch (e) {
+              console.error("Token decode error:", e);
+            }
+
+            const result = await signIn("exam-token", {
+              token: response.data.token,
+              redirect: false,
+            });
+            console.log("Sign in result:", result);
+          }
+        } catch (error) {
+          console.error("Auth error:", error);
         }
-      } catch (error) {
-        console.error("Error:", error);
-      } finally {
-        setLoading(false);
+      }
+    };
+
+    authenticate();
+  }, [status, params.id]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (status === "authenticated" || session) {
+        try {
+          requested.current = true;
+          const response = await getExamQuestions(params.id);
+
+          if (response.success) {
+            setQuestionData(response.data);
+            setExamStartTime(
+              response.data.assessment.duration > 0 ? Date.now() : null
+            );
+          } else {
+            setError(response.message || "Тест олдсонгүй");
+          }
+        } catch (error) {
+          console.error("Error:", error);
+        } finally {
+          setLoading(false);
+        }
       }
     };
 
@@ -95,7 +134,7 @@ export default function Exam() {
       fetchData();
       getData();
     }
-  }, [requested]);
+  }, [requested, status, session]);
 
   useEffect(() => {
     const preventNavigation = (e) => {
@@ -369,7 +408,7 @@ export default function Exam() {
       return (
         <>
           {renderHeader()}
-          <div className="fixed inset-0 bg-white/50 backdrop-blur-sm z-10 pt-[200px]">
+          <div className="fixed inset-0 bg-gray-100 z-10 pt-[200px]">
             <FinishModal
               open={showFeedbackModal}
               onClose={() => setShowFeedbackModal(false)}

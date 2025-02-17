@@ -14,9 +14,11 @@ export const getAssessments = async () => {
     };
   } catch (error) {
     console.error(error);
+
     return {
       success: false,
-      message: "Сервертэй холбогдоход алдаа гарлаа.",
+      message:
+        error.response?.data?.message || "Сервертэй холбогдоход алдаа гарлаа.",
     };
   }
 };
@@ -33,9 +35,11 @@ export const getAssessmentCategory = async () => {
     };
   } catch (error) {
     console.error(error);
+
     return {
       success: false,
-      message: "Сервертэй холбогдоход алдаа гарлаа.",
+      message:
+        error.response?.data?.message || "Сервертэй холбогдоход алдаа гарлаа.",
     };
   }
 };
@@ -56,9 +60,11 @@ export const getAssessmentById = async (id) => {
     };
   } catch (error) {
     console.error(error);
+
     return {
       success: false,
-      message: "Сервертэй холбогдоход алдаа гарлаа.",
+      message:
+        error.response?.data?.message || "Сервертэй холбогдоход алдаа гарлаа.",
     };
   }
 };
@@ -84,9 +90,11 @@ export const getUserTestHistory = async (id) => {
     };
   } catch (error) {
     console.error(error);
+
     return {
       success: false,
-      message: "Сервертэй холбогдоход алдаа гарлаа.",
+      message:
+        error.response?.data?.message || "Сервертэй холбогдоход алдаа гарлаа.",
     };
   }
 };

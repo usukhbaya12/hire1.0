@@ -4,7 +4,6 @@ import { api } from "../utils/routes";
 
 export const getExamQuestions = async (id, category = null) => {
   const token = await getAuthToken();
-  if (!token) return { token: false };
 
   try {
     const { data } = await axios.post(
@@ -20,7 +19,6 @@ export const getExamQuestions = async (id, category = null) => {
         },
       }
     );
-
     return {
       data: data.payload,
       token: true,
@@ -30,12 +28,17 @@ export const getExamQuestions = async (id, category = null) => {
     };
   } catch (error) {
     console.error(error);
+
+    return {
+      success: false,
+      message:
+        error.response?.data?.message || "Сервертэй холбогдоход алдаа гарлаа.",
+    };
   }
 };
 
 export const postUserAnswers = async (data, startDate, end) => {
   const token = await getAuthToken();
-  if (!token) return { token: false };
 
   try {
     const response = await axios.post(
@@ -58,21 +61,23 @@ export const postUserAnswers = async (data, startDate, end) => {
     };
   } catch (error) {
     console.error(error);
+
     return {
       success: false,
-      message: "Сервертэй холбогдоход алдаа гарлаа.",
+      message:
+        error.response?.data?.message || "Сервертэй холбогдоход алдаа гарлаа.",
     };
   }
 };
 
 export const getUserAnswer = async (code, id) => {
   const token = await getAuthToken();
-  if (!token) return { token: false };
 
   try {
     const response = await axios.get(`${api}userAnswer/${code}/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
     });
 
@@ -89,7 +94,8 @@ export const getUserAnswer = async (code, id) => {
     console.error(error);
     return {
       success: false,
-      message: "Сервертэй холбогдоход алдаа гарлаа.",
+      message:
+        error.response?.data?.message || "Сервертэй холбогдоход алдаа гарлаа.",
     };
   }
 };

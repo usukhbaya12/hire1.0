@@ -10,6 +10,7 @@ export const authOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
     CredentialsProvider({
+      id: "credentials",
       name: "Credentials",
       credentials: {
         email: { label: "Email", type: "text" },
@@ -70,6 +71,47 @@ export const authOptions = {
           throw new Error(res.message);
         } catch (error) {
           throw new Error(error.message);
+        }
+      },
+    }),
+    CredentialsProvider({
+      id: "exam-token",
+      name: "Exam Token",
+      credentials: {
+        token: { label: "Token", type: "text" },
+      },
+      async authorize(credentials) {
+        try {
+          const tokenParts = credentials.token.split(".");
+          const base64 = tokenParts[1].replace(/-/g, "+").replace(/_/g, "/");
+
+          const pad = base64.length % 4;
+          const paddedBase64 = pad ? base64 + "=".repeat(4 - pad) : base64;
+
+          const decodedPayload = Buffer.from(paddedBase64, "base64").toString();
+          const tokenData = JSON.parse(decodedPayload);
+
+          if (!tokenData.result) {
+            return null;
+          }
+
+          const userData = tokenData.result;
+
+          return {
+            id: userData.id,
+            email: userData.email,
+            name: `${userData.firstname} ${userData.lastname}`,
+            firstname: userData.firstname,
+            lastname: userData.lastname,
+            role: userData.role || 20,
+            accessToken: credentials.token,
+            phone: userData.phone || null,
+            profile: userData.profile || null,
+            wallet: userData.wallet || 0,
+          };
+        } catch (error) {
+          console.error("Token parse error:", error);
+          return null;
         }
       },
     }),

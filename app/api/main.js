@@ -18,9 +18,11 @@ export const signup = async (data) => {
     };
   } catch (error) {
     console.error(error);
+
     return {
       success: false,
-      message: "Сервертэй холбогдоход алдаа гарлаа.",
+      message:
+        error.response?.data?.message || "Сервертэй холбогдоход алдаа гарлаа.",
     };
   }
 };
@@ -50,9 +52,11 @@ export const purchaseTest = async (count, testId) => {
     };
   } catch (error) {
     console.error(error);
+
     return {
       success: false,
-      message: "Сервертэй холбогдоход алдаа гарлаа.",
+      message:
+        error.response?.data?.message || "Сервертэй холбогдоход алдаа гарлаа.",
     };
   }
 };
@@ -80,9 +84,11 @@ export const userService = async (testId, count = 1) => {
     };
   } catch (error) {
     console.error(error);
+
     return {
       success: false,
-      message: "Сервертэй холбогдоход алдаа гарлаа.",
+      message:
+        error.response?.data?.message || "Сервертэй холбогдоход алдаа гарлаа.",
     };
   }
 };
@@ -111,9 +117,11 @@ export const checkPayment = async (serviceId, invoiceId) => {
     };
   } catch (error) {
     console.error(error);
+
     return {
       success: false,
-      message: "Сервертэй холбогдоход алдаа гарлаа.",
+      message:
+        error.response?.data?.message || "Сервертэй холбогдоход алдаа гарлаа.",
     };
   }
 };
@@ -143,9 +151,11 @@ export const getCode = async ({ service, count, startDate, endDate }) => {
     };
   } catch (error) {
     console.error(error);
+
     return {
       success: false,
-      message: "Сервертэй холбогдоход алдаа гарлаа.",
+      message:
+        error.response?.data?.message || "Сервертэй холбогдоход алдаа гарлаа.",
     };
   }
 };
@@ -170,9 +180,11 @@ export const emailVerify = async (email) => {
     };
   } catch (error) {
     console.error(error);
+
     return {
       success: false,
-      message: "Сервертэй холбогдоход алдаа гарлаа.",
+      message:
+        error.response?.data?.message || "Сервертэй холбогдоход алдаа гарлаа.",
     };
   }
 };
@@ -202,9 +214,11 @@ export const sendInvite = async (links) => {
     };
   } catch (error) {
     console.error(error);
+
     return {
       success: false,
-      message: "Сервертэй холбогдоход алдаа гарлаа.",
+      message:
+        error.response?.data?.message || "Сервертэй холбогдоход алдаа гарлаа.",
     };
   }
 };

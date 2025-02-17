@@ -492,8 +492,8 @@ export default function Test() {
                         </div>
                       </div>
                       <Button
-                        className="no-inline"
-                        onClick={() => router.push(`/profile/test/${testId}`)}
+                        className="stroked-btn"
+                        onClick={() => router.push(`/tests/${testId}`)}
                       >
                         <CloudPlusLineDuotone width={18} />
                         Шалгуулагч урих

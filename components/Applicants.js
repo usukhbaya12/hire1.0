@@ -119,8 +119,8 @@ const EmployeeTable = ({ testData }) => {
       width: 100,
       render: (_, record) =>
         record.status === "Дуусгасан" ? (
-          <button className="text-main hover:text-secondary flex items-center gap-1 transition-colors duration-300">
-            <CloudDownloadLineDuotone size={16} />
+          <button className="text-main hover:text-secondary flex items-center gap-2 transition-colors duration-300">
+            <CloudDownloadLineDuotone width={18} />
             Татах
           </button>
         ) : null,
@@ -134,6 +134,7 @@ const EmployeeTable = ({ testData }) => {
       pagination={{
         pageSize: 10,
         className: "pt-4",
+        size: "small",
       }}
       className="rounded-xl overflow-hidden"
       rowClassName="hover:bg-gray-50 transition-colors"
