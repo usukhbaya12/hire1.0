@@ -153,49 +153,6 @@ export default function Exam() {
     };
   }, [questionData]);
 
-  const handleTimeUp = useCallback(async () => {
-    setLoading(true);
-
-    try {
-      await Promise.all(
-        questionData.questions.map((question) => {
-          const has = answeredQuestions.has(question.question.id);
-          if (!has) {
-            answeredQuestions.add(question.question.id);
-          }
-          if (answers[question.question.id] == undefined) {
-            answers[question.question.id] = null;
-          }
-        })
-      );
-
-      setAnsweredQuestions(new Set(answeredQuestions));
-      setAnswers({ ...answers });
-      await publish();
-
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      if (questionData?.categories?.length > 0) {
-        const nextCategoryId = questionData.categories[0];
-        const response = await getExamQuestions(params.id, nextCategoryId);
-
-        if (response.success) {
-          await getData();
-          setQuestionData(response.data);
-          setFlaggedQuestions(new Set());
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        }
-      } else {
-        await publish();
-        setShowCompletion(true);
-        return;
-      }
-    } catch (error) {
-      console.error("Error during auto-section change:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [questionData?.categories, params.id, messageApi]);
-
   const handleAnswer = (questionId, value) => {
     setAnswers((prev) => ({
       ...prev,
@@ -252,6 +209,51 @@ export default function Exam() {
       console.error("Error while publishing answers:", error);
     }
   };
+
+  const handleTimeUp = useCallback(async () => {
+    setLoading(true);
+
+    try {
+      questionData.questions.forEach((question) => {
+        if (!answeredQuestions.has(question.question.id)) {
+          answeredQuestions.add(question.question.id);
+          answers[question.question.id] = null;
+        }
+      });
+
+      setAnsweredQuestions(new Set(answeredQuestions));
+      setAnswers({ ...answers });
+
+      await publish();
+
+      if (questionData?.categories?.length > 0) {
+        const nextCategoryId = questionData.categories[0];
+        const response = await getExamQuestions(params.id, nextCategoryId);
+
+        if (response.success) {
+          await getData();
+          setQuestionData(response.data);
+          setFlaggedQuestions(new Set());
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      } else {
+        setShowCompletion(true);
+      }
+    } catch (error) {
+      console.error("Error during time up handling:", error);
+      messageApi.error("Алдаа гарлаа. Дахин оролдоно уу.");
+    } finally {
+      setLoading(false);
+    }
+  }, [
+    questionData?.categories,
+    params.id,
+    messageApi,
+    answers,
+    answeredQuestions,
+    publish,
+    getData,
+  ]);
 
   const handleSectionChange = async (timeUp = false) => {
     if (!timeUp) {
