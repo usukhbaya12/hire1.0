@@ -6,7 +6,7 @@ const ErrorIcon = () => (
   <svg
     viewBox="0 0 200 200"
     xmlns="http://www.w3.org/2000/svg"
-    className="w-40 h-40"
+    className="w-52 h-52"
   >
     <defs>
       <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -42,7 +42,6 @@ const ErrorIcon = () => (
       </pattern>
     </defs>
 
-    {/* Miniature buildings in the background */}
     <g opacity="0.2">
       <path
         d="M20,160 L20,140 L30,140 L30,150 L40,140 L50,140 L50,160"
@@ -65,7 +64,6 @@ const ErrorIcon = () => (
       </path>
     </g>
 
-    {/* Paper planes flying around */}
     <g fill="#FF4949" opacity="0.3">
       <path d="M0,50 L15,60 L0,70 L5,60 Z">
         <animateMotion
@@ -83,7 +81,6 @@ const ErrorIcon = () => (
       </path>
     </g>
 
-    {/* Main error circle */}
     <circle cx="100" cy="100" r="90" fill="url(#bgGradient)" />
     <circle
       cx="100"
@@ -94,7 +91,6 @@ const ErrorIcon = () => (
       strokeWidth="4"
     />
 
-    {/* Rotating outer ring */}
     <circle
       cx="100"
       cy="100"
@@ -114,7 +110,6 @@ const ErrorIcon = () => (
       />
     </circle>
 
-    {/* Smaller X symbol */}
     <g filter="url(#glow)" transform="translate(100 100)">
       <path
         d="M-30,-30 L30,30"
@@ -144,7 +139,6 @@ const ErrorIcon = () => (
       </path>
     </g>
 
-    {/* Cloud shapes floating by */}
     <path
       d="M40,30 Q45,25 50,30 T60,30 T70,30 Q75,25 70,20"
       fill="#FF4949"
@@ -168,7 +162,6 @@ const ErrorIcon = () => (
       />
     </path>
 
-    {/* Stick figures walking */}
     <g stroke="#FF4949" strokeWidth="1" opacity="0.3">
       <path d="M10,180 L15,170 L20,180 M15,170 L15,165 L12,160 M15,165 L18,160">
         <animateMotion
@@ -204,12 +197,12 @@ const Error = ({ message }) => {
             {message || "Сервертэй холбогдоход алдаа гарлаа."}
           </h1>
           <div
-            className="relative group cursor-pointer mt-3"
+            className="relative group cursor-pointer mt-2"
             onClick={() => router.push("/")}
           >
             <div className="absolute -inset-0.5 bg-gradient-to-br from-main/50 to-secondary/50 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
             <div className="relative bg-gradient-to-br from-main/10 to-secondary/10 rounded-full flex items-center justify-center border border-main/10">
-              <div className="text-base font-extrabold bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent py-1.5 px-4">
+              <div className="text-base font-extrabold bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent py-2.5 px-7">
                 Нүүр хуудас
               </div>
             </div>

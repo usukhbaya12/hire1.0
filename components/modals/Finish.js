@@ -35,6 +35,7 @@ const FinishModal = ({ open, onClose, onSubmit }) => {
       open={open}
       //onCancel={onClose}
       title="Тесттэй холбоотой санал хүсэлт"
+      width={450}
       footer={[
         <Button
           key="submit"

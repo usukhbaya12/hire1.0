@@ -95,7 +95,7 @@ const InviteTable = ({ testData, onSuccess }) => {
         setEditingKey("");
       }
     } catch (errInfo) {
-      console.log("Validate Failed:", errInfo);
+      console.error("Validate Failed:", errInfo);
     }
   };
 
@@ -131,7 +131,6 @@ const InviteTable = ({ testData, onSuccess }) => {
   };
 
   const processExcelData = async (excelData) => {
-    console.log(excelData);
     try {
       if (excelData.length + data.length > remainingAccesses) {
         throw new Error(
@@ -139,8 +138,6 @@ const InviteTable = ({ testData, onSuccess }) => {
         );
       }
       const newData = excelData.map((row) => {
-        console.log("Email:", row["И-мейл хаяг"]);
-
         if (
           !row["И-мейл хаяг"] ||
           !row["Овог"] ||

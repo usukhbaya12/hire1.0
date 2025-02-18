@@ -78,25 +78,12 @@ export default function Exam() {
       if (status === "unauthenticated") {
         try {
           const response = await getExamQuestions(params.id);
-          console.log("Exam questions response:", response);
 
           if (response.success && response.data.token) {
-            console.log("Token before signing in:", response.data.token);
-
-            // Decode token to check structure
-            try {
-              const tokenParts = response.data.token.split(".");
-              const decodedPayload = JSON.parse(atob(tokenParts[1]));
-              console.log("Decoded token payload:", decodedPayload);
-            } catch (e) {
-              console.error("Token decode error:", e);
-            }
-
-            const result = await signIn("exam-token", {
+            await signIn("exam-token", {
               token: response.data.token,
               redirect: false,
             });
-            console.log("Sign in result:", result);
           }
         } catch (error) {
           console.error("Auth error:", error);
@@ -198,7 +185,7 @@ export default function Exam() {
           window.scrollTo({ top: 0, behavior: "smooth" });
         }
       } else {
-        router.push(`/exam/${params.id}/finish`);
+        setShowCompletion(true);
         return;
       }
     } catch (error) {
@@ -398,6 +385,7 @@ export default function Exam() {
               onClose={() => {
                 router.push("/");
               }}
+              questionData={questionData}
             />
           </div>
         </>
@@ -488,6 +476,7 @@ export default function Exam() {
                 flaggedQuestions={flaggedQuestions}
                 handleFlag={handleFlag}
                 setAnsweredQuestions={setAnsweredQuestions}
+                report={questionData.assessment.report}
               />
             ))}
           </div>

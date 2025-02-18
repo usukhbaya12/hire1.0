@@ -4,7 +4,7 @@ import { DangerTriangleBoldDuotone } from "solar-icons";
 const InfoModal = ({ open, onOk, onCancel, text, list }) => {
   return (
     <Modal
-      width="400px"
+      width="450px"
       //title="Анхааруулга"
       open={open}
       onOk={onOk}

@@ -99,3 +99,31 @@ export const getUserAnswer = async (code, id) => {
     };
   }
 };
+
+export const getReport = async (code) => {
+  try {
+    const token = await getAuthToken();
+    if (!token) return { token: false };
+
+    const response = await axios.get(`${api}exam/pdf/${code}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      responseType: "blob",
+    });
+
+    return {
+      data: response.data,
+      token: true,
+      success: true,
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      success: false,
+      message:
+        error.response?.data?.message || "Сервертэй холбогдоход алдаа гарлаа.",
+    };
+  }
+};

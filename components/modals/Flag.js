@@ -43,6 +43,7 @@ const FlagModal = ({ open, onClose }) => {
   return (
     <Modal
       open={open}
+      width={450}
       title="Асуудал мэдэгдэх"
       onCancel={onClose}
       footer={

@@ -4,7 +4,6 @@ import dayjs from "dayjs";
 import { CloudDownloadLineDuotone } from "solar-icons";
 
 const EmployeeTable = ({ testData }) => {
-  console.log(testData);
   const allExams = testData?.flatMap((test) => test.exams) || [];
 
   const transformedData = allExams.map((exam) => {

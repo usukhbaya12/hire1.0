@@ -23,7 +23,7 @@ const Header = ({ assessment }) => {
           <div className="flex items-center gap-1.5 justify-end">
             <div
               className={`w-8 h-8 rounded-full ${
-                assessment ? "md:bg-main/30 bg-white" : "bg-main/30"
+                assessment ? "md:bg-main/30 bg-white/70" : "bg-main/30"
               } flex items-center justify-center`}
             >
               <span

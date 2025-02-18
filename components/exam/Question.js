@@ -8,13 +8,6 @@ import {
   Input,
   Image,
 } from "antd";
-import {
-  AlarmAddBoldDuotone,
-  BookmarkBoldDuotone,
-  BookmarkLineDuotone,
-  BookmarkSquareBoldDuotone,
-  BookmarkSquareMinimalisticBoldDuotone,
-} from "solar-icons";
 import { api } from "@/app/utils/routes";
 import { BookmarkIcon } from "../Icons";
 
@@ -36,6 +29,7 @@ const QuestionCard = ({
   flaggedQuestions,
   handleFlag,
   setAnsweredQuestions,
+  report,
 }) => {
   const renderQuestionContent = () => {
     const extractParagraphs = (html) => {
@@ -59,66 +53,101 @@ const QuestionCard = ({
     );
   };
 
-  const renderMatrix = () => (
-    <div className="mt-4 overflow-x-auto pb-1">
-      <table className="min-w-full border-separate border-spacing-0">
-        <thead>
-          <tr>
-            <th className="bg-gray-50/50 rounded-t-xl p-3 w-[200px] text-left text-gray-700 text-sm font-medium"></th>
-            {question.answers[0].matrix.map((point, index) => (
-              <th
-                key={index}
-                className="text-center bg-gray-50/50 last:rounded-t-xl p-3 text-gray-700 text-sm font-medium"
-              >
-                {point.value}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {question.answers.map((answer, rowIndex) => (
-            <tr key={rowIndex}>
-              <td className="p-3 text-gray-700 font-medium border-t border-gray-100">
-                {answer.value}
-              </td>
-              {answer.matrix.map((_, colIndex) => (
-                <td
-                  key={colIndex}
-                  className="p-3 text-center border-t border-gray-100"
-                >
-                  <Radio
-                    checked={
-                      answers[question.question.id]?.[answer.id] === _.id
-                    }
-                    onChange={() => {
-                      const newAnswer = {
-                        ...(answers[question.question.id] || {}),
-                        [answer.id]: _.id,
-                      };
-                      handleAnswer(question.question.id, newAnswer);
-                      const isComplete = question.answers.every(
-                        (ans) => newAnswer[ans.id] !== undefined
-                      );
+  const renderMatrix = () => {
+    const getSelectedColumnOrderNumber = (rowId) => {
+      const currentAnswers = answers[question.question.id] || {};
+      const selectedColId = currentAnswers[rowId];
 
-                      setAnsweredQuestions((prev) => {
-                        const newSet = new Set(prev);
-                        if (isComplete) {
-                          newSet.add(question.question.id);
-                        } else {
-                          newSet.delete(question.question.id);
-                        }
-                        return newSet;
-                      });
-                    }}
-                  />
-                </td>
+      if (!selectedColId) return null;
+
+      const rowData = question.answers.find((ans) => ans.id === rowId);
+      const selectedColumn = rowData?.matrix.find(
+        (col) => col.id === selectedColId
+      );
+      return selectedColumn?.orderNumber;
+    };
+
+    const isColumnUsed = (columnOrderNumber, currentRowId) => {
+      if (report !== 20) return false;
+
+      return question.answers.some((answer) => {
+        if (answer.id === currentRowId) return false;
+
+        const selectedOrderNumber = getSelectedColumnOrderNumber(answer.id);
+        return selectedOrderNumber === columnOrderNumber;
+      });
+    };
+
+    return (
+      <div className="mt-4 overflow-x-auto pb-1">
+        <table className="min-w-full border-separate border-spacing-0">
+          <thead>
+            <tr>
+              <th className="bg-gray-50/50 rounded-t-xl p-3 w-[200px] text-left text-gray-700 text-sm font-medium"></th>
+              {question.answers[0].matrix.map((point, index) => (
+                <th
+                  key={index}
+                  className="text-center bg-gray-50/50 last:rounded-t-xl p-3 text-gray-700 text-sm font-medium"
+                >
+                  {point.value}
+                </th>
               ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
+          </thead>
+          <tbody>
+            {question.answers.map((answer, rowIndex) => (
+              <tr key={rowIndex}>
+                <td className="p-3 text-gray-700 font-medium border-t border-gray-100">
+                  {answer.value}
+                </td>
+                {answer.matrix.map((col) => {
+                  const isCurrentSelection =
+                    answers[question.question.id]?.[answer.id] === col.id;
+                  const shouldDisable = isColumnUsed(
+                    col.orderNumber,
+                    answer.id
+                  );
+
+                  return (
+                    <td
+                      key={col.id}
+                      className="p-3 text-center border-t border-gray-100"
+                    >
+                      <Radio
+                        checked={isCurrentSelection}
+                        disabled={!isCurrentSelection && shouldDisable}
+                        onChange={() => {
+                          const newAnswer = {
+                            ...(answers[question.question.id] || {}),
+                            [answer.id]: col.id,
+                          };
+                          handleAnswer(question.question.id, newAnswer);
+
+                          const isComplete = question.answers.every(
+                            (ans) => newAnswer[ans.id] !== undefined
+                          );
+
+                          setAnsweredQuestions((prev) => {
+                            const newSet = new Set(prev);
+                            if (isComplete) {
+                              newSet.add(question.question.id);
+                            } else {
+                              newSet.delete(question.question.id);
+                            }
+                            return newSet;
+                          });
+                        }}
+                      />
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
 
   const renderConstantSum = () => {
     const targetSum = parseInt(question.question.point) || 10;
