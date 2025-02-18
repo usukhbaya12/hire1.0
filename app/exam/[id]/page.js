@@ -185,6 +185,7 @@ export default function Exam() {
           window.scrollTo({ top: 0, behavior: "smooth" });
         }
       } else {
+        await publish();
         setShowCompletion(true);
         return;
       }
