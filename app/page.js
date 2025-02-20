@@ -156,7 +156,7 @@ export default function Home() {
       </div>
 
       <div className="relative">
-        <div className="relative 2xl:px-60 xl:px-24 lg:px-16 md:px-12 px-6">
+        <div className="relative 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -380,7 +380,7 @@ export default function Home() {
         </motion.div>
 
         <motion.div
-          className="relative 2xl:px-60 xl:px-24 lg:px-16 md:px-12 px-6 bg-orange-500 -mt-1"
+          className="relative 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6 bg-orange-500 -mt-1"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 1 }}
@@ -430,16 +430,17 @@ export default function Home() {
           </div>
         </motion.div>
         <motion.div
-          className="relative 2xl:px-60 xl:px-24 lg:px-16 md:px-12 px-6"
+          className="relative 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 1 }}
         >
           <motion.div
+            id="tests"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
-            className="font-black text-xl inline-flex gap-1 text-main pt-10"
+            className="font-black text-xl inline-flex gap-1 text-main pt-10 scroll-mt-32" // Added scroll-mt-32 for spacing
           >
             <NotesBoldDuotone />
             Тестүүд
@@ -500,7 +501,7 @@ export default function Home() {
           </motion.div>
 
           <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 pt-6"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-6"
             initial="hidden"
             animate="visible"
             variants={{

@@ -1,7 +1,7 @@
 import React from "react";
 import { Table, Button } from "antd";
 import dayjs from "dayjs";
-import { CloudDownloadLineDuotone } from "solar-icons";
+import { ClipboardBoldDuotone, CloudDownloadLineDuotone } from "solar-icons";
 
 const EmployeeTable = ({ testData }) => {
   const allExams = testData?.flatMap((test) => test.exams) || [];
@@ -119,7 +119,7 @@ const EmployeeTable = ({ testData }) => {
       render: (_, record) =>
         record.status === "Дуусгасан" ? (
           <button className="text-main hover:text-secondary flex items-center gap-2 transition-colors duration-300">
-            <CloudDownloadLineDuotone width={18} />
+            <ClipboardBoldDuotone width={18} />
             Татах
           </button>
         ) : null,

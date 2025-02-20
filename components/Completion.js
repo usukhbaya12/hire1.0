@@ -6,12 +6,10 @@ import { getReport } from "@/app/api/exam";
 import { message } from "antd";
 import { useRouter } from "next/navigation";
 
-const Completion = ({ examId, onClose, questionData }) => {
+const Completion = ({ examId, onClose, questionData, showReport }) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-
-  console.log(questionData);
 
   const downloadReport = async () => {
     try {
@@ -57,8 +55,8 @@ const Completion = ({ examId, onClose, questionData }) => {
                   x2="100%"
                   y2="100%"
                 >
-                  <stop offset="0%" stop-color="#4BB543" stopOpacity="0.1" />
-                  <stop offset="100%" stop-color="#3C9B35" stopOpacity="0.3" />
+                  <stop offset="0%" stopColor="#4BB543" stopOpacity="0.1" />
+                  <stop offset="100%" stopColor="#3C9B35" stopOpacity="0.3" />
                 </linearGradient>
 
                 <filter
@@ -123,7 +121,7 @@ const Completion = ({ examId, onClose, questionData }) => {
               <path
                 d="M70 100 L90 120 L130 80"
                 stroke="#4BB543"
-                stroke-width="8"
+                strokeWidth="8"
                 fill="none"
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -191,25 +189,32 @@ const Completion = ({ examId, onClose, questionData }) => {
             <h1 className="text-xl font-extrabold text-gray-900 mb-3 text-center leading-5">
               Таны хариулт амжилттай илгээгдлээ.
             </h1>
-
-            <p className="text-gray-700 leading-4 px-4">
-              Таны тестийн үр дүнг боловсруулсан тайланг харахын тулд{" "}
-              <span className="font-extrabold px-0.5">Тайлан татах</span> товч
-              дээр дарна уу.
-            </p>
+            {showReport ? (
+              <p className="text-gray-700 leading-4 px-4">
+                Таны тестийн үр дүнг боловсруулсан тайланг харахын тулд{" "}
+                <span className="font-extrabold px-0.5">Тайлан татах</span> товч
+                дээр дарна уу.
+              </p>
+            ) : (
+              <p className="text-gray-700 leading-4 px-4">
+                Таны хариулт байгууллага руу илгээгдсэн.
+              </p>
+            )}
 
             <div className="flex flex-col gap-4 items-center pt-4">
-              <div
-                className="relative group cursor-pointer mt-3"
-                onClick={downloadReport}
-              >
-                <div className="absolute -inset-0.5 bg-gradient-to-br from-blue-500/50 to-green-700/50 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-                <div className="relative bg-gradient-to-br from-blue-500/10 to-green-700/10 rounded-full flex items-center justify-center border border-blue-500/10">
-                  <div className="text-base font-extrabold bg-gradient-to-br from-green-700 to-blue-600 bg-clip-text text-transparent py-2.5 px-7">
-                    Тайлан татах
+              {showReport && (
+                <div
+                  className="relative group cursor-pointer mt-3"
+                  onClick={downloadReport}
+                >
+                  <div className="absolute -inset-0.5 bg-gradient-to-br from-blue-500/50 to-green-700/50 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+                  <div className="relative bg-gradient-to-br from-blue-500/10 to-green-700/10 rounded-full flex items-center justify-center border border-blue-500/10">
+                    <div className="text-base font-extrabold bg-gradient-to-br from-green-700 to-blue-600 bg-clip-text text-transparent py-2.5 px-7">
+                      Тайлан татах
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
               <div
                 className="relative group cursor-pointer"
                 onClick={() => router.push("/")}

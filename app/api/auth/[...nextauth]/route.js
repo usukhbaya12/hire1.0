@@ -117,6 +117,48 @@ export const authOptions = {
     }),
   ],
   callbacks: {
+    async signIn({ user, account, profile }) {
+      if (account.provider === "google") {
+        try {
+          const response = await fetch(`${api}login`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              name: profile.name,
+              email: profile.email,
+              profile: profile.picture,
+              token: account.access_token,
+            }),
+          });
+
+          const data = await response.json();
+
+          if (data.succeed) {
+            Object.assign(user, {
+              id: data.payload.user.id,
+              email: data.payload.user.email,
+              name:
+                data.payload.user.firstname + " " + data.payload.user.lastname,
+              firstname: data.payload.user.firstname,
+              lastname: data.payload.user.lastname,
+              role: data.payload.user.role,
+              accessToken: data.payload.accessToken,
+              phone: data.payload.user.phone,
+              profile: data.payload.user.profile,
+              wallet: data.payload.user.wallet,
+            });
+            return true;
+          }
+          return false;
+        } catch (error) {
+          console.error("Google sign in error:", error);
+          return false;
+        }
+      }
+      return true;
+    },
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;

@@ -127,3 +127,31 @@ export const getReport = async (code) => {
     };
   }
 };
+
+export const postFeedback = async (data) => {
+  const token = await getAuthToken();
+
+  try {
+    const response = await axios.post(`${api}feedback`, data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    return {
+      data: response.data.payload,
+      message: response.data?.message,
+      status: response.data?.status,
+      success: response.data.succeed,
+    };
+  } catch (error) {
+    console.error(error);
+
+    return {
+      success: false,
+      message:
+        error.response?.data?.message || "Сервертэй холбогдоход алдаа гарлаа.",
+    };
+  }
+};

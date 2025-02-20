@@ -14,12 +14,14 @@ import {
   CloudPlusLineDuotone,
   CursorLineDuotone,
   EyeBoldDuotone,
+  EyeClosedLineDuotone,
   Flag2BoldDuotone,
   FolderCloudBoldDuotone,
   HistoryBoldDuotone,
   QuestionCircleBoldDuotone,
   SquareArrowRightDownBoldDuotone,
   TicketSaleBoldDuotone,
+  UserPlusBoldDuotone,
   Wallet2BoldDuotone,
 } from "solar-icons";
 import Image from "next/image";
@@ -262,7 +264,7 @@ export default function Test() {
               </div>
             </div>
           </div>
-          <div className="relative 2xl:px-60 xl:px-24 lg:px-16 md:px-12 px-6 pt-5 pb-16 z-[3]">
+          <div className="relative 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6 pt-5 pb-16 z-[3]">
             <div className="flex flex-col sm:flex-row gap-3 pt-12">
               <div className="text-main hidden sm:block -mt-0.5">
                 <SquareArrowRightDownBoldDuotone />
@@ -413,7 +415,17 @@ export default function Test() {
                               Дуусгасан
                             </div>
                           ),
-                        result: "-",
+                        result: item.exams[0].visible ? (
+                          <div>{item.exams[0].result}</div>
+                        ) : (
+                          <div className="items-center gap-2 flex">
+                            <EyeClosedLineDuotone
+                              width={18}
+                              className="text-main"
+                            />
+                            Нууцалсан
+                          </div>
+                        ),
                         payment:
                           item.price > 0 ? (
                             <div className="flex items-center gap-2 justify-center">
@@ -432,12 +444,14 @@ export default function Test() {
                               </button>
                             </div>
                           ) : (
-                            <div className="flex justify-center">
-                              <button className="text-main hover:text-secondary flex items-center gap-2 font-semibold">
-                                <CloudDownloadLineDuotone width={18} />
-                                Татах
-                              </button>
-                            </div>
+                            item.exams[0].visible && (
+                              <div className="flex justify-center">
+                                <button className="text-main hover:text-secondary flex items-center gap-2 font-semibold">
+                                  <ClipboardTextBoldDuotone width={18} />
+                                  Татах
+                                </button>
+                              </div>
+                            )
                           ),
                       }))}
                     className="test-history-table overflow-x-auto"
@@ -495,7 +509,7 @@ export default function Test() {
                         className="stroked-btn"
                         onClick={() => router.push(`/tests/${testId}`)}
                       >
-                        <CloudPlusLineDuotone width={18} />
+                        <UserPlusBoldDuotone width={18} />
                         Шалгуулагч урих
                       </Button>
                     </div>

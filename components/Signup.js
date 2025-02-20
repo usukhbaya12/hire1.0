@@ -13,6 +13,7 @@ import {
   SuitcaseBoldDuotone,
   UserIdBoldDuotone,
 } from "solar-icons";
+import { signIn } from "next-auth/react";
 
 const Signup = () => {
   const router = useRouter();
@@ -121,6 +122,10 @@ const Signup = () => {
     );
   }
 
+  const googleSignIn = () => {
+    signIn("google", { callbackUrl: "/me" });
+  };
+
   return (
     <div className="flex flex-col">
       {contextHolder}
@@ -177,7 +182,10 @@ const Signup = () => {
               </div>
               {!isOrganization ? (
                 <div className="min-w-64">
-                  <div className="flex bg-white items-center gap-2 rounded-2xl cursor-pointer px-3 py-2 justify-center mb-6 border border-neutral shadow-sm">
+                  <div
+                    onClick={googleSignIn}
+                    className="flex bg-white items-center gap-2 rounded-2xl cursor-pointer px-3 py-2 justify-center mb-6 border border-neutral shadow-sm"
+                  >
                     <Image
                       src="/google.webp"
                       width={25}

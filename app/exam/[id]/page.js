@@ -42,6 +42,7 @@ export default function Exam() {
   const [showCompletion, setShowCompletion] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   const requested = useRef(false);
+  const [showReport, setShowReport] = useState(true);
 
   const getData = async () => {
     const userAnswers = await getUserAnswer(params.id);
@@ -167,7 +168,11 @@ export default function Exam() {
 
   const publish = async () => {
     try {
-      const body = Object.entries(answers).map(([question, value]) => {
+      const validAnswers = Object.entries(answers).filter(
+        ([_, value]) => value !== undefined
+      );
+
+      const body = validAnswers.map(([question, value]) => {
         const payload = {
           flag: false,
           questionCategory: questionData.category.id,
@@ -177,36 +182,55 @@ export default function Exam() {
           correct: false,
         };
 
+        if (value === null) {
+          payload.answers.push({
+            answer: null,
+            point: null,
+            matrix: null,
+          });
+          return payload;
+        }
+
         if (typeof value === "number") {
           payload.answers.push({
             answer: value,
             point: null,
             matrix: null,
           });
-        } else if (value !== null) {
-          if (typeof value !== "string") {
-            Object.entries(value).forEach(([q, v]) => {
-              payload.answers.push({
-                answer: q,
-                point: v > 10 ? null : v,
-                matrix: v <= 10 ? null : v,
-              });
+        } else if (typeof value === "object") {
+          Object.entries(value).forEach(([q, v]) => {
+            payload.answers.push({
+              answer: q,
+              point: v > 10 ? null : v,
+              matrix: v <= 10 ? null : v,
             });
-          } else {
-            payload.answers.push({ value });
-          }
+          });
+        } else if (typeof value === "string") {
+          payload.answers.push({ value });
         }
 
         return payload;
       });
 
-      await postUserAnswers(
+      if (body.length === 0) {
+        console.warn("No valid answers to publish!");
+        return;
+      }
+
+      const result = await postUserAnswers(
         body,
         new Date(),
-        questionData.categories?.length == 0
+        questionData.categories?.length === 0
       );
+
+      return result;
     } catch (error) {
-      console.error("Error while publishing answers:", error);
+      console.error("Error details:", {
+        message: error.message,
+        stack: error.stack,
+        name: error.name,
+      });
+      throw error;
     }
   };
 
@@ -215,9 +239,10 @@ export default function Exam() {
 
     try {
       questionData.questions.forEach((question) => {
-        if (!answeredQuestions.has(question.question.id)) {
-          answeredQuestions.add(question.question.id);
-          answers[question.question.id] = null;
+        const questionId = question.question.id;
+        if (!answeredQuestions.has(questionId)) {
+          answeredQuestions.add(questionId);
+          answers[questionId] = null;
         }
       });
 
@@ -237,7 +262,7 @@ export default function Exam() {
           window.scrollTo({ top: 0, behavior: "smooth" });
         }
       } else {
-        setShowCompletion(true);
+        setShowFeedbackModal(true);
       }
     } catch (error) {
       console.error("Error during time up handling:", error);
@@ -268,7 +293,7 @@ export default function Exam() {
 
     try {
       setLoading(true);
-      await publish();
+      const result = await publish();
 
       if (questionData?.categories?.length > 0) {
         const nextCategoryId = questionData.categories[0];
@@ -285,6 +310,7 @@ export default function Exam() {
         }
       } else {
         setShowFeedbackModal(true);
+        setShowReport(result.data.visible);
       }
     } catch (error) {
       console.error("Error during section change:", error);
@@ -337,7 +363,7 @@ export default function Exam() {
   const renderContent = () => {
     const renderHeader = () => (
       <>
-        <div className="fixed top-0 sm:top-4 w-full sm:w-fit 2xl:px-60 xl:px-24 lg:px-16 md:px-12 z-[100]">
+        <div className="fixed top-0 sm:top-4 w-full sm:w-fit 2xl:px-72 xl:px-24 lg:px-16 md:px-12 z-[100]">
           <Header assessment={questionData?.assessment.timeout} />
         </div>
         <div className="hidden sm:block fixed -top-48 w-[500px] h-[500px] 2xl:right-60 xl:right-24 lg:right-16 md:right-12">
@@ -389,6 +415,7 @@ export default function Exam() {
                 router.push("/");
               }}
               questionData={questionData}
+              showReport={showReport}
             />
           </div>
         </>
@@ -417,7 +444,7 @@ export default function Exam() {
       <>
         {renderHeader()}
 
-        <div className="fixed top-0 sm:top-4 right-0 2xl:px-60 xl:px-24 lg:px-16 md:px-12 z-[100]">
+        <div className="fixed top-0 sm:top-4 right-0 2xl:px-72 xl:px-24 lg:px-16 md:px-12 z-[100]">
           {questionData.assessment.timeout && (
             <div className="flex items-center gap-2">
               {questionData.category.duration > 0 && (

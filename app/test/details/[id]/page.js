@@ -226,7 +226,7 @@ export default function TestDesc() {
         <div className="absolute left-[-5%] w-[200px] h-[200px] md:w-[400px] md:h-[400px] rounded-full bg-orange-600/5 blur-[80px]" />
         <div className="absolute bottom-[-20%] right-[-10%] w-[200px] h-[200px] md:w-[500px] md:h-[500px] rounded-full bg-orange-600/5 blur-[100px]" />
       </div>
-      <div className="2xl:px-60 xl:px-24 lg:px-16 md:px-12 px-6 pt-6">
+      <div className="2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6 pt-6">
         <div className="lg:flex gap-12">
           <div className="lg:w-1/3 mb-8 lg:mb-0">
             <div className="sticky top-[84px] sm:top-[104px]">

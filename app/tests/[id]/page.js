@@ -145,7 +145,7 @@ const MyTests = () => {
         <div className="absolute left-[-5%] w-[200px] h-[200px] md:w-[400px] md:h-[400px] rounded-full bg-orange-600/10 blur-[80px]" />
         <div className="absolute bottom-[-20%] right-[-10%] w-[200px] h-[200px] md:w-[500px] md:h-[500px] rounded-full bg-orange-600/10 blur-[100px]" />
       </div>
-      <div className="relative 2xl:px-60 xl:px-24 lg:px-16 md:px-12 px-6 pt-8 md:pt-12 pb-16 z-[3]">
+      <div className="relative 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6 pt-8 md:pt-12 pb-16 z-[3]">
         <div className="w-full relative p-4 bg-white/70 backdrop-blur-md rounded-full shadow shadow-slate-200 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-white to-main/5"></div>
           <div className="absolute top-0 right-0 w-60 h-60">

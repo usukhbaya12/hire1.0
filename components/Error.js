@@ -118,7 +118,7 @@ const ErrorIcon = () => (
         strokeLinecap="round"
       >
         <animate
-          attributeName="stroke-width"
+          attributeName="strokeWidth"
           values="10;12;10"
           dur="2s"
           repeatCount="indefinite"
@@ -131,7 +131,7 @@ const ErrorIcon = () => (
         strokeLinecap="round"
       >
         <animate
-          attributeName="stroke-width"
+          attributeName="strokeWidth"
           values="10;12;10"
           dur="2s"
           repeatCount="indefinite"
@@ -185,7 +185,7 @@ const Error = ({ message }) => {
   const router = useRouter();
   return (
     <div>
-      <div className="fixed top-0 sm:top-4 w-full sm:w-fit 2xl:px-60 xl:px-24 lg:px-16 md:px-12 z-[100]">
+      <div className="fixed top-0 sm:top-4 w-full sm:w-fit 2xl:px-72 xl:px-24 lg:px-16 md:px-12 z-[100]">
         <Header />
       </div>
       <div className="h-screen flex flex-col items-center justify-center px-6">

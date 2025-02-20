@@ -64,7 +64,7 @@ export default function RootLayout({ children }) {
         <Zoom />
         <Provider>
           {!hideNavbar && (
-            <div className="fixed top-0 sm:top-4 w-full 2xl:px-60 xl:px-24 lg:px-16 md:px-12 z-[100]">
+            <div className="fixed top-0 sm:top-4 w-full 2xl:px-72 xl:px-24 lg:px-16 md:px-12 z-[100]">
               <Navbar />
             </div>
           )}
