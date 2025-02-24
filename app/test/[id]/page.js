@@ -178,12 +178,9 @@ export default function Test() {
     }
 
     if (
-      session?.user?.role === 20 ||
-      (session?.user?.role === 10 &&
-        testHistory &&
-        testHistory.some(
-          (item) => item.usedUserCount === 0 && item.status === 20
-        ))
+      session?.user?.role === 10 &&
+      testHistory &&
+      testHistory.some((item) => item.usedUserCount === 0 && item.status === 20)
     ) {
       router.push(`/test/details/${testId}`);
       return;
