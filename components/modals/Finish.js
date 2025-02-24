@@ -5,7 +5,7 @@ import { postFeedback } from "@/app/api/exam";
 
 const { TextArea } = Input;
 
-const FinishModal = ({ open, onClose, onSubmit }) => {
+const FinishModal = ({ open, onClose, onSubmit, assessment }) => {
   const [selected, setSelected] = useState(null);
   const [feedback, setFeedback] = useState("");
   const [loading, setLoading] = useState(false);
@@ -37,6 +37,7 @@ const FinishModal = ({ open, onClose, onSubmit }) => {
         status: selected,
         type: 20,
         message: feedback,
+        assessment: assessment,
       };
 
       const response = await postFeedback(feedbackData);

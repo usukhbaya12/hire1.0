@@ -434,6 +434,7 @@ export default function Exam() {
                 setShowFeedbackModal(false);
                 setShowCompletion(true);
               }}
+              assessment={questionData.assessment.id}
             />
           </div>
         </>
@@ -528,6 +529,7 @@ export default function Exam() {
           <FlagModal
             open={isFlagModalOpen}
             onClose={() => setIsFlagModalOpen(false)}
+            assessment={questionData.assessment.id}
           />
         </div>
 

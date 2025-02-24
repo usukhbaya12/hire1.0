@@ -8,7 +8,7 @@ import {
 } from "solar-icons";
 import { postFeedback } from "@/app/api/exam";
 
-const FlagModal = ({ open, onClose }) => {
+const FlagModal = ({ open, onClose, assessment }) => {
   const [selected, setSelected] = useState(null);
   const [feedback, setFeedback] = useState("");
   const [loading, setLoading] = useState(false);
@@ -44,6 +44,7 @@ const FlagModal = ({ open, onClose }) => {
       const flagData = {
         type: 10,
         message: feedback,
+        assessment: assessment,
       };
 
       const response = await postFeedback(flagData);
