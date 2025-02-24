@@ -178,7 +178,7 @@ export default function Test() {
     }
 
     if (
-      session?.user?.role === 10 &&
+      session?.user?.role === 20 &&
       testHistory &&
       testHistory.some((item) => item.usedUserCount === 0 && item.status === 20)
     ) {
@@ -328,7 +328,7 @@ export default function Test() {
             </div>
             <div className="flex flex-col justify-center gap-3 mt-8 sm:hidden text-center">
               <Button onClick={handleTakeTest}>
-                {(session?.user?.role === 20 &&
+                {(session?.user?.role === 10 &&
                   testHistory &&
                   testHistory.some(
                     (item) => item.usedUserCount === 0 && item.status === 20
@@ -379,7 +379,7 @@ export default function Test() {
             </div>
             <div className="flex justify-center gap-4 mt-12 hidden sm:flex">
               <Button onClick={handleTakeTest}>
-                {(session?.user?.role === 20 &&
+                {(session?.user?.role === 10 &&
                   testHistory &&
                   testHistory.some(
                     (item) => item.usedUserCount === 0 && item.status === 20
