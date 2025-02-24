@@ -415,17 +415,17 @@ export default function Test() {
                               Дуусгасан
                             </div>
                           ),
-                        result: item.exams[0].visible ? (
-                          <div>{item.exams[0].result}</div>
-                        ) : (
-                          <div className="items-center gap-2 flex">
-                            <EyeClosedLineDuotone
-                              width={18}
-                              className="text-main"
-                            />
-                            Нууцалсан
-                          </div>
-                        ),
+                        // result: item.exams[0].visible ? (
+                        //   <div>{item.exams[0].result}</div>
+                        // ) : (
+                        //   <div className="items-center gap-2 flex">
+                        //     <EyeClosedLineDuotone
+                        //       width={18}
+                        //       className="text-main"
+                        //     />
+                        //     Нууцалсан
+                        //   </div>
+                        // ),
                         payment:
                           item.price > 0 ? (
                             <div className="flex items-center gap-2 justify-center">
@@ -444,14 +444,12 @@ export default function Test() {
                               </button>
                             </div>
                           ) : (
-                            item.exams[0].visible && (
-                              <div className="flex justify-center">
-                                <button className="text-main hover:text-secondary flex items-center gap-2 font-semibold">
-                                  <ClipboardTextBoldDuotone width={18} />
-                                  Татах
-                                </button>
-                              </div>
-                            )
+                            <div className="flex justify-center">
+                              <button className="text-main hover:text-secondary flex items-center gap-2 font-semibold">
+                                <ClipboardTextBoldDuotone width={18} />
+                                Татах
+                              </button>
+                            </div>
                           ),
                       }))}
                     className="test-history-table overflow-x-auto"
