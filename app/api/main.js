@@ -222,3 +222,89 @@ export const sendInvite = async (links) => {
     };
   }
 };
+
+export const sendPasswordResetCode = async (email) => {
+  try {
+    const response = await axios.get(`${api}user/forget/send/${email}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    return {
+      data: response.data.payload,
+      message: response.data?.message,
+      status: response.data?.status,
+      success: response.data.succeed,
+    };
+  } catch (error) {
+    console.error(error);
+
+    return {
+      success: false,
+      message:
+        error.response?.data?.message || "Сервертэй холбогдоход алдаа гарлаа.",
+    };
+  }
+};
+
+export const verifyPasswordResetCode = async (code, email) => {
+  try {
+    const response = await axios.get(
+      `${api}user/forget/verify/${code}/${email}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return {
+      data: response.data.payload,
+      message: response.data?.message,
+      status: response.data?.status,
+      success: response.data.succeed,
+    };
+  } catch (error) {
+    console.error(error);
+
+    return {
+      success: false,
+      message:
+        error.response?.data?.message || "Сервертэй холбогдоход алдаа гарлаа.",
+    };
+  }
+};
+
+export const resetPassword = async (email, code, newPassword) => {
+  try {
+    const response = await axios.post(
+      `${api}user/forget/reset`,
+      {
+        email,
+        code,
+        newPassword,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return {
+      data: response.data.payload,
+      message: response.data?.message,
+      status: response.data?.status,
+      success: response.data.succeed,
+    };
+  } catch (error) {
+    console.error(error);
+
+    return {
+      success: false,
+      message:
+        error.response?.data?.message || "Сервертэй холбогдоход алдаа гарлаа.",
+    };
+  }
+};

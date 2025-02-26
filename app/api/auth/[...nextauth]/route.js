@@ -8,6 +8,11 @@ export const authOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      authorization: {
+        params: {
+          redirect_uri: "https://www.hire.mn/api/auth/callback/google",
+        },
+      },
     }),
     CredentialsProvider({
       id: "credentials",
@@ -134,7 +139,7 @@ export const authOptions = {
           });
 
           const data = await response.json();
-
+          console.log("kk", data);
           if (data.succeed) {
             Object.assign(user, {
               id: data.payload.user.id,
