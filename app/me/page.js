@@ -370,9 +370,14 @@ const Profile = () => {
               <div className="relative group">
                 <div className="absolute -inset-0.5 bg-gradient-to-br from-main/50 to-secondary/50 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
                 <div className="relative min-w-16 min-h-16 sm:min-w-24 sm:min-h-24 bg-gradient-to-br from-main/10 to-secondary/10 rounded-full flex items-center justify-center border border-main/10">
-                  <div className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent pt-1.5">
+                  <div className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent pt-1.5 w-full h-full flex items-center justify-center">
                     {session?.user?.profile ? (
-                      <img src={session?.user?.profile}></img>
+                      <img
+                        src={session?.user?.profile}
+                        alt={session?.user?.name || "Profile"}
+                        className="w-full h-full object-cover rounded-full"
+                        style={{ width: "100%", height: "100%" }}
+                      />
                     ) : (
                       session?.user?.name?.[0]
                     )}
