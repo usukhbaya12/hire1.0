@@ -184,15 +184,17 @@ const Signup = () => {
                 <div className="min-w-64">
                   <div
                     onClick={googleSignIn}
-                    className="flex bg-white items-center gap-2 rounded-2xl cursor-pointer px-3 py-2 justify-center mb-6 border border-neutral shadow-sm"
+                    className="flex items-center gap-3 border border-gray-200 shadow shadow-slate-200 rounded-lg cursor-pointer sm:px-8 py-3 justify-center hover:bg-gray-50 transition-colors"
                   >
                     <Image
                       src="/google.webp"
-                      width={25}
-                      height={25}
+                      width={22}
+                      height={22}
                       alt="Google Logo"
-                    ></Image>
-                    Google хаягаар бүртгүүлэх
+                    />
+                    <span className="font-medium">
+                      Google хаягаар бүртгүүлэх
+                    </span>
                   </div>
                 </div>
               ) : (
@@ -222,7 +224,7 @@ const Signup = () => {
                       <Input
                         prefix={<UserIdBoldDuotone width={18} height={18} />}
                         placeholder="Овог"
-                        className="sm:w-[240px]"
+                        className="sm:w-[240px] text-gray-400"
                       />
                     </Form.Item>
                     <Form.Item
@@ -238,7 +240,7 @@ const Signup = () => {
                       <Input
                         prefix={<UserIdBoldDuotone width={18} height={18} />}
                         placeholder="Нэр"
-                        className="sm:w-[240px]"
+                        className="sm:w-[240px] text-gray-400"
                       />
                     </Form.Item>
                     <Form.Item
@@ -255,7 +257,7 @@ const Signup = () => {
                       <Input
                         prefix={<LetterBoldDuotone width={18} height={18} />}
                         placeholder="И-мейл хаяг"
-                        className="sm:w-[240px]"
+                        className="sm:w-[240px] text-gray-400"
                       />
                     </Form.Item>
                   </>
@@ -277,7 +279,7 @@ const Signup = () => {
                       <Input
                         prefix={<UserIdBoldDuotone width={18} height={18} />}
                         placeholder="Байгууллагын нэр"
-                        className="sm:w-[240px]"
+                        className="sm:w-[240px] text-gray-400"
                       />
                     </Form.Item>
                     <Form.Item
@@ -297,7 +299,7 @@ const Signup = () => {
                       <Input
                         prefix={<Card2BoldDuotone width={18} height={18} />}
                         placeholder="Регистрийн дугаар"
-                        className="sm:w-[240px]"
+                        className="sm:w-[240px] text-gray-400"
                       />
                     </Form.Item>
                     <Form.Item
@@ -322,7 +324,7 @@ const Signup = () => {
                           />
                         }
                         placeholder="Утасны дугаар"
-                        className="sm:w-[240px]"
+                        className="sm:w-[240px] text-gray-400"
                       />
                     </Form.Item>
                     <Form.Item
@@ -343,7 +345,7 @@ const Signup = () => {
                         prefix={<KeyBoldDuotone width={18} height={18} />}
                         type="password"
                         placeholder="Нууц үг"
-                        className="sm:w-[240px]"
+                        className="sm:w-[240px] text-gray-400"
                         autoComplete="new-password"
                       />
                     </Form.Item>
@@ -367,7 +369,7 @@ const Signup = () => {
                         prefix={<KeyBoldDuotone width={18} height={18} />}
                         type="password"
                         placeholder="Нууц үгээ давтах"
-                        className="sm:w-[240px]"
+                        className="sm:w-[240px] text-gray-400"
                         autoComplete="new-password"
                       />
                     </Form.Item>
@@ -401,7 +403,7 @@ const Signup = () => {
                           />
                         }
                         placeholder="Утасны дугаар"
-                        className="sm:w-[240px]"
+                        className="sm:w-[240px] text-gray-400"
                       />
                     </Form.Item>
                     <Form.Item
@@ -422,7 +424,7 @@ const Signup = () => {
                         prefix={<KeyBoldDuotone width={18} height={18} />}
                         type="password"
                         placeholder="Нууц үг"
-                        className="sm:w-[240px]"
+                        className="sm:w-[240px] text-gray-400"
                         autoComplete="new-password"
                       />
                     </Form.Item>
@@ -446,7 +448,7 @@ const Signup = () => {
                         prefix={<KeyBoldDuotone width={18} height={18} />}
                         type="password"
                         placeholder="Нууц үгээ давтах"
-                        className="sm:w-[240px]"
+                        className="sm:w-[240px] text-gray-400"
                         autoComplete="new-password"
                       />
                     </Form.Item>
@@ -469,7 +471,7 @@ const Signup = () => {
                       <Input
                         prefix={<UserIdBoldDuotone width={18} height={18} />}
                         placeholder="Овог"
-                        className="sm:w-[240px]"
+                        className="sm:w-[240px] text-gray-400"
                       />
                     </Form.Item>
                     <Form.Item
@@ -485,7 +487,7 @@ const Signup = () => {
                       <Input
                         prefix={<UserIdBoldDuotone width={18} height={18} />}
                         placeholder="Нэр"
-                        className="sm:w-[240px]"
+                        className="sm:w-[240px] text-gray-400"
                       />
                     </Form.Item>
                     <Form.Item
@@ -501,7 +503,7 @@ const Signup = () => {
                       <Input
                         prefix={<SuitcaseBoldDuotone width={18} height={18} />}
                         placeholder="Албан тушаал"
-                        className="sm:w-[240px]"
+                        className="sm:w-[240px] text-gray-400"
                       />
                     </Form.Item>
                     <Form.Item
@@ -518,7 +520,7 @@ const Signup = () => {
                       <Input
                         prefix={<LetterBoldDuotone width={18} height={18} />}
                         placeholder="И-мейл хаяг"
-                        className="sm:w-[240px]"
+                        className="sm:w-[240px] text-gray-400"
                       />
                     </Form.Item>
                     <Form.Item
@@ -543,7 +545,7 @@ const Signup = () => {
                           />
                         }
                         placeholder="Утасны дугаар"
-                        className="sm:w-[240px]"
+                        className="sm:w-[240px] text-gray-400"
                       />
                     </Form.Item>
                   </>

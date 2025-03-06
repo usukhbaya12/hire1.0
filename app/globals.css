@@ -542,3 +542,23 @@ textarea.ant-input {
 .ant-timeline .ant-timeline-item-content {
   inset-block-start: -10px;
 }
+
+.ant-steps .ant-steps-item-process .ant-steps-item-icon {
+  background-color: #f26522;
+  border-color: #f26522;
+}
+
+.ant-steps .ant-steps-item-process .ant-steps-item-icon > .ant-steps-icon {
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.ant-steps .ant-steps-item-icon .ant-steps-icon {
+  position: relative;
+  top: 0px !important;
+  color: #f26522;
+  line-height: 1;
+  font-size: 12px;
+  font-weight: 600;
+}

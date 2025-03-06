@@ -276,14 +276,13 @@ export const verifyPasswordResetCode = async (code, email) => {
   }
 };
 
-export const resetPassword = async (email, code, newPassword) => {
+export const resetPassword = async (email, password) => {
   try {
     const response = await axios.post(
-      `${api}user/forget/reset`,
+      `${api}user/forget/password`,
       {
         email,
-        code,
-        newPassword,
+        password,
       },
       {
         headers: {
