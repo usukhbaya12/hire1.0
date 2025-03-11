@@ -190,6 +190,10 @@ const HistoryCard = ({ data }) => {
   if (!data || !Array.isArray(data)) return null;
 
   const groupedData = data.reduce((acc, item) => {
+    if (!item.exams || item.exams.length === 0) {
+      return acc;
+    }
+
     const assessment = item.assessment;
     if (!acc[assessment.id]) {
       acc[assessment.id] = {

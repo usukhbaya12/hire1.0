@@ -168,7 +168,9 @@ const Signin = () => {
         setIsResetMode(false);
         form.setFieldsValue({ email: resetEmail });
       } else {
-        messageApi.error(response.message || "Нууц үг шинэчлэхэд алдаа гарлаа");
+        messageApi.error(
+          response.message || "Нууц үг шинэчлэхэд алдаа гарлаа."
+        );
       }
     } catch (error) {
       return;

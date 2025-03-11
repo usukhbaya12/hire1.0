@@ -14,9 +14,8 @@ export default function Footer() {
     { key: "3", label: "Эрэлттэй" },
   ];
   const knowledge = [
-    { key: "1", label: "Блог" },
-    { key: "2", label: "Зөвлөмжүүд" },
-    { key: "3", label: "Нэр томьёоны тайлбар" },
+    { key: "1", label: "Блог, зөвлөмжүүд" },
+    { key: "2", label: "Нэр томьёоны тайлбар" },
   ];
   const support = [
     { key: "1", label: "Түгээмэл асуултууд" },

@@ -6,6 +6,7 @@ import {
   Card2BoldDuotone,
   KeyBoldDuotone,
   PhoneCallingRoundedBoldDuotone,
+  RefreshCircleBoldDuotone,
   RoundDoubleAltArrowRightBoldDuotone,
   SuitcaseBoldDuotone,
   UserIdBoldDuotone,
@@ -16,19 +17,50 @@ import Image from "next/image";
 import { getUserTestHistory } from "../api/assessment";
 import { message, Form, Spin, Input, Button } from "antd";
 import HistoryCard from "@/components/History";
+import { updateUserProfile, getCurrentUser, resetPassword } from "../api/main";
+import ChargeModal from "@/components/modals/Charge";
 
 const Profile = () => {
-  const { data: session } = useSession();
+  const { data: session, update } = useSession();
   const [activeTab, setActiveTab] = useState("history");
   const [form] = Form.useForm();
+  const [orgForm] = Form.useForm();
+  const [empForm] = Form.useForm();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
+  const [userData, setUserData] = useState(null);
   const [isRechargeModalOpen, setIsRechargeModalOpen] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [walletBalance, setWalletBalance] = useState(
-    session?.user?.wallet || 0
-  );
   const [messageApi, contextHolder] = message.useMessage();
+  const [updateLoading, setUpdateLoading] = useState(false);
+  const [updateLoading2, setUpdateLoading2] = useState(false);
+
+  const fetchUserData = async () => {
+    try {
+      const response = await getCurrentUser();
+      if (response.success) {
+        setUserData(response.data);
+        return response.data;
+      }
+      return null;
+    } catch (error) {
+      console.error("GET / Алдаа гарлаа.", error);
+      messageApi.error("Сервертэй холбогдоход алдаа гарлаа.");
+      return null;
+    }
+  };
+
+  const refreshBalance = async () => {
+    setIsRefreshing(true);
+    try {
+      await fetchUserData();
+    } catch (error) {
+      console.error("Үлдэгдэл шинэчлэхэд алдаа гарлаа:", error);
+      messageApi.error("Үлдэгдэл шинэчлэхэд алдаа гарлаа.");
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,6 +70,8 @@ const Profile = () => {
         if (res.success) {
           setData(res.data);
         }
+
+        await fetchUserData();
       } catch (error) {
         console.error("GET / Алдаа гарлаа.", error);
         messageApi.error("Сервертэй холбогдоход алдаа гарлаа.");
@@ -60,14 +94,165 @@ const Profile = () => {
     {
       key: "information",
       icon: <UserIdBoldDuotone width={20} height={20} />,
-      label: "Хувийн мэдээлэл",
+      label: "Мэдээлэл",
     },
     {
       key: "password",
       icon: <KeyBoldDuotone width={20} height={20} />,
       label: "Нууц үг солих",
     },
+    {
+      key: "wallet",
+      icon: <Wallet2BoldDuotone width={20} height={20} />,
+      label: "Төлбөрийн түүх",
+    },
   ];
+
+  const handleUpdateOrgInfo = async (values) => {
+    if (!session.user.id) {
+      messageApi.error("Хэрэглэгчийн мэдээлэл олдсонгүй.");
+      return;
+    }
+
+    setUpdateLoading(true);
+    try {
+      const userData = {
+        organizationName: values.organizationName,
+        organizationPhone: values.organizationPhone,
+      };
+
+      const response = await updateUserProfile(session.user.id, userData);
+
+      if (response.success) {
+        await update({
+          ...session,
+          user: {
+            ...session.user,
+            ...userData,
+          },
+        });
+
+        messageApi.success("Мэдээлэл амжилттай шинэчлэгдлээ.");
+      } else {
+        messageApi.error(
+          response.message || "Мэдээлэл шинэчлэхэд алдаа гарлаа"
+        );
+      }
+    } catch (error) {
+      console.error("Error updating organization info:", error);
+      messageApi.error("Мэдээлэл шинэчлэхэд алдаа гарлаа");
+    } finally {
+      setUpdateLoading(false);
+    }
+  };
+
+  const handleUpdateEmpInfo = async (values) => {
+    if (!session.user.id) {
+      messageApi.error("Хэрэглэгчийн мэдээлэл олдсонгүй.");
+      return;
+    }
+
+    setUpdateLoading2(true);
+    try {
+      const userData = {
+        firstname: values.firstname,
+        lastname: values.lastname,
+        position: values.position,
+        phone: values.phone,
+      };
+
+      const response = await updateUserProfile(session.user.id, userData);
+
+      if (response.success) {
+        await update({
+          ...session,
+          user: {
+            ...session.user,
+            ...userData,
+          },
+        });
+
+        messageApi.success("Мэдээлэл амжилттай шинэчлэгдлээ.");
+      } else {
+        messageApi.error(
+          response.message || "Мэдээлэл шинэчлэхэд алдаа гарлаа"
+        );
+      }
+    } catch (error) {
+      console.error("Error updating employee info:", error);
+      messageApi.error("Мэдээлэл шинэчлэхэд алдаа гарлаа");
+    } finally {
+      setUpdateLoading2(false);
+    }
+  };
+
+  const handleUpdateUserInfo = async (values) => {
+    if (!session.user.id) {
+      messageApi.error("Хэрэглэгчийн мэдээлэл олдсонгүй.");
+      return;
+    }
+
+    setUpdateLoading(true);
+    try {
+      const userData = {
+        firstname: values.firstname,
+        lastname: values.lastname,
+        phone: values.phone,
+      };
+
+      const response = await updateUserProfile(session.user.id, userData);
+
+      if (response.success) {
+        await update({
+          ...session,
+          user: {
+            ...session.user,
+            ...userData,
+          },
+        });
+
+        messageApi.success("Мэдээлэл амжилттай шинэчлэгдлээ.");
+      } else {
+        messageApi.error(
+          response.message || "Мэдээлэл шинэчлэхэд алдаа гарлаа"
+        );
+      }
+    } catch (error) {
+      console.error("Error updating user info:", error);
+      messageApi.error("Мэдээлэл шинэчлэхэд алдаа гарлаа");
+    } finally {
+      setUpdateLoading(false);
+    }
+  };
+
+  const handlePasswordUpdate = async (values) => {
+    if (!session.user.id) {
+      messageApi.error("Хэрэглэгчийн мэдээлэл олдсонгүй.");
+      return;
+    }
+
+    if (values.newPassword !== values.confirmPassword) {
+      messageApi.error("Шинэ нууц үг таарахгүй байна");
+      return;
+    }
+
+    setUpdateLoading(true);
+    try {
+      const res = await resetPassword(
+        session?.user?.email,
+        values.confirmPassword
+      );
+      if (res.success) {
+        messageApi.success("Нууц үг амжилттай шинэчлэгдлээ.");
+      } else {
+        messageApi.error(res.message || "Нууц үг шинэчлэхэд алдаа гарлаа.");
+      }
+    } catch (error) {
+      console.error("Error updating password:", error);
+    } finally {
+      setUpdateLoading(false);
+    }
+  };
 
   const renderContent = () => {
     switch (activeTab) {
@@ -79,12 +264,14 @@ const Profile = () => {
                 <div className="space-y-4 lg:w-2/5">
                   <h2 className="text-base font-bold">Байгууллагын мэдээлэл</h2>
                   <Form
+                    form={orgForm}
                     layout="vertical"
                     initialValues={{
-                      organizationName: session.user.organizationName,
-                      organizationPhone: session.user.organizationPhone,
-                      registerNumber: session.user.organizationRegisterNumber,
+                      organizationName: userData?.organizationName,
+                      organizationPhone: userData?.organizationPhone,
+                      registerNumber: userData?.organizationRegisterNumber,
                     }}
+                    onFinish={handleUpdateOrgInfo}
                   >
                     <Form.Item
                       name="organizationName"
@@ -141,19 +328,30 @@ const Profile = () => {
                         }
                       />
                     </Form.Item>
+                    <Form.Item className="mb-0">
+                      <Button
+                        htmlType="submit"
+                        loading={updateLoading}
+                        className="w-full"
+                      >
+                        Хадгалах
+                      </Button>
+                    </Form.Item>
                   </Form>
                 </div>
 
-                <div className="space-y-4 lg:w-2/5">
+                <div className="space-y-4 lg:w-2/5 pt-6 sm:pt-0">
                   <h2 className="text-base font-bold">Ажилтны мэдээлэл</h2>
                   <Form
+                    form={empForm}
                     layout="vertical"
                     initialValues={{
-                      lastname: session.user.lastname,
-                      firstname: session.user.firstname,
-                      position: session.user.position,
-                      phone: session.user.phone,
+                      lastname: userData?.lastname,
+                      firstname: userData?.firstname,
+                      position: userData?.position,
+                      phone: userData?.phone,
                     }}
+                    onFinish={handleUpdateEmpInfo}
                   >
                     <Form.Item
                       name="lastname"
@@ -214,9 +412,15 @@ const Profile = () => {
                         }
                       />
                     </Form.Item>
-                    <Button type="submit" className="w-full">
-                      Хадгалах
-                    </Button>
+                    <Form.Item className="mb-0">
+                      <Button
+                        htmlType="submit"
+                        loading={updateLoading2}
+                        className="w-full"
+                      >
+                        Хадгалах
+                      </Button>
+                    </Form.Item>
                   </Form>
                 </div>
               </div>
@@ -231,11 +435,12 @@ const Profile = () => {
                     form={form}
                     layout="vertical"
                     initialValues={{
-                      lastname: session.user.lastname,
-                      firstname: session.user.firstname,
-                      email: session.user.email,
-                      phone: session.user.phone,
+                      lastname: userData?.lastname,
+                      firstname: userData?.firstname,
+                      email: userData?.email,
+                      phone: userData?.phone,
                     }}
+                    onFinish={handleUpdateUserInfo}
                   >
                     <Form.Item
                       name="lastname"
@@ -263,6 +468,10 @@ const Profile = () => {
                           required: true,
                           message: "Утасны дугаараа оруулна уу.",
                         },
+                        {
+                          pattern: /^\d{8}$/,
+                          message: "Зөв утасны дугаар оруулна уу.",
+                        },
                       ]}
                     >
                       <Input
@@ -275,9 +484,15 @@ const Profile = () => {
                         className="rounded-xl"
                       />
                     </Form.Item>
-                    <Button type="submit" className="w-full">
-                      Хадгалах
-                    </Button>
+                    <Form.Item className="mb-0">
+                      <Button
+                        htmlType="submit"
+                        loading={updateLoading}
+                        className="w-full"
+                      >
+                        Хадгалах
+                      </Button>
+                    </Form.Item>
                   </Form>
                 </div>
               </div>
@@ -291,37 +506,74 @@ const Profile = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-1 sm:gap-6">
               <div className="space-y-4 lg:w-2/5">
                 <h2 className="text-base font-bold mb-4">Нууц үг солих</h2>
-                <Form layout="vertical">
+                <Form layout="vertical" onFinish={handlePasswordUpdate}>
                   <Form.Item
                     name="currentPassword"
                     label="Одоогийн нууц үг"
-                    rules={[{ required: true }]}
-                  >
-                    <Input.Password className="rounded-xl" />
-                  </Form.Item>
-
-                  <Form.Item
-                    name="newPassword"
-                    label="Шинэ нууц үг"
                     rules={[
-                      { required: true },
-                      { min: 8, message: "Хамгийн багадаа 8 тэмдэгт" },
+                      {
+                        required: true,
+                        message: "Одоогийн нууц үгээ оруулна уу.",
+                      },
                     ]}
                   >
                     <Input.Password className="rounded-xl" />
                   </Form.Item>
 
                   <Form.Item
-                    name="confirmPassword"
-                    label="Шинэ нууц үгээ давтах"
-                    rules={[{ required: true }]}
+                    validateTrigger="onSubmit"
+                    name="newPassword"
+                    label="Шинэ нууц үг"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Шинэ нууц үгээ оруулна уу.",
+                      },
+                      {
+                        min: 6,
+                        message: "Багадаа 6 тэмдэгт оруулна уу.",
+                      },
+                    ]}
                   >
                     <Input.Password className="rounded-xl" />
                   </Form.Item>
 
-                  <Button type="submit" className="w-full">
-                    Нууц үг солих
-                  </Button>
+                  <Form.Item
+                    validateTrigger="onSubmit"
+                    name="confirmPassword"
+                    label="Шинэ нууц үгээ давтах"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Нууц үгээ давтан оруулна уу.",
+                      },
+                      ({ getFieldValue }) => ({
+                        validator(_, value) {
+                          if (
+                            !value ||
+                            getFieldValue("newPassword") === value
+                          ) {
+                            return Promise.resolve();
+                          }
+                          return Promise.reject(
+                            new Error("Нууц үг тохирохгүй байна.")
+                          );
+                        },
+                      }),
+                    ]}
+                  >
+                    <Input.Password className="rounded-xl" />
+                  </Form.Item>
+
+                  <Form.Item className="mb-0">
+                    <Button
+                      htmlType="submit"
+                      loading={updateLoading}
+                      className="w-full"
+                    >
+                      Нууц үг солих
+                    </Button>
+                  </Form.Item>
                 </Form>
               </div>
             </div>
@@ -348,6 +600,10 @@ const Profile = () => {
   return (
     <>
       {contextHolder}
+      <ChargeModal
+        isOpen={isRechargeModalOpen}
+        onClose={() => setIsRechargeModalOpen(false)}
+      />
       <div className="inset-0 fixed">
         <div className="absolute left-[-5%] w-[200px] h-[200px] md:w-[400px] md:h-[400px] rounded-full bg-orange-600/10 blur-[80px]" />
         <div className="absolute bottom-[-20%] right-[-10%] w-[200px] h-[200px] md:w-[500px] md:h-[500px] rounded-full bg-orange-600/10 blur-[100px]" />
@@ -369,19 +625,19 @@ const Profile = () => {
             <div className="relative flex items-center gap-4 sm:gap-5">
               <div className="relative group">
                 <div className="absolute -inset-0.5 bg-gradient-to-br from-main/50 to-secondary/50 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-                <div className="relative min-w-16 min-h-16 sm:min-w-24 sm:min-h-24 bg-gradient-to-br from-main/10 to-secondary/10 rounded-full flex items-center justify-center border border-main/10">
-                  <div className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent pt-1.5 w-full h-full flex items-center justify-center">
-                    {session?.user?.profile ? (
-                      <img
-                        src={session?.user?.profile}
-                        alt={session?.user?.name || "Profile"}
-                        className="w-full h-full object-cover rounded-full"
-                        style={{ width: "100%", height: "100%" }}
-                      />
-                    ) : (
-                      session?.user?.name?.[0]
-                    )}
-                  </div>
+                <div className="relative min-w-20 min-h-20 w-20 h-20 sm:w-24 sm:h-24 sm:min-w-24 sm:min-h-24 bg-gradient-to-br from-main/10 to-secondary/10 rounded-full flex items-center justify-center border border-main/10">
+                  {session?.user?.profile ? (
+                    <img
+                      src={session?.user?.profile}
+                      alt={session?.user?.name || "Profile"}
+                      className="w-full h-full object-cover rounded-full"
+                      style={{ width: "100%", height: "100%" }}
+                    />
+                  ) : (
+                    <div className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent pt-1.5 flex items-center justify-center">
+                      {session?.user?.name?.[0]}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -409,16 +665,35 @@ const Profile = () => {
                       </div>
                     </div>
                   </div>
-                  <div>
-                    <div className="-mt-0.5 sm:mt-0 flex items-center gap-2 text-gray-700">
-                      <span className="font-medium">Үлдэгдэл</span>
-                    </div>
-                    <div className="font-extrabold text-xl bg-gradient-to-br from-gray-800 to-gray-600 bg-clip-text text-transparent">
-                      {session?.user?.wallet.toLocaleString()}₮
+                  <div className="flex items-center gap-2">
+                    <div>
+                      <div className="-mt-0.5 sm:mt-0 flex items-center gap-2 text-gray-700">
+                        <span className="font-medium">Үлдэгдэл</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 font-extrabold text-xl bg-gradient-to-br from-gray-800 to-gray-600 bg-clip-text text-transparent">
+                        {userData?.wallet.toLocaleString()}₮
+                        <button
+                          onClick={refreshBalance}
+                          disabled={isRefreshing}
+                          className="flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
+                          title="Үлдэгдэл шинэчлэх"
+                        >
+                          <RefreshCircleBoldDuotone
+                            width={18}
+                            height={18}
+                            className={`text-main -mt-0.5 ${
+                              isRefreshing ? "animate-spin opacity-50" : ""
+                            }`}
+                          />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <button className="relative group pl-5 pr-3.5 py-2 bg-gradient-to-br from-main to-secondary rounded-xl text-white font-bold shadow-lg shadow-main/20 hover:shadow-main/30 transition-all duration-300 hover:scale-105 active:scale-95">
+                <button
+                  onClick={() => setIsRechargeModalOpen(true)}
+                  className="relative group pl-4 pr-3 py-2 bg-gradient-to-br from-main to-secondary rounded-xl text-white font-bold shadow-lg shadow-main/20 hover:shadow-main/30 transition-all duration-300 hover:scale-105 active:scale-95"
+                >
                   <div className="absolute inset-0 bg-white/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <div className="relative flex items-center gap-1">
                     <span>Цэнэглэх</span>
@@ -432,6 +707,7 @@ const Profile = () => {
             </div>
           )}
         </div>
+
         <div className="bg-white/70 backdrop-blur-md rounded-2xl p-3 shadow shadow-slate-200 mt-4">
           <div className="flex flex-wrap gap-2">
             {menuItems.map((item, index) => (

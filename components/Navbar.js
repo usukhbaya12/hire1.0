@@ -18,11 +18,10 @@ const Navbar = () => {
   const knowledge = [
     {
       key: "1",
-      label: "Блог",
+      label: "Блог, зөвлөмжүүд",
       href: "/news",
     },
-    { key: "2", label: "Зөвлөмжүүд" },
-    { key: "3", label: "Нэр томьёоны тайлбар" },
+    { key: "2", label: "Нэр томьёоны тайлбар" },
   ];
 
   const handleKnowledgeClick = (item) => {
@@ -43,7 +42,9 @@ const Navbar = () => {
           <div className="font-bold">
             {session?.user.role === 30
               ? session?.user?.name
-              : session?.user?.lastname?.[0] + "." + session?.user?.firstname}
+              : session?.user?.lastname
+              ? session?.user?.lastname?.[0] + "." + session?.user?.firstname
+              : session?.user?.name}
           </div>
           <div className="text-gray-700 font-medium">
             {session?.user?.email}
@@ -181,11 +182,21 @@ const Navbar = () => {
                   placement="bottomRight"
                 >
                   <div className="flex items-center gap-1.5 cursor-pointer">
-                    <div className="w-8 h-8 rounded-full bg-main/30 flex items-center justify-center">
-                      <span className="text-main font-bold pt-0.5">
-                        {session?.user?.name?.[0]}
-                      </span>
-                    </div>
+                    {session?.user?.profile ? (
+                      <div className="w-8 h-8 rounded-full overflow-hidden">
+                        <img
+                          src={session?.user?.profile}
+                          alt={session?.user?.name || "Profile"}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-main/30 flex items-center justify-center">
+                        <span className="text-main font-bold pt-0.5">
+                          {session?.user?.name?.[0]}
+                        </span>
+                      </div>
+                    )}
                     <span className="hidden sm:block font-bold pt-0.5">
                       {session?.user.role === 20
                         ? session?.user?.name?.split(" ")[0]
