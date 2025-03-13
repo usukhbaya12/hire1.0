@@ -445,7 +445,7 @@ const InviteTable = ({ testData, onSuccess }) => {
   return (
     <Form form={form}>
       {contextHolder}
-      <div className="flex items-center gap-4">
+      <div className="flex items- gap-4 md:flex-row flex-col">
         <Button
           onClick={handleAdd}
           className="stroked-btn add flex items-center gap-2 text-main hover:text-secondary border-main/50 rounded-xl font-medium transition-colors duration-400"
@@ -479,7 +479,7 @@ const InviteTable = ({ testData, onSuccess }) => {
           dataSource={data}
           pagination={false}
           rowClassName="editable-row"
-          className="rounded-xl overflow-hidden mt-4"
+          className="test-history-table overflow-x-auto sm:mt-4"
         />
       )}
       {data.length > 0 && (

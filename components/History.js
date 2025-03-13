@@ -1,5 +1,5 @@
-import React from "react";
-import { Collapse, Button, Timeline } from "antd";
+import React, { useState } from "react";
+import { Collapse, Button, Timeline, message } from "antd";
 import { DropdownIcon } from "./Icons";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -13,58 +13,17 @@ import {
   UserPlusBoldDuotone,
   Wallet2BoldDuotone,
 } from "solar-icons";
-
-const AssessmentTimeline = ({ histories }) => (
-  <Timeline
-    items={histories.map((history) => ({
-      dot: (
-        <div
-          className={`h-2 w-2 rounded-full ${
-            history.completed
-              ? "bg-green-600 border border-green-700"
-              : "bg-yellow-500 border border-yellow-600"
-          }`}
-        >
-          <div
-            className={`h-2 w-2 border blur-sm opacity-70 ${
-              history.completed ? "bg-green-500" : "bg-yellow-400"
-            }`}
-          ></div>
-        </div>
-      ),
-      children: (
-        <>
-          <div className="flex items-center justify-between w-full">
-            <div className="flex items-center gap-2">
-              <span>
-                {history.examStarted
-                  ? new Date(history.examStarted).toLocaleDateString()
-                  : "Өгөөгүй"}
-              </span>
-              <div>•</div>
-              <Button type="link" className="link-btn-2">
-                {history.completed ? (
-                  <ClipboardTextBoldDuotone width={18} height={18} />
-                ) : (
-                  <CursorLineDuotone width={18} height={18} />
-                )}
-                {history.completed ? "Тайлан" : "Тест өгөх"}
-              </Button>
-            </div>
-          </div>
-        </>
-      ),
-    }))}
-  />
-);
+import { getReport } from "@/app/api/exam";
 
 const AssessmentCard = ({ assessment }) => {
+  const router = useRouter();
+  const { data: session } = useSession();
+  const [loading, setLoading] = useState(false);
+  const messageApi = message;
+
   const histories = assessment.histories.sort(
     (a, b) => new Date(b.examStarted) - new Date(a.examStarted)
   );
-
-  const router = useRouter();
-  const { data: session } = useSession();
 
   const totalTests = assessment.histories.reduce(
     (sum, history) => sum + history.count,
@@ -78,6 +37,90 @@ const AssessmentCard = ({ assessment }) => {
   const totalPrice = assessment.histories.reduce(
     (sum, history) => sum + history.price,
     0
+  );
+
+  const downloadReport = async (code) => {
+    try {
+      setLoading(true);
+      const res = await getReport(code);
+
+      if (res.success && res.data) {
+        const blob = new Blob([res.data], { type: "application/pdf" });
+        const url = window.URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", `report_${code}.pdf`);
+        document.body.appendChild(link);
+        link.click();
+
+        link.parentNode.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      } else {
+        messageApi.error("Тайлан татахад алдаа гарлаа.");
+      }
+    } catch (error) {
+      console.error("GET / Aлдаа гарлаа.", error);
+      messageApi.error("Сервертэй холбогдоход алдаа гарлаа.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleButtonClick = (history) => {
+    if (!history.completed) {
+      router.push(`/test/details/${history.assessment}`);
+    } else {
+      downloadReport(history.exams.code);
+    }
+  };
+
+  const AssessmentTimeline = ({ histories }) => (
+    <Timeline
+      items={histories.map((history) => ({
+        dot: (
+          <div
+            className={`h-2 w-2 rounded-full ${
+              history.completed
+                ? "bg-green-600 border border-green-700"
+                : "bg-yellow-500 border border-yellow-600"
+            }`}
+          >
+            <div
+              className={`h-2 w-2 border blur-sm opacity-70 ${
+                history.completed ? "bg-green-500" : "bg-yellow-400"
+              }`}
+            ></div>
+          </div>
+        ),
+        children: (
+          <>
+            <div className="flex items-center justify-between w-full">
+              <div className="flex items-center gap-2">
+                <span>
+                  {history.examStarted
+                    ? new Date(history.examStarted).toLocaleDateString()
+                    : "Өгөөгүй"}
+                </span>
+                <div>•</div>
+                <Button
+                  type="link"
+                  className="link-btn-2"
+                  onClick={() => handleButtonClick(history)}
+                >
+                  {history.completed ? (
+                    <ClipboardTextBoldDuotone width={18} height={18} />
+                  ) : (
+                    <CursorLineDuotone width={18} height={18} />
+                  )}
+                  {history.completed ? "Тайлан" : "Тест өгөх"}
+                </Button>
+              </div>
+            </div>
+          </>
+        ),
+      }))}
+    />
   );
 
   return (
@@ -164,7 +207,7 @@ const AssessmentCard = ({ assessment }) => {
             </div>
           </div>
 
-          {session.user.role === 20 && (
+          {session?.user?.role === 20 && (
             <Collapse
               className="pt-2"
               expandIcon={({ isActive }) => (
@@ -190,10 +233,6 @@ const HistoryCard = ({ data }) => {
   if (!data || !Array.isArray(data)) return null;
 
   const groupedData = data.reduce((acc, item) => {
-    if (!item.exams || item.exams.length === 0) {
-      return acc;
-    }
-
     const assessment = item.assessment;
     if (!acc[assessment.id]) {
       acc[assessment.id] = {
@@ -208,6 +247,8 @@ const HistoryCard = ({ data }) => {
       count: item.count,
       left: item.count - item.usedUserCount,
       examStarted: item.exams[0]?.userStartDate,
+      exams: item.exams[0],
+      assessment: item.assessment.id,
     });
     return acc;
   }, {});

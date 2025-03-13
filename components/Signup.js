@@ -4,7 +4,7 @@ import Image from "next/image";
 import React, { useState } from "react";
 import { Button, Form, Input, Segmented, message } from "antd";
 import { useRouter } from "next/navigation";
-import { emailVerify, signup } from "@/app/api/main";
+import { signup } from "@/app/api/main";
 import {
   Card2BoldDuotone,
   KeyBoldDuotone,
@@ -26,24 +26,6 @@ const Signup = () => {
   const onSegmentedChange = (value) =>
     setIsOrganization(value === "Байгууллага");
 
-  const sendEmailConfirmation = async (email) => {
-    try {
-      const response = await emailVerify(email);
-
-      if (response.success) {
-        messageApi.success("Бүртгэл амжилттай.");
-        return true;
-      } else {
-        messageApi.error(response.message || "Бүртгэл амжилтгүй боллоо.");
-        return false;
-      }
-    } catch (error) {
-      console.error("Бүртгүүлэхэд алдаа гарлаа.", error);
-      messageApi.error("Сервертэй холбогдоход алдаа гарлаа.");
-      return false;
-    }
-  };
-
   const onFinish = async (values) => {
     setLoading(true);
     const { passwordverify, ...data } = values;
@@ -51,13 +33,7 @@ const Signup = () => {
     try {
       const response = await signup(data);
       if (response.success) {
-        const emailConfirmationSent = await sendEmailConfirmation(data.email);
-
-        if (emailConfirmationSent) {
-          setIsSignupComplete(true);
-        } else {
-          messageApi.warning("Баталгаажуулах и-мейл илгээхэд алдаа гарлаа.");
-        }
+        setIsSignupComplete(true);
       } else {
         messageApi.error(response.data.message);
       }
@@ -184,7 +160,7 @@ const Signup = () => {
                 <div className="min-w-64">
                   <div
                     onClick={googleSignIn}
-                    className="flex items-center gap-3 border border-gray-200 shadow shadow-slate-200 rounded-lg cursor-pointer sm:px-8 py-3 justify-center hover:bg-gray-50 transition-colors"
+                    className="flex items-center bg-white gap-3 border border-gray-200 shadow shadow-slate-200 rounded-lg cursor-pointer sm:px-8 py-3 justify-center hover:bg-gray-50 transition-colors"
                   >
                     <Image
                       src="/google.webp"
@@ -222,9 +198,15 @@ const Signup = () => {
                       validateTrigger="onSubmit"
                     >
                       <Input
-                        prefix={<UserIdBoldDuotone width={18} height={18} />}
+                        prefix={
+                          <UserIdBoldDuotone
+                            width={18}
+                            height={18}
+                            className="text-gray-400"
+                          />
+                        }
                         placeholder="Овог"
-                        className="sm:w-[240px] text-gray-400"
+                        className="sm:w-[240px]"
                       />
                     </Form.Item>
                     <Form.Item
@@ -238,9 +220,15 @@ const Signup = () => {
                       validateTrigger="onSubmit"
                     >
                       <Input
-                        prefix={<UserIdBoldDuotone width={18} height={18} />}
+                        prefix={
+                          <UserIdBoldDuotone
+                            width={18}
+                            height={18}
+                            className="text-gray-400"
+                          />
+                        }
                         placeholder="Нэр"
-                        className="sm:w-[240px] text-gray-400"
+                        className="sm:w-[240px]"
                       />
                     </Form.Item>
                     <Form.Item
@@ -255,9 +243,15 @@ const Signup = () => {
                       validateTrigger="onSubmit"
                     >
                       <Input
-                        prefix={<LetterBoldDuotone width={18} height={18} />}
+                        prefix={
+                          <LetterBoldDuotone
+                            width={18}
+                            height={18}
+                            className="text-gray-400"
+                          />
+                        }
                         placeholder="И-мейл хаяг"
-                        className="sm:w-[240px] text-gray-400"
+                        className="sm:w-[240px]"
                       />
                     </Form.Item>
                   </>
@@ -277,9 +271,15 @@ const Signup = () => {
                       validateTrigger="onSubmit"
                     >
                       <Input
-                        prefix={<UserIdBoldDuotone width={18} height={18} />}
+                        prefix={
+                          <UserIdBoldDuotone
+                            width={18}
+                            height={18}
+                            className="text-gray-400"
+                          />
+                        }
                         placeholder="Байгууллагын нэр"
-                        className="sm:w-[240px] text-gray-400"
+                        className="sm:w-[240px]"
                       />
                     </Form.Item>
                     <Form.Item
@@ -297,9 +297,15 @@ const Signup = () => {
                       validateTrigger="onSubmit"
                     >
                       <Input
-                        prefix={<Card2BoldDuotone width={18} height={18} />}
+                        prefix={
+                          <Card2BoldDuotone
+                            width={18}
+                            height={18}
+                            className="text-gray-400"
+                          />
+                        }
                         placeholder="Регистрийн дугаар"
-                        className="sm:w-[240px] text-gray-400"
+                        className="sm:w-[240px]"
                       />
                     </Form.Item>
                     <Form.Item
@@ -321,10 +327,11 @@ const Signup = () => {
                           <PhoneCallingRoundedBoldDuotone
                             width={18}
                             height={18}
+                            className="text-gray-400"
                           />
                         }
                         placeholder="Утасны дугаар"
-                        className="sm:w-[240px] text-gray-400"
+                        className="sm:w-[240px]"
                       />
                     </Form.Item>
                     <Form.Item
@@ -342,10 +349,16 @@ const Signup = () => {
                       validateTrigger="onSubmit"
                     >
                       <Input
-                        prefix={<KeyBoldDuotone width={18} height={18} />}
+                        prefix={
+                          <KeyBoldDuotone
+                            width={18}
+                            height={18}
+                            className="text-gray-400"
+                          />
+                        }
                         type="password"
                         placeholder="Нууц үг"
-                        className="sm:w-[240px] text-gray-400"
+                        className="sm:w-[240px]"
                         autoComplete="new-password"
                       />
                     </Form.Item>
@@ -366,10 +379,16 @@ const Signup = () => {
                       validateTrigger="onSubmit"
                     >
                       <Input
-                        prefix={<KeyBoldDuotone width={18} height={18} />}
+                        prefix={
+                          <KeyBoldDuotone
+                            width={18}
+                            height={18}
+                            className="text-gray-400"
+                          />
+                        }
                         type="password"
                         placeholder="Нууц үгээ давтах"
-                        className="sm:w-[240px] text-gray-400"
+                        className="sm:w-[240px]"
                         autoComplete="new-password"
                       />
                     </Form.Item>
@@ -400,10 +419,11 @@ const Signup = () => {
                           <PhoneCallingRoundedBoldDuotone
                             width={18}
                             height={18}
+                            className="text-gray-400"
                           />
                         }
                         placeholder="Утасны дугаар"
-                        className="sm:w-[240px] text-gray-400"
+                        className="sm:w-[240px]"
                       />
                     </Form.Item>
                     <Form.Item
@@ -421,10 +441,16 @@ const Signup = () => {
                       validateTrigger="onSubmit"
                     >
                       <Input
-                        prefix={<KeyBoldDuotone width={18} height={18} />}
+                        prefix={
+                          <KeyBoldDuotone
+                            width={18}
+                            height={18}
+                            className="text-gray-400"
+                          />
+                        }
                         type="password"
                         placeholder="Нууц үг"
-                        className="sm:w-[240px] text-gray-400"
+                        className="sm:w-[240px]"
                         autoComplete="new-password"
                       />
                     </Form.Item>
@@ -445,10 +471,16 @@ const Signup = () => {
                       validateTrigger="onSubmit"
                     >
                       <Input
-                        prefix={<KeyBoldDuotone width={18} height={18} />}
+                        prefix={
+                          <KeyBoldDuotone
+                            width={18}
+                            height={18}
+                            className="text-gray-400"
+                          />
+                        }
                         type="password"
                         placeholder="Нууц үгээ давтах"
-                        className="sm:w-[240px] text-gray-400"
+                        className="sm:w-[240px]"
                         autoComplete="new-password"
                       />
                     </Form.Item>
@@ -469,9 +501,15 @@ const Signup = () => {
                       validateTrigger="onSubmit"
                     >
                       <Input
-                        prefix={<UserIdBoldDuotone width={18} height={18} />}
+                        prefix={
+                          <UserIdBoldDuotone
+                            width={18}
+                            height={18}
+                            className="text-gray-400"
+                          />
+                        }
                         placeholder="Овог"
-                        className="sm:w-[240px] text-gray-400"
+                        className="sm:w-[240px]"
                       />
                     </Form.Item>
                     <Form.Item
@@ -485,9 +523,15 @@ const Signup = () => {
                       validateTrigger="onSubmit"
                     >
                       <Input
-                        prefix={<UserIdBoldDuotone width={18} height={18} />}
+                        prefix={
+                          <UserIdBoldDuotone
+                            width={18}
+                            height={18}
+                            className="text-gray-400"
+                          />
+                        }
                         placeholder="Нэр"
-                        className="sm:w-[240px] text-gray-400"
+                        className="sm:w-[240px]"
                       />
                     </Form.Item>
                     <Form.Item
@@ -501,9 +545,15 @@ const Signup = () => {
                       validateTrigger="onSubmit"
                     >
                       <Input
-                        prefix={<SuitcaseBoldDuotone width={18} height={18} />}
+                        prefix={
+                          <SuitcaseBoldDuotone
+                            width={18}
+                            height={18}
+                            className="text-gray-400"
+                          />
+                        }
                         placeholder="Албан тушаал"
-                        className="sm:w-[240px] text-gray-400"
+                        className="sm:w-[240px]"
                       />
                     </Form.Item>
                     <Form.Item
@@ -518,9 +568,15 @@ const Signup = () => {
                       validateTrigger="onSubmit"
                     >
                       <Input
-                        prefix={<LetterBoldDuotone width={18} height={18} />}
+                        prefix={
+                          <LetterBoldDuotone
+                            width={18}
+                            height={18}
+                            className="text-gray-400"
+                          />
+                        }
                         placeholder="И-мейл хаяг"
-                        className="sm:w-[240px] text-gray-400"
+                        className="sm:w-[240px]"
                       />
                     </Form.Item>
                     <Form.Item
@@ -542,10 +598,11 @@ const Signup = () => {
                           <PhoneCallingRoundedBoldDuotone
                             width={18}
                             height={18}
+                            className="text-gray-400"
                           />
                         }
                         placeholder="Утасны дугаар"
-                        className="sm:w-[240px] text-gray-400"
+                        className="sm:w-[240px]"
                       />
                     </Form.Item>
                   </>

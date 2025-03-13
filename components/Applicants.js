@@ -1,10 +1,14 @@
-import React from "react";
-import { Table, Button } from "antd";
+import React, { useState } from "react";
+import { Table, Progress, Button, message } from "antd";
 import dayjs from "dayjs";
-import { ClipboardBoldDuotone, CloudDownloadLineDuotone } from "solar-icons";
+import { ClipboardBoldDuotone } from "solar-icons";
+import { getReport } from "@/app/api/exam";
 
 const EmployeeTable = ({ testData }) => {
   const allExams = testData?.flatMap((test) => test.exams) || [];
+  const [loading, setLoading] = useState(false);
+  const [loadingReportId, setLoadingReportId] = useState(null);
+  const messageApi = message;
 
   const transformedData = allExams.map((exam) => {
     let status = "Хүлээгдэж буй";
@@ -13,7 +17,7 @@ const EmployeeTable = ({ testData }) => {
     } else if (exam.userEndDate) {
       status = "Дуусгасан";
     } else if (exam.email && !exam.userStartDate) {
-      status = "Мэйл илгээсэн";
+      status = "Мейл илгээсэн";
     }
 
     const formatDate = (date) => {
@@ -31,21 +35,90 @@ const EmployeeTable = ({ testData }) => {
       testDate: exam.userStartDate ? formatDate(exam.userStartDate) : "-",
       status: status,
       endDate: formatDate(exam.endDate),
-      percentage: exam.userEndDate ? 93.3 : null,
+      result: exam.result,
+      assessment: exam.assessment,
       code: exam.code,
     };
   });
 
-  const getStatusColor = (status) => {
+  const renderStatus = (status) => {
     switch (status) {
       case "Дуусгасан":
-        return "bg-green-100 text-green-800";
+        return (
+          <div className="relative group w-fit">
+            <div className="absolute -inset-0.5 bg-gradient-to-br from-lime-800/50 to-green-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+            <div className="relative bg-gradient-to-br from-lime-600/20 to-green-600/30 rounded-full flex items-center justify-center border border-yellow-900/10">
+              <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-black/60 to-black/70 bg-clip-text text-transparent py-1 px-3.5">
+                <div className="w-2 h-2 bg-lime-600 rounded-full -mt-0.5"></div>
+                Дуусгасан
+              </div>
+            </div>
+          </div>
+        );
       case "Эхэлсэн":
-        return "bg-blue-100 text-blue-800";
-      case "Мэйл илгээсэн":
-        return "bg-yellow-100 text-yellow-800";
+        return (
+          <div className="relative group w-fit">
+            <div className="absolute -inset-0.5 bg-gradient-to-br from-blue-600/50 to-blue-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+            <div className="relative bg-gradient-to-br from-blue-400/30 to-blue-300/20 rounded-full flex items-center justify-center border border-blue-900/10">
+              <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-1 px-3.5">
+                <div className="w-2 h-2 bg-blue-500 rounded-full -mt-0.5"></div>
+                Эхэлсэн
+              </div>
+            </div>
+          </div>
+        );
+      case "Мейл илгээсэн":
+        return (
+          <div className="relative group w-fit">
+            <div className="absolute -inset-0.5 bg-gradient-to-br from-yellow-600/50 to-orange-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+            <div className="relative bg-gradient-to-br from-yellow-400/30 to-yellow-300/20 rounded-full flex items-center justify-center border border-yellow-900/10">
+              <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-1 px-3.5">
+                <div className="min-w-2 min-h-2 w-2 h-2 bg-yellow-500 rounded-full -mt-0.5"></div>
+                Мейл илгээсэн
+              </div>
+            </div>
+          </div>
+        );
       default:
-        return "bg-gray-100 text-gray-800";
+        return (
+          <div className="relative group w-fit">
+            <div className="absolute -inset-0.5 bg-gradient-to-br from-gray-600/50 to-gray-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+            <div className="relative bg-gradient-to-br from-gray-400/30 to-gray-300/20 rounded-full flex items-center justify-center border border-gray-900/10">
+              <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-1 px-3.5">
+                <div className="min-w-2 min-h-2 w-2 h-2 bg-gray-500 rounded-full -mt-0.5"></div>
+                Хүлээгдэж буй
+              </div>
+            </div>
+          </div>
+        );
+    }
+  };
+
+  const downloadReport = async (code) => {
+    try {
+      setLoadingReportId(code);
+      const res = await getReport(code);
+
+      if (res.success && res.data) {
+        const blob = new Blob([res.data], { type: "application/pdf" });
+        const url = window.URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", `report_${code}.pdf`);
+        document.body.appendChild(link);
+        link.click();
+
+        link.parentNode.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      } else {
+        messageApi.error("Тайлан татахад алдаа гарлаа.");
+      }
+    } catch (error) {
+      console.error("GET / Aлдаа гарлаа.", error);
+      messageApi.error("Сервертэй холбогдоход алдаа гарлаа.");
+    } finally {
+      setLoadingReportId(null);
     }
   };
 
@@ -54,13 +127,13 @@ const EmployeeTable = ({ testData }) => {
       title: "Илгээсэн огноо",
       dataIndex: "date",
       width: 180,
-      render: (text) => <span className="text-gray-600">{text}</span>,
+      render: (text) => <span className="text-gray-700">{text}</span>,
     },
     {
       title: "Дуусах огноо",
       dataIndex: "endDate",
       width: 180,
-      render: (text) => <span className="text-gray-600">{text}</span>,
+      render: (text) => <span className="text-gray-700">{text}</span>,
     },
     {
       title: "Нэр",
@@ -72,44 +145,51 @@ const EmployeeTable = ({ testData }) => {
       title: "И-мейл хаяг",
       dataIndex: "email",
       width: 250,
-      render: (text) => <span className="text-gray-600">{text}</span>,
+      render: (text) => <span className="text-gray-700">{text}</span>,
     },
-    {
-      title: "Тест өгсөн огноо",
-      dataIndex: "testDate",
-      width: 180,
-      render: (text) => <span className="text-gray-600">{text}</span>,
-    },
-
     {
       title: "Төлөв",
       dataIndex: "status",
       width: 200,
-      render: (status) => (
-        <span
-          className={`px-3 py-1 rounded-full text-sm ${getStatusColor(status)}`}
-        >
-          {status}
-        </span>
-      ),
+      render: (status) => renderStatus(status),
     },
     {
       title: "Үр дүн",
-      dataIndex: "percentage",
+      dataIndex: "result",
       width: 200,
-      render: (percentage) => {
-        if (percentage === null) return "-";
-        return (
-          <div className="w-full flex items-center gap-2">
-            <div className="flex-1 bg-gray-100 rounded-full h-2">
-              <div
-                className="bg-green-500 h-2 rounded-full transition-all duration-300"
-                style={{ width: `${percentage}%` }}
+      render: (result, record) => {
+        if (!result) return "-";
+
+        if (record.assessment?.report === 10) {
+          const percent = result.total
+            ? Math.round((result.point / result.total) * 100)
+            : 0;
+          return (
+            <div className="flex items-center gap-2">
+              <Progress
+                type="circle"
+                size="small"
+                percent={percent}
+                format={(percent) => `${percent}%`}
+                strokeColor={{
+                  "0%": "#FF8400",
+                  "100%": "#FF5C00",
+                }}
               />
+              <span>
+                ({result.point}/{result.total})
+              </span>
             </div>
-            <span className="text-sm font-medium">{percentage}%</span>
-          </div>
-        );
+          );
+        } else {
+          return (
+            <div>
+              {result.result && result.value
+                ? `${result.result} • ${result.value}`
+                : result.value || result.result || "-"}
+            </div>
+          );
+        }
       },
     },
     {
@@ -118,16 +198,23 @@ const EmployeeTable = ({ testData }) => {
       width: 100,
       render: (_, record) =>
         record.status === "Дуусгасан" ? (
-          <button className="text-main hover:text-secondary flex items-center gap-2 transition-colors duration-300">
-            <ClipboardBoldDuotone width={18} />
+          <Button
+            className="link-btn-2"
+            loading={loadingReportId === record.code}
+            onClick={() => downloadReport(record.code)}
+          >
+            {loadingReportId !== record.code && (
+              <ClipboardBoldDuotone width={18} />
+            )}
             Татах
-          </button>
+          </Button>
         ) : null,
     },
   ];
 
   return (
     <Table
+      loading={loading}
       columns={columns}
       dataSource={transformedData}
       pagination={{
@@ -135,7 +222,7 @@ const EmployeeTable = ({ testData }) => {
         className: "pt-4",
         size: "small",
       }}
-      className="rounded-xl overflow-hidden"
+      className="test-history-table overflow-x-auto"
       rowClassName="hover:bg-gray-50 transition-colors"
     />
   );

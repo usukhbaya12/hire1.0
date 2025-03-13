@@ -365,3 +365,40 @@ export const getCurrentUser = async () => {
     };
   }
 };
+
+export const getPaymentHistory = async (
+  role = 0,
+  id,
+  page = 1,
+  limit = 100
+) => {
+  try {
+    const token = await getAuthToken();
+    if (!token) return { token: false };
+    const response = await axios.get(
+      `${api}payment/view/${role}/${id}/${page}/${limit}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return {
+      data: response.data.payload,
+      token: true,
+      message: response.data?.message,
+      status: response.data?.status,
+      success: response.data.succeed,
+    };
+  } catch (error) {
+    console.error(error);
+
+    return {
+      success: false,
+      message:
+        error.response?.data?.message || "Сервертэй холбогдоход алдаа гарлаа.",
+    };
+  }
+};

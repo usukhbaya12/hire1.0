@@ -189,7 +189,7 @@ body {
   padding-inline: 0px;
   padding-block: 0px;
   font-weight: 700;
-  backdrop-filter: blur(12px);
+  /* backdrop-filter: blur(12px); */
 }
 
 .link-btn-2.ant-btn-variant-outlined:not(:disabled):not(
@@ -561,4 +561,49 @@ textarea.ant-input {
   line-height: 1;
   font-size: 12px;
   font-weight: 600;
+}
+
+.ant-message .ant-message-notice-wrapper .ant-message-notice-content {
+  display: inline-block;
+  padding: 8px 16px;
+  backdrop-filter: blur(8px);
+  border-radius: 25px;
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06), 0 3px 8px rgba(226, 232, 240, 0.5);
+  pointer-events: all;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+  animation: message-slide-in 0.3s ease-out forwards;
+}
+
+@keyframes message-slide-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ant-message-success .ant-message-notice-content {
+  border-left: 3px solid #10b981;
+}
+
+.ant-message-error .ant-message-notice-content {
+  border-left: 3px solid #ef4444;
+}
+
+.ant-message-warning .ant-message-notice-content {
+  border-left: 3px solid #f59e0b;
+}
+
+.ant-message-info .ant-message-notice-content {
+  border-left: 3px solid #3b82f6;
+}
+
+.ant-message {
+  top: 24px !important;
 }

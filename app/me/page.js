@@ -3,24 +3,41 @@
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import {
+  CalendarBoldDuotone,
+  Card2,
   Card2BoldDuotone,
+  ChatRoundDotsLineDuotone,
+  ClockCircleBoldDuotone,
+  CourseUpBoldDuotone,
+  HistoryBoldDuotone,
   KeyBoldDuotone,
+  MoneyBagBoldDuotone,
+  Paperclip2BoldDuotone,
   PhoneCallingRoundedBoldDuotone,
   RefreshCircleBoldDuotone,
   RoundDoubleAltArrowRightBoldDuotone,
   SuitcaseBoldDuotone,
+  TagBoldDuotone,
   UserIdBoldDuotone,
   VerifiedCheckBoldDuotone,
   Wallet2BoldDuotone,
 } from "solar-icons";
 import Image from "next/image";
 import { getUserTestHistory } from "../api/assessment";
-import { message, Form, Spin, Input, Button } from "antd";
+import { message, Form, Spin, Input, Button, Empty, Table } from "antd";
 import HistoryCard from "@/components/History";
-import { updateUserProfile, getCurrentUser, resetPassword } from "../api/main";
+import {
+  updateUserProfile,
+  getCurrentUser,
+  resetPassword,
+  getPaymentHistory,
+} from "../api/main";
 import ChargeModal from "@/components/modals/Charge";
+import PaymentHistoryChart from "@/components/Payment";
+import { useRouter } from "next/navigation";
 
 const Profile = () => {
+  const router = useRouter();
   const { data: session, update } = useSession();
   const [activeTab, setActiveTab] = useState("history");
   const [form] = Form.useForm();
@@ -28,6 +45,7 @@ const Profile = () => {
   const [empForm] = Form.useForm();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
+  const [paymentData, setPaymentData] = useState(null);
   const [userData, setUserData] = useState(null);
   const [isRechargeModalOpen, setIsRechargeModalOpen] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -66,9 +84,15 @@ const Profile = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
+
         const res = await getUserTestHistory(0);
         if (res.success) {
           setData(res.data);
+        }
+
+        const response = await getPaymentHistory(0, session?.user?.id, 1, 100);
+        if (response.success) {
+          setPaymentData(response.data);
         }
 
         await fetchUserData();
@@ -81,7 +105,7 @@ const Profile = () => {
     };
 
     fetchData();
-  }, []);
+  }, [activeTab]);
 
   if (!session) return null;
 
@@ -580,6 +604,205 @@ const Profile = () => {
           </div>
         );
 
+      case "wallet":
+        return (
+          <>
+            <div className="space-y-6">
+              {/* Statistics Cards for Organization Users */}
+              {session.user.role === 30 && (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                    <div className="bg-white/80 backdrop-blur-md rounded-2xl p-5 shadow shadow-slate-200">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="text-sm text-gray-500 font-medium">
+                            Нийт зарцуулалт
+                          </div>
+                          <div className="text-xl font-bold text-red-500 mt-1">
+                            {paymentData?.payments
+                              .reduce(
+                                (sum, item) =>
+                                  sum + (item.assessment ? item.price : 0),
+                                0
+                              )
+                              .toLocaleString()}
+                            ₮
+                          </div>
+                        </div>
+                        <div className="bg-red-50 p-3 rounded-lg">
+                          <MoneyBagBoldDuotone className="w-6 h-6 text-red-500" />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-white/80 backdrop-blur-md rounded-2xl p-5 shadow shadow-slate-200">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="text-sm text-gray-500 font-medium">
+                            Нийт цэнэглэлт
+                          </div>
+                          <div className="text-xl font-bold text-green-500 mt-1">
+                            {paymentData.payments
+                              ?.reduce(
+                                (sum, item) =>
+                                  sum + (!item.assessment ? item.price : 0),
+                                0
+                              )
+                              .toLocaleString()}
+                            ₮
+                          </div>
+                        </div>
+                        <div className="bg-green-50 p-3 rounded-lg">
+                          <MoneyBagBoldDuotone className="w-6 h-6 text-green-500" />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-white/80 backdrop-blur-md rounded-2xl p-5 shadow shadow-slate-200">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="text-sm text-gray-500 font-medium">
+                            Гүйлгээний тоо
+                          </div>
+                          <div className="text-xl font-bold text-blue-500 mt-1">
+                            {data?.length || 0}
+                          </div>
+                        </div>
+                        <div className="bg-blue-50 p-3 rounded-lg">
+                          <CourseUpBoldDuotone className="w-6 h-6 text-blue-500" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {data && data.length > 0 && (
+                    <PaymentHistoryChart paymentData={paymentData.payments} />
+                  )}
+                </>
+              )}
+
+              <div className="bg-white/70 shadow shadow-slate-200 backdrop-blur-md rounded-2xl p-6 shadow-sm mt-4">
+                <h2 className="text-base font-extrabold mb-4 px-1 flex items-center gap-2">
+                  <HistoryBoldDuotone width={20} />
+                  Гүйлгээний түүх
+                </h2>
+                <Table
+                  className="test-history-table overflow-x-auto"
+                  dataSource={paymentData.payments || []}
+                  loading={loading}
+                  rowKey={(record, index) => index}
+                  pagination={{
+                    pageSize: 10,
+                    hideOnSinglePage: true,
+                    showSizeChanger: false,
+                  }}
+                  locale={{
+                    emptyText: (
+                      <Empty
+                        description="Төлбөрийн түүх олдсонгүй"
+                        className="py-6"
+                        image={Empty.PRESENTED_IMAGE_SIMPLE}
+                      />
+                    ),
+                  }}
+                  rowClassName={(record) =>
+                    record.assessment ? "" : "bg-orange-50/30"
+                  }
+                  columns={[
+                    {
+                      title: "Огноо",
+                      dataIndex: "paymentDate",
+                      key: "date",
+                      render: (text) => (
+                        <div className="flex items-center gap-2">
+                          <CalendarBoldDuotone className="text-gray-400 w-4 h-4" />
+                          <span className="text-sm text-gray-700">
+                            {new Date(text).toLocaleDateString()}
+                          </span>
+                        </div>
+                      ),
+                    },
+                    {
+                      title:
+                        session?.user?.role === 20
+                          ? "Тестийн нэр"
+                          : "Худалдан авалтын төрөл",
+                      dataIndex: ["assessment", "name"],
+                      key: "name",
+                      render: (assessment, record) => (
+                        <div className="flex items-start gap-2">
+                          {assessment ? (
+                            <div className="flex">
+                              <div
+                                className="font-bold text-main cursor-pointer hover:underline underline-offset-4"
+                                onClick={() =>
+                                  router.push(`/test/${record.assessment.id}`)
+                                }
+                              >
+                                {typeof assessment === "string"
+                                  ? assessment
+                                  : assessment?.name || ""}
+                              </div>
+                              {session?.user?.role === 30 && (
+                                <div className="text-gray-700 font-medium">
+                                  <span className="px-2">•</span>
+                                  {Math.abs(
+                                    record.price / record.assessment.price
+                                  )}{" "}
+                                  эрх
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            <>
+                              <Card2 className="text-orange-500 w-4 h-4 mt-0.5 flex-shrink-0" />
+                              <div>
+                                <div className="text-sm font-medium text-gray-800">
+                                  Хэтэвч цэнэглэсэн
+                                </div>
+                                <div className="text-xs font-semibold text-gray-600 pt-1">
+                                  {record.message}
+                                </div>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      ),
+                    },
+                    {
+                      title: "Төлбөрийн хэлбэр",
+                      dataIndex: "price",
+                      key: "price",
+                      align: "right",
+                      render: (price, record) => (
+                        <div className="inline-flex items-center gap-2">
+                          {session?.user?.role === 20 && (
+                            <>
+                              <img src="/qpay.png" width={40}></img>•
+                            </>
+                          )}
+                          <div
+                            className={`inline-flex items-center justify-end gap-1 px-2.5 py-0.5 rounded-full text-sm font-medium ${
+                              record.assessment
+                                ? "bg-red-50 text-red-700"
+                                : "bg-green-50 text-green-700"
+                            }`}
+                          >
+                            <MoneyBagBoldDuotone className="w-3.5 h-3.5" />
+                            <span>
+                              {record.assessment ? "" : "+"}
+                              {price.toLocaleString()}₮
+                            </span>
+                          </div>
+                        </div>
+                      ),
+                    },
+                  ]}
+                />
+              </div>
+            </div>
+          </>
+        );
       default:
         return (
           <div>
@@ -599,6 +822,7 @@ const Profile = () => {
 
   return (
     <>
+      <title>{session?.user?.name + " – Hire.mn"}</title>
       {contextHolder}
       <ChargeModal
         isOpen={isRechargeModalOpen}
@@ -609,7 +833,7 @@ const Profile = () => {
         <div className="absolute bottom-[-20%] right-[-10%] w-[200px] h-[200px] md:w-[500px] md:h-[500px] rounded-full bg-orange-600/10 blur-[100px]" />
       </div>
       <div className="relative 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6 pt-8 md:pt-12 pb-8 z-[3]">
-        <div className="flex flex-col md:flex-row gap-5">
+        <div className="flex flex-col lg:flex-row gap-5">
           <div className="w-full relative p-6 bg-white/70 backdrop-blur-md rounded-3xl shadow shadow-slate-200 overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-white to-main/5"></div>
             <div className="absolute top-0 right-0 w-60 h-60">
@@ -654,7 +878,7 @@ const Profile = () => {
             </div>
           </div>
           {session?.user?.role === 30 && (
-            <div className="w-full md:w-1/2 relative p-6 bg-white/70 backdrop-blur-md rounded-3xl shadow shadow-slate-200 overflow-hidden">
+            <div className="w-full lg:w-2/3 relative p-6 bg-white/70 backdrop-blur-md rounded-3xl shadow shadow-slate-200 overflow-hidden">
               <div className="relative flex justify-between items-center gap-4 sm:gap-5">
                 <div className="relative flex items-center gap-4 sm:gap-5">
                   <div className="relative group">
@@ -696,7 +920,7 @@ const Profile = () => {
                 >
                   <div className="absolute inset-0 bg-white/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <div className="relative flex items-center gap-1">
-                    <span>Цэнэглэх</span>
+                    <span className="hidden xl:block">Цэнэглэх</span>
                     <RoundDoubleAltArrowRightBoldDuotone
                       width={20}
                       height={20}

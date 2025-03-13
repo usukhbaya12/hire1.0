@@ -7,6 +7,7 @@ import "./globals.css";
 import Zoom from "@/components/Zoom";
 import { Provider } from "@/components/Provider";
 import Navbar from "@/components/Navbar";
+import Head from "next/head";
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",

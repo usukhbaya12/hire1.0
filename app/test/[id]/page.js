@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { getAssessmentById, getUserTestHistory } from "@/app/api/assessment";
-import { Breadcrumb, Button, message, Spin, Table } from "antd";
+import { Breadcrumb, Button, message, Progress, Spin, Table } from "antd";
 import {
   AlarmBoldDuotone,
   BookBookmarkBoldDuotone,
@@ -29,6 +29,7 @@ import { api } from "@/app/utils/routes";
 import PurchaseModal from "@/components/modals/Purchase";
 import { purchaseTest, userService } from "@/app/api/main";
 import QPay from "@/components/modals/QPay";
+import { getReport } from "@/app/api/exam";
 
 export default function Test() {
   const params = useParams();
@@ -231,9 +232,38 @@ export default function Test() {
     }
   };
 
+  const downloadReport = async (code) => {
+    try {
+      setLoading(true);
+      const res = await getReport(code);
+
+      if (res.success && res.data) {
+        const blob = new Blob([res.data], { type: "application/pdf" });
+        const url = window.URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", `report_${code}.pdf`);
+        document.body.appendChild(link);
+        link.click();
+
+        link.parentNode.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      } else {
+        messageApi.error("Тайлан татахад алдаа гарлаа.");
+      }
+    } catch (error) {
+      console.error("GET / Aлдаа гарлаа.", error);
+      messageApi.error("Сервертэй холбогдоход алдаа гарлаа.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <Spin tip="Уншиж байна..." fullscreen spinning={loading} />
+      <title>{assessmentData?.data?.name + " – Hire.mn"}</title>
       {contextHolder}
       {assessmentData.category && (
         <div className="relative overflow-hidden">
@@ -327,17 +357,33 @@ export default function Test() {
               ))}
             </div>
             <div className="flex flex-col justify-center gap-3 mt-8 sm:hidden text-center">
-              <Button onClick={handleTakeTest}>
-                {(session?.user?.role === 20 &&
-                  testHistory &&
-                  testHistory.some(
-                    (item) => item.usedUserCount === 0 && item.status === 20
-                  )) ||
-                (session?.user?.role === 20 && assessmentData.data.price === 0)
-                  ? "Тест өгөх"
-                  : "Худалдаж авах"}
-              </Button>
-              <Button className="back">Жишиг тайлан харах</Button>
+              <div
+                className="relative group cursor-pointer"
+                onClick={handleTakeTest}
+              >
+                <div className="absolute -inset-0.5 bg-gradient-to-br from-main/50 to-main/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+                <div className="relative bg-gradient-to-br from-main/20 to-main/10 rounded-full flex items-center justify-center border border-main/10">
+                  <div className="font-extrabold bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent py-2 px-7">
+                    {(session?.user?.role === 20 &&
+                      testHistory &&
+                      testHistory.some(
+                        (item) => item.usedUserCount === 0 && item.status === 20
+                      )) ||
+                    (session?.user?.role === 20 &&
+                      assessmentData.data.price === 0)
+                      ? "Тест өгөх"
+                      : "Худалдаж авах"}
+                  </div>
+                </div>
+              </div>
+              <div className="relative group cursor-pointer">
+                <div className="absolute -inset-0.5 bg-gradient-to-br from-gray-600/50 to-gray-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+                <div className="relative bg-gradient-to-br from-gray-400/30 to-gray-200/20 rounded-full flex items-center justify-center border border-gray-900/10">
+                  <div className="font-extrabold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-2 px-7">
+                    Жишиг тайлан харах
+                  </div>
+                </div>
+              </div>
             </div>
             <div
               className={`w-full grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mt-8`}
@@ -378,17 +424,33 @@ export default function Test() {
               ))}
             </div>
             <div className="flex justify-center gap-4 mt-12 hidden sm:flex">
-              <Button onClick={handleTakeTest}>
-                {(session?.user?.role === 20 &&
-                  testHistory &&
-                  testHistory.some(
-                    (item) => item.usedUserCount === 0 && item.status === 20
-                  )) ||
-                (session?.user?.role !== 30 && assessmentData.data.price === 0)
-                  ? "Тест өгөх"
-                  : "Худалдаж авах"}
-              </Button>
-              <Button className="back">Жишиг тайлан харах</Button>
+              <div
+                className="relative group cursor-pointer"
+                onClick={handleTakeTest}
+              >
+                <div className="absolute -inset-0.5 bg-gradient-to-br from-main/50 to-main/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+                <div className="relative bg-gradient-to-br from-main/30 to-secondary/20 rounded-full flex items-center justify-center border border-main/10">
+                  <div className="font-extrabold bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent py-2 px-7">
+                    {(session?.user?.role === 20 &&
+                      testHistory &&
+                      testHistory.some(
+                        (item) => item.usedUserCount === 0 && item.status === 20
+                      )) ||
+                    (session?.user?.role === 20 &&
+                      assessmentData.data.price === 0)
+                      ? "Тест өгөх"
+                      : "Худалдаж авах"}
+                  </div>
+                </div>
+              </div>
+              <div className="relative group cursor-pointer">
+                <div className="absolute -inset-0.5 bg-gradient-to-br from-gray-600/50 to-gray-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+                <div className="relative bg-gradient-to-br from-gray-400/30 to-gray-200/20 rounded-full flex items-center justify-center border border-gray-900/10">
+                  <div className="font-extrabold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-2 px-7">
+                    Жишиг тайлан харах
+                  </div>
+                </div>
+              </div>
             </div>
             {session?.user?.role === 20 &&
               testHistory &&
@@ -407,25 +469,70 @@ export default function Test() {
                         date: new Date(item.createdAt).toLocaleDateString(),
                         status:
                           item.usedUserCount === 0 ? (
-                            <div className="inline-flex gap-1.5 bg-amber-400 px-3 font-semibold py-0.5 rounded-full">
-                              Өгөөгүй
+                            <div className="relative group w-fit">
+                              <div className="absolute -inset-0.5 bg-gradient-to-br from-yellow-600/50 to-orange-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+                              <div className="relative bg-gradient-to-br from-yellow-400/30 to-yellow-300/20 rounded-full flex items-center justify-center border border-yellow-900/10">
+                                <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-1 px-3.5">
+                                  <div className="w-2 h-2 bg-yellow-500 rounded-full -mt-0.5"></div>
+                                  Өгөөгүй
+                                </div>
+                              </div>
                             </div>
                           ) : (
-                            <div className="inline-flex gap-1.5 bg-green-600 text-white px-3 font-semibold py-0.5 rounded-full">
-                              Дуусгасан
+                            <div className="relative group w-fit">
+                              <div className="absolute -inset-0.5 bg-gradient-to-br from-lime-800/50 to-green-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+                              <div className="relative bg-gradient-to-br from-lime-600/20 to-green-600/30 rounded-full flex items-center justify-center border border-yellow-900/10">
+                                <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-black/60 to-black/70 bg-clip-text text-transparent py-1 px-3.5">
+                                  <div className="w-2 h-2 bg-lime-600 rounded-full -mt-0.5"></div>
+                                  Дуусгасан
+                                </div>
+                              </div>
                             </div>
                           ),
-                        // result: item.exams[0].visible ? (
-                        //   <div>{item.exams[0].result}</div>
-                        // ) : (
-                        //   <div className="items-center gap-2 flex">
-                        //     <EyeClosedLineDuotone
-                        //       width={18}
-                        //       className="text-main"
-                        //     />
-                        //     Нууцалсан
-                        //   </div>
-                        // ),
+                        result:
+                          item.exams && item.exams.length > 0 ? (
+                            item.exams[0].visible ? (
+                              item.assessment.report === 10 ? (
+                                <div className="flex items-center gap-2">
+                                  <Progress
+                                    size="small"
+                                    percent={Math.round(
+                                      (item.exams[0].result.point /
+                                        item.exams[0].result.total) *
+                                        100
+                                    )}
+                                    format={(percent) => `${percent}%`}
+                                    strokeColor={{
+                                      "0%": "#FF8400",
+                                      "100%": "#FF5C00",
+                                    }}
+                                  />
+                                  <span>
+                                    ({item.exams[0].result.point}/
+                                    {item.exams[0].result.total})
+                                  </span>
+                                </div>
+                              ) : (
+                                <div>
+                                  {item.exams[0].result
+                                    ? item.exams[0].result.result +
+                                      " • " +
+                                      item.exams[0].result.value
+                                    : ""}
+                                </div>
+                              )
+                            ) : (
+                              <div className="items-center gap-2 flex">
+                                <EyeClosedLineDuotone
+                                  width={18}
+                                  className="text-main"
+                                />
+                                Байгууллагад илгээсэн
+                              </div>
+                            )
+                          ) : (
+                            <div></div>
+                          ),
                         payment:
                           item.price > 0 ? (
                             <div className="flex items-center gap-2 justify-center">
@@ -437,14 +544,26 @@ export default function Test() {
                           ),
                         report:
                           item.usedUserCount === 0 ? (
-                            <div className="flex justify-center">
+                            <div
+                              className="flex justify-center"
+                              onClick={() =>
+                                router.push(`/test/details/${testId}`)
+                              }
+                            >
                               <button className="text-main hover:text-secondary flex items-center gap-2 text-center font-semibold">
                                 <CursorLineDuotone width={18} />
                                 Тест өгөх
                               </button>
                             </div>
                           ) : (
-                            <div className="flex justify-center">
+                            <div
+                              className="flex justify-center"
+                              onClick={() =>
+                                item.exams &&
+                                item.exams.length > 0 &&
+                                downloadReport(item.exams[0].code)
+                              }
+                            >
                               <button className="text-main hover:text-secondary flex items-center gap-2 font-semibold">
                                 <ClipboardTextBoldDuotone width={18} />
                                 Татах

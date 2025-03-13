@@ -139,7 +139,6 @@ export const authOptions = {
           });
 
           const data = await response.json();
-          console.log("kk", data);
           if (data.succeed) {
             Object.assign(user, {
               id: data.payload.user.id,
