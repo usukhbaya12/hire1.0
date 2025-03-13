@@ -31,6 +31,7 @@ import {
   getCurrentUser,
   resetPassword,
   getPaymentHistory,
+  updatePassword,
 } from "../api/main";
 import ChargeModal from "@/components/modals/Charge";
 import PaymentHistoryChart from "@/components/Payment";
@@ -62,8 +63,8 @@ const Profile = () => {
       }
       return null;
     } catch (error) {
-      console.error("GET / Алдаа гарлаа.", error);
-      messageApi.error("Сервертэй холбогдоход алдаа гарлаа.");
+      console.error("GET / Алдаа гарлаа..", error);
+      messageApi.error("Сервертэй холбогдоход алдаа гарлаа..");
       return null;
     }
   };
@@ -73,8 +74,8 @@ const Profile = () => {
     try {
       await fetchUserData();
     } catch (error) {
-      console.error("Үлдэгдэл шинэчлэхэд алдаа гарлаа:", error);
-      messageApi.error("Үлдэгдэл шинэчлэхэд алдаа гарлаа.");
+      console.error("Үлдэгдэл шинэчлэхэд алдаа гарлаа.:", error);
+      messageApi.error("Үлдэгдэл шинэчлэхэд алдаа гарлаа..");
     } finally {
       setIsRefreshing(false);
     }
@@ -97,8 +98,8 @@ const Profile = () => {
 
         await fetchUserData();
       } catch (error) {
-        console.error("GET / Алдаа гарлаа.", error);
-        messageApi.error("Сервертэй холбогдоход алдаа гарлаа.");
+        console.error("GET / Алдаа гарлаа..", error);
+        messageApi.error("Сервертэй холбогдоход алдаа гарлаа..");
       } finally {
         setLoading(false);
       }
@@ -159,12 +160,12 @@ const Profile = () => {
         messageApi.success("Мэдээлэл амжилттай шинэчлэгдлээ.");
       } else {
         messageApi.error(
-          response.message || "Мэдээлэл шинэчлэхэд алдаа гарлаа"
+          response.message || "Мэдээлэл шинэчлэхэд алдаа гарлаа."
         );
       }
     } catch (error) {
       console.error("Error updating organization info:", error);
-      messageApi.error("Мэдээлэл шинэчлэхэд алдаа гарлаа");
+      messageApi.error("Мэдээлэл шинэчлэхэд алдаа гарлаа.");
     } finally {
       setUpdateLoading(false);
     }
@@ -199,12 +200,12 @@ const Profile = () => {
         messageApi.success("Мэдээлэл амжилттай шинэчлэгдлээ.");
       } else {
         messageApi.error(
-          response.message || "Мэдээлэл шинэчлэхэд алдаа гарлаа"
+          response.message || "Мэдээлэл шинэчлэхэд алдаа гарлаа."
         );
       }
     } catch (error) {
       console.error("Error updating employee info:", error);
-      messageApi.error("Мэдээлэл шинэчлэхэд алдаа гарлаа");
+      messageApi.error("Мэдээлэл шинэчлэхэд алдаа гарлаа.");
     } finally {
       setUpdateLoading2(false);
     }
@@ -238,12 +239,12 @@ const Profile = () => {
         messageApi.success("Мэдээлэл амжилттай шинэчлэгдлээ.");
       } else {
         messageApi.error(
-          response.message || "Мэдээлэл шинэчлэхэд алдаа гарлаа"
+          response.message || "Мэдээлэл шинэчлэхэд алдаа гарлаа."
         );
       }
     } catch (error) {
       console.error("Error updating user info:", error);
-      messageApi.error("Мэдээлэл шинэчлэхэд алдаа гарлаа");
+      messageApi.error("Мэдээлэл шинэчлэхэд алдаа гарлаа.");
     } finally {
       setUpdateLoading(false);
     }
@@ -262,14 +263,14 @@ const Profile = () => {
 
     setUpdateLoading(true);
     try {
-      const res = await resetPassword(
-        session?.user?.email,
+      const res = await updatePassword(
+        values.currentPassword,
         values.confirmPassword
       );
       if (res.success) {
         messageApi.success("Нууц үг амжилттай шинэчлэгдлээ.");
       } else {
-        messageApi.error(res.message || "Нууц үг шинэчлэхэд алдаа гарлаа.");
+        messageApi.error(res.message || "Нууц үг шинэчлэхэд алдаа гарлаа..");
       }
     } catch (error) {
       console.error("Error updating password:", error);

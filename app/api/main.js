@@ -308,6 +308,41 @@ export const resetPassword = async (email, password) => {
   }
 };
 
+export const updatePassword = async (oldPassword, password) => {
+  const token = await getAuthToken();
+  if (!token) return { token: false };
+  try {
+    const response = await axios.post(
+      `${api}user/password`,
+      {
+        oldPassword,
+        password,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return {
+      data: response.data.payload,
+      message: response.data?.message,
+      status: response.data?.status,
+      success: response.data.succeed,
+    };
+  } catch (error) {
+    console.error(error);
+
+    return {
+      success: false,
+      message:
+        error.response?.data?.message || "Сервертэй холбогдоход алдаа гарлаа.",
+    };
+  }
+};
+
 export const updateUserProfile = async (userId, userData) => {
   const token = await getAuthToken();
   if (!token) return { token: false };
