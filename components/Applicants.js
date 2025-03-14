@@ -164,7 +164,6 @@ const EmployeeTable = ({ testData }) => {
     }
   };
 
-  console.log(transformedData);
   const downloadReport = async (code) => {
     try {
       setLoadingReportId(code);

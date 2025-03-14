@@ -160,7 +160,6 @@ export default function TestDesc() {
     fetchData();
   }, [testId, router]);
 
-  console.log(assessmentData);
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
