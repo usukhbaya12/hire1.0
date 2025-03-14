@@ -7,6 +7,7 @@ import {
   InputNumber,
   Input,
   Image,
+  Slider,
 } from "antd";
 import { api } from "@/app/utils/routes";
 import { BookmarkIcon } from "../Icons";
@@ -18,6 +19,7 @@ const QUESTION_TYPES = {
   MATRIX: 40,
   CONSTANT_SUM: 50,
   TEXT: 60,
+  SLIDER: 70,
 };
 
 const QuestionCard = ({
@@ -365,6 +367,78 @@ const QuestionCard = ({
           </div>
         );
 
+      case QUESTION_TYPES.SLIDER:
+        const min = parseInt(question.question?.minValue) || 1;
+        const max = parseInt(question.question?.maxValue) || 5;
+
+        const internalMin = min - 1;
+
+        const marks = {};
+
+        if (question.question?.slider) {
+          const labels = question.question.slider
+            .split(",")
+            .map((s) => s.trim());
+
+          labels.forEach((label, idx) => {
+            marks[min + idx] = label;
+          });
+        } else {
+          for (let i = min; i <= max; i++) {
+            marks[i] = i.toString();
+          }
+        }
+
+        return (
+          <div className="space-y-4 pl-3.5">
+            {question.answers.map((answer, index) => (
+              <React.Fragment key={index}>
+                <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4 md:justify-between">
+                  <div className="md:w-1/4 font-semibold w-full">
+                    {answer.value}
+                  </div>
+                  <div className="md:flex md:pr-5">
+                    <Slider
+                      min={internalMin}
+                      max={max}
+                      value={
+                        answers[question.question.id]?.[answer.id] ??
+                        internalMin
+                      }
+                      onChange={(value) => {
+                        if (value >= min) {
+                          const newAnswer = {
+                            ...(answers[question.question.id] || {}),
+                            [answer.id]: value,
+                          };
+                          handleAnswer(question.question.id, newAnswer);
+
+                          const allAnswered = question.answers.every(
+                            (ans) => (newAnswer[ans.id] ?? internalMin) >= min
+                          );
+
+                          setAnsweredQuestions((prev) => {
+                            const newSet = new Set(prev);
+                            if (allAnswered) {
+                              newSet.add(question.question.id);
+                            } else {
+                              newSet.delete(question.question.id);
+                            }
+                            return newSet;
+                          });
+                        }
+                      }}
+                      marks={marks}
+                      disabled={false}
+                      className="w-[262px] md:w-80 lg:w-96 custom-slider"
+                    />
+                  </div>
+                </div>
+                <Divider />
+              </React.Fragment>
+            ))}
+          </div>
+        );
       default:
         return null;
     }

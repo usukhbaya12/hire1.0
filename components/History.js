@@ -8,6 +8,7 @@ import {
   CursorLineDuotone,
   GlobalLineDuotone,
   HistoryLineDuotone,
+  MouseBoldDuotone,
   NotesBoldDuotone,
   RoundArrowRightDownLineDuotone,
   UserPlusBoldDuotone,
@@ -68,12 +69,16 @@ const AssessmentCard = ({ assessment }) => {
   };
 
   const handleButtonClick = (history) => {
-    if (!history.completed) {
-      router.push(`/test/details/${history.assessment}`);
-    } else {
+    if (history.completed) {
       downloadReport(history.exams.code);
+    } else if (!history.completed && history.examStarted) {
+      router.push(`/exam//${history.exams.code}`);
+    } else {
+      router.push(`/test/details/${history.assessment}`);
     }
   };
+
+  console.log("j", histories);
 
   const AssessmentTimeline = ({ histories }) => (
     <Timeline
@@ -83,12 +88,18 @@ const AssessmentCard = ({ assessment }) => {
             className={`h-2 w-2 rounded-full ${
               history.completed
                 ? "bg-green-600 border border-green-700"
+                : history.examStarted && history.completed === null
+                ? "bg-blue-400 border border-blue-500"
                 : "bg-yellow-500 border border-yellow-600"
             }`}
           >
             <div
               className={`h-2 w-2 border blur-sm opacity-70 ${
-                history.completed ? "bg-green-500" : "bg-yellow-400"
+                history.completed
+                  ? "bg-green-500"
+                  : history.examStarted && history.completed === null
+                  ? "bg-blue-400"
+                  : "bg-yellow-400"
               }`}
             ></div>
           </div>
@@ -110,10 +121,16 @@ const AssessmentCard = ({ assessment }) => {
                 >
                   {history.completed ? (
                     <ClipboardTextBoldDuotone width={18} height={18} />
+                  ) : history.examStarted && history.completed === null ? (
+                    <MouseBoldDuotone width={18} height={18} />
                   ) : (
                     <CursorLineDuotone width={18} height={18} />
                   )}
-                  {history.completed ? "Тайлан" : "Тест өгөх"}
+                  {history.completed
+                    ? "Тайлан"
+                    : history.examStarted && history.completed === null
+                    ? "Үргэлжлүүлэх"
+                    : "Тест өгөх"}
                 </Button>
               </div>
             </div>

@@ -18,6 +18,7 @@ import {
   Flag2BoldDuotone,
   FolderCloudBoldDuotone,
   HistoryBoldDuotone,
+  MouseBoldDuotone,
   QuestionCircleBoldDuotone,
   SquareArrowRightDownBoldDuotone,
   TicketSaleBoldDuotone,
@@ -260,6 +261,8 @@ export default function Test() {
     }
   };
 
+  console.log(testHistory);
+
   return (
     <>
       <Spin tip="Уншиж байна..." fullscreen spinning={loading} />
@@ -468,13 +471,25 @@ export default function Test() {
                         key: item.id,
                         date: new Date(item.createdAt).toLocaleDateString(),
                         status:
-                          item.usedUserCount === 0 ? (
+                          item.exams[0]?.userStartDate == null &&
+                          item.exams[0]?.userEndDate == null ? (
                             <div className="relative group w-fit">
                               <div className="absolute -inset-0.5 bg-gradient-to-br from-yellow-600/50 to-orange-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
                               <div className="relative bg-gradient-to-br from-yellow-400/30 to-yellow-300/20 rounded-full flex items-center justify-center border border-yellow-900/10">
                                 <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-1 px-3.5">
                                   <div className="w-2 h-2 bg-yellow-500 rounded-full -mt-0.5"></div>
                                   Өгөөгүй
+                                </div>
+                              </div>
+                            </div>
+                          ) : item.exams[0]?.userStartDate != null &&
+                            item.exams[0]?.userEndDate == null ? (
+                            <div className="relative group w-fit">
+                              <div className="absolute -inset-0.5 bg-gradient-to-br from-blue-600/50 to-blue-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+                              <div className="relative bg-gradient-to-br from-blue-400/30 to-blue-300/20 rounded-full flex items-center justify-center border border-blue-900/10">
+                                <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-1 px-3.5">
+                                  <div className="w-2 h-2 bg-blue-500 rounded-full -mt-0.5"></div>
+                                  Дуусгаагүй
                                 </div>
                               </div>
                             </div>
@@ -492,7 +507,8 @@ export default function Test() {
                         result:
                           item.exams && item.exams.length > 0 ? (
                             item.exams[0].visible ? (
-                              item.assessment.report === 10 ? (
+                              item.assessment.report === 10 &&
+                              item.exams[0].result ? (
                                 <div className="flex items-center gap-2">
                                   <Progress
                                     size="small"
@@ -543,7 +559,8 @@ export default function Test() {
                             "Үнэгүй"
                           ),
                         report:
-                          item.usedUserCount === 0 ? (
+                          item.exams[0]?.userStartDate == null &&
+                          item.exams[0]?.userEndDate == null ? (
                             <div
                               className="flex justify-center"
                               onClick={() =>
@@ -553,6 +570,21 @@ export default function Test() {
                               <button className="text-main hover:text-secondary flex items-center gap-2 text-center font-semibold">
                                 <CursorLineDuotone width={18} />
                                 Тест өгөх
+                              </button>
+                            </div>
+                          ) : item.exams[0]?.userStartDate != null &&
+                            item.exams[0]?.userEndDate == null ? (
+                            <div
+                              className="flex justify-center"
+                              onClick={() =>
+                                item.exams &&
+                                item.exams.length > 0 &&
+                                router.push(`/exam/${item.exams[0].code}`)
+                              }
+                            >
+                              <button className="text-main hover:text-secondary flex items-center gap-2 font-semibold">
+                                <MouseBoldDuotone width={18} />
+                                Үргэлжлүүлэх
                               </button>
                             </div>
                           ) : (
@@ -591,7 +623,6 @@ export default function Test() {
               confirmLoading={confirmLoading}
               onPurchase={handleOrganizationPurchase}
               testPrice={assessmentData.data?.price || 0}
-              balance={session?.user?.wallet}
               remaining={testHistory?.reduce(
                 (sum, item) => sum + (item.count - item.usedUserCount),
                 0

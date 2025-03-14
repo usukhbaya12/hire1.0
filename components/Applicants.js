@@ -1,45 +1,115 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Table, Progress, Button, message } from "antd";
 import dayjs from "dayjs";
-import { ClipboardBoldDuotone } from "solar-icons";
+import {
+  ClipboardBoldDuotone,
+  EyeBoldDuotone,
+  EyeClosedBold,
+  EyeClosedBoldDuotone,
+} from "solar-icons";
 import { getReport } from "@/app/api/exam";
 
 const EmployeeTable = ({ testData }) => {
-  const allExams = testData?.flatMap((test) => test.exams) || [];
+  const [transformedData, setTransformedData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadingReportId, setLoadingReportId] = useState(null);
   const messageApi = message;
 
-  const transformedData = allExams.map((exam) => {
-    let status = "Хүлээгдэж буй";
-    if (exam.userStartDate && !exam.userEndDate) {
-      status = "Эхэлсэн";
-    } else if (exam.userEndDate) {
-      status = "Дуусгасан";
-    } else if (exam.email && !exam.userStartDate) {
-      status = "Мейл илгээсэн";
+  // Process and transform the data when testData changes
+  useEffect(() => {
+    if (!testData || !Array.isArray(testData)) {
+      console.error("Invalid testData:", testData);
+      setTransformedData([]);
+      return;
     }
 
-    const formatDate = (date) => {
-      return date ? dayjs(date).format("YYYY/MM/DD HH:mm") : "-";
-    };
+    // Create a map to quickly lookup assessment by id
+    const assessmentMap = {};
+    testData.forEach((test) => {
+      if (test.assessment) {
+        assessmentMap[test.assessment.id] = test.assessment;
+      }
 
-    return {
-      key: exam.id,
-      date: formatDate(exam.startDate),
-      name:
-        exam.firstname && exam.lastname
-          ? `${exam.lastname.charAt(0)}.${exam.firstname}`
-          : "-",
-      email: exam.email || "-",
-      testDate: exam.userStartDate ? formatDate(exam.userStartDate) : "-",
-      status: status,
-      endDate: formatDate(exam.endDate),
-      result: exam.result,
-      assessment: exam.assessment,
-      code: exam.code,
-    };
-  });
+      // Also add from assessments array if it exists
+      if (test.assessments && Array.isArray(test.assessments)) {
+        test.assessments.forEach((assessment) => {
+          if (assessment && assessment.id) {
+            assessmentMap[assessment.id] = assessment;
+          }
+        });
+      }
+    });
+
+    // Transform all exams with proper assessment data
+    const allExams = testData.flatMap((test) => {
+      if (!test.exams || !Array.isArray(test.exams)) return [];
+
+      return test.exams.map((exam) => {
+        // Try to find assessment data from multiple sources
+        let assessmentData = null;
+
+        // 1. From exam.assessment directly
+        if (exam.assessment) {
+          assessmentData = exam.assessment;
+        }
+        // 2. From test.assessment using assessmentId reference
+        else if (exam.assessmentId && assessmentMap[exam.assessmentId]) {
+          assessmentData = assessmentMap[exam.assessmentId];
+        }
+        // 3. Try to match by name
+        else if (exam.assessmentName) {
+          const matchedAssessment = Object.values(assessmentMap).find(
+            (a) => a.name === exam.assessmentName
+          );
+          if (matchedAssessment) {
+            assessmentData = matchedAssessment;
+          }
+        }
+
+        return {
+          ...exam,
+          assessment: assessmentData,
+        };
+      });
+    });
+
+    const transformed = allExams.map((exam) => {
+      let status = "Хүлээгдэж буй";
+      if (exam.userStartDate && !exam.userEndDate) {
+        status = "Эхэлсэн";
+      } else if (exam.userEndDate) {
+        status = "Дуусгасан";
+      } else if (exam.email && !exam.userStartDate) {
+        status = "Мейл илгээсэн";
+      }
+
+      const formatDate = (date) => {
+        return date ? dayjs(date).format("YYYY/MM/DD HH:mm") : "-";
+      };
+
+      return {
+        key: exam.id,
+        date: formatDate(exam.startDate),
+        name:
+          exam.firstname && exam.lastname
+            ? `${exam.lastname.charAt(0)}.${exam.firstname}`
+            : "-",
+        email: exam.email || "-",
+        testDate: exam.userStartDate ? formatDate(exam.userStartDate) : "-",
+        status: status,
+        endDate: formatDate(exam.endDate),
+        result: exam.result,
+        assessment: exam.assessment,
+        visible: exam.visible,
+        userEndDate: formatDate(exam.userEndDate),
+        code: exam.code,
+        assessmentName:
+          exam.assessmentName || (exam.assessment ? exam.assessment.name : "-"),
+      };
+    });
+
+    setTransformedData(transformed);
+  }, [testData]);
 
   const renderStatus = (status) => {
     switch (status) {
@@ -94,6 +164,7 @@ const EmployeeTable = ({ testData }) => {
     }
   };
 
+  console.log(transformedData);
   const downloadReport = async (code) => {
     try {
       setLoadingReportId(code);
@@ -124,50 +195,65 @@ const EmployeeTable = ({ testData }) => {
 
   const columns = [
     {
-      title: "Илгээсэн огноо",
+      title: "Урилга илгээсэн",
       dataIndex: "date",
       width: 180,
       render: (text) => <span className="text-gray-700">{text}</span>,
     },
     {
-      title: "Дуусах огноо",
+      title: "Хугацаа дуусах",
       dataIndex: "endDate",
       width: 180,
       render: (text) => <span className="text-gray-700">{text}</span>,
     },
     {
-      title: "Нэр",
-      dataIndex: "name",
-      width: 180,
-      render: (text) => <span className="font-medium">{text}</span>,
+      title: "Шалгуулагч",
+      key: "user",
+      render: (_, record) => (
+        <div className="flex items-center gap-3">
+          <div className="relative group">
+            <div className="absolute -inset-0.5 bg-gradient-to-br from-main/50 to-secondary/50 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+            <div className="relative min-w-10 min-h-10 bg-gradient-to-br from-main/10 to-secondary/10 rounded-full flex items-center justify-center border border-main/10">
+              <div className="text-base font-bold uppercase bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent">
+                {record?.name?.[2]}
+              </div>
+            </div>
+          </div>
+          <div className="leading-4">
+            <div className="font-semibold">{record.name}</div>
+            <div className="text-gray-700 text-sm">{record.email}</div>
+          </div>
+        </div>
+      ),
     },
     {
-      title: "И-мейл хаяг",
-      dataIndex: "email",
-      width: 250,
+      title: "Тест өгсөн",
+      dataIndex: "userEndDate",
+      width: 180,
       render: (text) => <span className="text-gray-700">{text}</span>,
     },
     {
       title: "Төлөв",
       dataIndex: "status",
-      width: 200,
+      width: 180,
       render: (status) => renderStatus(status),
     },
     {
       title: "Үр дүн",
       dataIndex: "result",
-      width: 200,
+      width: 280,
       render: (result, record) => {
         if (!result) return "-";
 
-        if (record.assessment?.report === 10) {
+        const reportType = record.assessment?.report || 10; // Default to 10 if not specified
+
+        if (reportType === 10) {
           const percent = result.total
             ? Math.round((result.point / result.total) * 100)
             : 0;
           return (
             <div className="flex items-center gap-2">
               <Progress
-                type="circle"
                 size="small"
                 percent={percent}
                 format={(percent) => `${percent}%`}
@@ -191,6 +277,21 @@ const EmployeeTable = ({ testData }) => {
           );
         }
       },
+    },
+    {
+      title: "Шалгуулагч үр дүнгээ харсан эсэх",
+      dataIndex: "visible",
+      width: 220,
+      render: (_, record) =>
+        record.visible ? (
+          <div className="text-gray-700 flex items-center gap-1">
+            <EyeBoldDuotone width={18} /> Тийм
+          </div>
+        ) : (
+          <div className="text-gray-700 flex items-center gap-1">
+            <EyeClosedBold width={18} /> Үгүй
+          </div>
+        ),
     },
     {
       title: "Тайлан",

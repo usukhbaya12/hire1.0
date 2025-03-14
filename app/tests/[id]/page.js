@@ -136,7 +136,6 @@ const MyTests = () => {
         confirmLoading={confirmLoading}
         onPurchase={handleOrganizationPurchase}
         testPrice={data[0]?.assessment.price || 0}
-        balance={session?.user?.wallet}
         remaining={data?.reduce(
           (sum, item) => sum + (item.count - item.usedUserCount),
           0

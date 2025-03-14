@@ -160,6 +160,7 @@ export default function TestDesc() {
     fetchData();
   }, [testId, router]);
 
+  console.log(assessmentData);
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -293,9 +294,11 @@ export default function TestDesc() {
               </div>
 
               <div className="divide-y">
-                {sections.map((section, index) => (
-                  <Blocks key={index} number={index + 1} {...section} />
-                ))}
+                {sections
+                  .sort((a, b) => a.orderNumber - b.orderNumber)
+                  .map((section, index) => (
+                    <Blocks key={index} number={index + 1} {...section} />
+                  ))}
               </div>
             </div>
           </div>

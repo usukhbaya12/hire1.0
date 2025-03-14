@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
-import { Button, Form, InputNumber, Modal, Divider } from "antd";
+import React, { useState, useEffect } from "react";
+import { Button, Form, InputNumber, Modal, Divider, message } from "antd";
 import {
   CalculatorMinimalisticBoldDuotone,
   DangerTriangleBoldDuotone,
   Wallet2BoldDuotone,
+  RefreshCircleBoldDuotone,
 } from "solar-icons";
+import { getCurrentUser } from "@/app/api/main";
 
 const PurchaseModal = ({
   isOpen,
@@ -14,11 +16,48 @@ const PurchaseModal = ({
   confirmLoading,
   onPurchase,
   testPrice,
-  balance,
   remaining,
 }) => {
   const [form] = Form.useForm();
   const [quantity, setQuantity] = useState(1);
+  const [userData, setUserData] = useState(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [balance, setBalance] = useState(0);
+  const [fetchError, setFetchError] = useState(false);
+
+  const fetchUserData = async () => {
+    setIsRefreshing(true);
+    setFetchError(false);
+    try {
+      const response = await getCurrentUser();
+      if (response.success) {
+        setUserData(response.data);
+        setBalance(response.data.wallet || 0);
+        return response.data;
+      } else {
+        setFetchError(true);
+        message.error("Хэрэглэгчийн мэдээлэл авахад алдаа гарлаа");
+      }
+      return null;
+    } catch (error) {
+      console.error("GET / Алдаа гарлаа.", error);
+      setFetchError(true);
+      message.error("Серверт холбогдоход алдаа гарлаа");
+      return null;
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
+  const refreshBalance = async () => {
+    await fetchUserData();
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchUserData();
+    }
+  }, [isOpen]);
 
   const calculateTotal = (qty) => {
     return qty * testPrice;
@@ -26,6 +65,20 @@ const PurchaseModal = ({
 
   const handleQuantityChange = (value) => {
     setQuantity(value || 0);
+  };
+
+  const handleSubmit = async (values) => {
+    // First refresh the balance to make sure we have the latest data
+    await refreshBalance();
+
+    // Check if user can afford purchase
+    if (calculateTotal(values.count) > balance) {
+      message.error("Үлдэгдэл хүрэлцэхгүй байна.");
+      return;
+    }
+
+    // Call the parent onPurchase function with the form values
+    onPurchase(values);
   };
 
   return (
@@ -36,22 +89,47 @@ const PurchaseModal = ({
       footer={null}
       width={400}
     >
-      <div className="w-full mt-4 p-3 px-4 rounded-full flex items-center gap-3 justify-between bg-main">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-main">
-            <Wallet2BoldDuotone width={24} />
+      <div className="relative group w-full mt-4">
+        <div className="absolute -inset-0.5 bg-gradient-to-br from-main to-secondary rounded-full blur opacity-40 group-hover:opacity-40 transition duration-300"></div>
+        <div className="relative w-full p-3 px-4 rounded-full flex items-center gap-3 justify-between bg-gradient-to-br from-main/70 to-secondary/70">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-main shadow-md">
+              <Wallet2BoldDuotone width={24} />
+            </div>
+            <div>
+              <p className="text-white">Үлдэгдэл</p>
+              <p className="text-xl text-white font-extrabold">
+                {balance?.toLocaleString()}₮
+              </p>
+            </div>
           </div>
-          <div>
-            <p className="text-white">Үлдэгдэл</p>
-            <p className="text-xl text-white font-extrabold">
-              {balance?.toLocaleString()}₮
-            </p>
-          </div>
+          <button
+            onClick={refreshBalance}
+            disabled={isRefreshing}
+            className="flex items-center justify-center rounded-full transition-colors"
+            title="Үлдэгдэл шинэчлэх"
+          >
+            <RefreshCircleBoldDuotone
+              width={24}
+              height={24}
+              className={`text-white -mt-0.5 ${
+                isRefreshing ? "animate-spin opacity-50" : ""
+              }`}
+            />
+          </button>
         </div>
       </div>
+
       <div className="mt-4 bg-gray-50 p-2 rounded-xl px-4 justify-between flex items-center shadow shadow-slate-200">
         Үлдэгдэл эрх:<div className="font-bold text-main">{remaining}</div>
       </div>
+
+      {fetchError && (
+        <div className="mt-4 text-red-500 text-sm flex items-center gap-2 bg-red-50 p-2 rounded-lg">
+          <DangerTriangleBoldDuotone width={18} />
+          Үлдэгдэл мэдээлэл авахад алдаа гарлаа. Дахин оролдоно уу.
+        </div>
+      )}
 
       <div className="mt-4 bg-gray-50 px-4 py-3 pb-4 rounded-xl shadow shadow-slate-200">
         <div className="flex items-center gap-2">
@@ -60,7 +138,7 @@ const PurchaseModal = ({
         </div>
         <Divider />
 
-        <Form form={form} onFinish={onPurchase} initialValues={{ count: 1 }}>
+        <Form form={form} onFinish={handleSubmit} initialValues={{ count: 1 }}>
           <Form.Item
             className="fnp"
             name="count"
@@ -115,9 +193,11 @@ const PurchaseModal = ({
           loading={confirmLoading}
           htmlType="submit"
           onClick={() => form.submit()}
-          disabled={calculateTotal(quantity) > balance}
+          disabled={
+            calculateTotal(quantity) > balance || isRefreshing || fetchError
+          }
           className={`${
-            calculateTotal(quantity) > balance
+            calculateTotal(quantity) > balance || isRefreshing || fetchError
               ? "bg-gray-400 cursor-not-allowed"
               : ""
           }`}

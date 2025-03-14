@@ -275,7 +275,7 @@ const InviteTable = ({ testData, onSuccess }) => {
       }
 
       const links = dataToSend.map((item, index) => ({
-        email: item.email,
+        email: item.email.toLowerCase(),
         lastname: item.lastname,
         firstname: item.firstname,
         phone: item.phone,

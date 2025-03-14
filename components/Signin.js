@@ -55,10 +55,14 @@ const Signin = () => {
 
   const onFinish = async (values) => {
     setLoading(true);
+    const { email, password } = values;
+
+    const emailToUse = email.toLowerCase();
     try {
       const result = await signIn("credentials", {
-        ...values,
         redirect: false,
+        email: emailToUse,
+        password,
       });
 
       if (result?.error) {
@@ -100,10 +104,10 @@ const Signin = () => {
       const email = resetForm.getFieldValue("email");
       setResetLoading(true);
 
-      const response = await sendPasswordResetCode(email);
+      const response = await sendPasswordResetCode(email.toLowerCase());
 
       if (response.success) {
-        setResetEmail(email);
+        setResetEmail(email.toLowerCase());
         setResetStep(1);
         messageApi.success("Баталгаажуулах код илгээгдлээ.");
       } else {
@@ -126,7 +130,7 @@ const Signin = () => {
     try {
       const response = await verifyPasswordResetCode(
         verificationCode,
-        resetEmail
+        resetEmail.toLowerCase()
       );
 
       if (response.success) {
@@ -161,12 +165,15 @@ const Signin = () => {
 
       setResetLoading(true);
 
-      const response = await resetPasswordApi(resetEmail, newPassword);
+      const response = await resetPasswordApi(
+        resetEmail.toLowerCase(),
+        newPassword
+      );
 
       if (response.success) {
         messageApi.success("Нууц үг амжилттай шинэчлэгдлээ.");
         setIsResetMode(false);
-        form.setFieldsValue({ email: resetEmail });
+        form.setFieldsValue({ email: resetEmail.toLowerCase() });
       } else {
         messageApi.error(
           response.message || "Нууц үг шинэчлэхэд алдаа гарлаа."

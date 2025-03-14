@@ -30,6 +30,10 @@ const Signup = () => {
     setLoading(true);
     const { passwordverify, ...data } = values;
 
+    if (data.email) {
+      data.email = data.email.toLowerCase();
+    }
+
     try {
       const response = await signup(data);
       if (response.success) {
