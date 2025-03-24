@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import {
   Button,
   Form,
@@ -10,6 +10,7 @@ import {
   message,
   Typography,
   Divider,
+  Spin,
 } from "antd";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
@@ -29,7 +30,8 @@ import {
 
 const { Title, Text } = Typography;
 
-const Signin = () => {
+// This component uses useSearchParams, so it needs to be wrapped in Suspense
+function SigninForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [userType, setUserType] = useState("Шалгуулагч");
@@ -677,6 +679,21 @@ const Signin = () => {
       </div>
     </div>
   );
-};
+}
 
-export default Signin;
+function SigninFallback() {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[400px]">
+      <Spin size="large" />
+      <div className="mt-4 text-gray-600">Уншиж байна...</div>
+    </div>
+  );
+}
+
+export default function Signin() {
+  return (
+    <Suspense fallback={<SigninFallback />}>
+      <SigninForm />
+    </Suspense>
+  );
+}

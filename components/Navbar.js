@@ -1,10 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
-import { Button, Divider, Dropdown } from "antd";
+import { Button, Divider, Dropdown, Spin } from "antd";
 import { DropdownIcon, HamburgerIcon, XIcon } from "./Icons";
 import {
   CheckCircleBoldDuotone,
@@ -15,7 +15,20 @@ import {
   UserCircleLineDuotone,
 } from "solar-icons";
 
-const Navbar = () => {
+// Fallback component to show while Navbar is loading
+function NavbarFallback() {
+  return (
+    <div className="w-full px-6 md:px-10 py-5 relative shadow shadow-slate-200 sm:rounded-full bg-white/70 backdrop-blur-md flex justify-between items-center">
+      <div className="w-20 h-6 bg-gray-200 animate-pulse rounded"></div>
+      <div className="flex items-center gap-2">
+        <div className="w-20 h-8 bg-gray-200 animate-pulse rounded-full"></div>
+      </div>
+    </div>
+  );
+}
+
+// The main navbar content component that uses hooks requiring Suspense
+function NavbarContent() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -54,7 +67,7 @@ const Navbar = () => {
       label: "Блог, зөвлөмжүүд",
       href: "/news",
     },
-    { key: "2", label: "Нэр томьёоны тайлбар" },
+    { key: "2", label: "Нэр томьёоны тайлбар", href: "/glossary" },
   ];
 
   const handleKnowledgeClick = (item) => {
@@ -219,7 +232,9 @@ const Navbar = () => {
                   <span className="font-bold">Мэдлэгийн сан</span>
                   <div
                     className={`absolute bottom-0 left-0 w-full h-0.5 bg-main rounded-full transition-all duration-300 origin-left ${
-                      pathname === "/news" ? "scale-x-100" : "scale-x-0"
+                      pathname === "/news" || pathname === "/glossary"
+                        ? "scale-x-100"
+                        : "scale-x-0"
                     }`}
                   />
                 </div>
@@ -350,7 +365,8 @@ const Navbar = () => {
                   <div
                     key={item.key}
                     className={`transition-all duration-200 hover:translate-x-1 cursor-pointer font-bold ${
-                      pathname === "/news" && item.href === "/news"
+                      (pathname === "/news" && item.href === "/news") ||
+                      (pathname === "/glossary" && item.href === "/glossary")
                         ? "text-main"
                         : ""
                     }`}
@@ -376,6 +392,13 @@ const Navbar = () => {
       </div>
     </nav>
   );
-};
+}
 
-export default Navbar;
+// Main component with Suspense boundary
+export default function Navbar() {
+  return (
+    <Suspense fallback={<NavbarFallback />}>
+      <NavbarContent />
+    </Suspense>
+  );
+}

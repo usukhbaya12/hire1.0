@@ -96,8 +96,8 @@ const MyTests = () => {
         onClose={() => setIsModalOpen(false)}
         confirmLoading={confirmLoading}
         onPurchase={handleOrganizationPurchase}
-        testPrice={data[0]?.assessment.price || 0}
-        remaining={data?.reduce(
+        testPrice={data?.data?.[0].assessment.price || 0}
+        remaining={data?.data?.reduce(
           (sum, item) => sum + (item.count - item.usedUserCount),
           0
         )}
@@ -136,7 +136,7 @@ const MyTests = () => {
                 </div>
               </div>
               <div className="font-extrabold text-xl bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent">
-                {data[0]?.assessment.name}
+                {data?.data?.[0].assessment.name}
               </div>
             </div>
 
@@ -152,7 +152,7 @@ const MyTests = () => {
                   <div>
                     Авсан эрх:
                     <span className="font-extrabold text-base text-main pl-1">
-                      {data?.reduce((sum, item) => sum + item.count, 0)}
+                      {data?.data?.reduce((sum, item) => sum + item.count, 0)}
                     </span>
                   </div>
                 </div>
@@ -165,7 +165,7 @@ const MyTests = () => {
                   <div>
                     Үлдсэн эрх:
                     <span className="font-extrabold text-base text-main pl-1">
-                      {data?.reduce(
+                      {data?.data?.reduce(
                         (sum, item) => sum + (item.count - item.usedUserCount),
                         0
                       )}
@@ -200,7 +200,7 @@ const MyTests = () => {
             </div>
           </div>
           <div className="px-1">
-            <InviteTable testData={data} onSuccess={refetchData} />
+            <InviteTable testData={data.data} onSuccess={refetchData} />
           </div>
         </div>
         <div className="bg-white/70 shadow shadow-slate-200 backdrop-blur-md rounded-3xl p-6 shadow-sm mt-6">
@@ -211,7 +211,7 @@ const MyTests = () => {
             </h2>
           </div>
           <div className="px-1">
-            <EmployeeTable testData={data} onRefresh={refetchData} />
+            <EmployeeTable testData={data.data} onRefresh={refetchData} />
           </div>
         </div>
       </div>

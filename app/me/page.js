@@ -127,8 +127,8 @@ const Profile = () => {
     },
   ];
 
-  const filteredData = data
-    ? data.filter((item) =>
+  const filteredData = data?.data
+    ? data?.data.filter((item) =>
         item.assessment.name.toLowerCase().includes(searchTerm.toLowerCase())
       )
     : [];
@@ -190,7 +190,7 @@ const Profile = () => {
                       <div className="font-bold text-gray-800">
                         {
                           Object.keys(
-                            data.reduce((acc, item) => {
+                            data?.data.reduce((acc, item) => {
                               acc[item.assessment.id] = true;
                               return acc;
                             }, {})
@@ -206,7 +206,7 @@ const Profile = () => {
                         Оролдлогын тоо:
                       </div>
                       <div className="font-bold text-gray-800">
-                        {data.filter((item) => item.status === 20).length}
+                        {data?.data.filter((item) => item.status === 20).length}
                       </div>
                     </div>
                     <Divider type="vertical" className="hidden md:block h-10" />
@@ -218,7 +218,7 @@ const Profile = () => {
                       </div>
                       <div className="font-bold text-gray-800">
                         {
-                          data.filter(
+                          data?.data.filter(
                             (item) =>
                               item.status === 20 && item.exams[0]?.userEndDate
                           ).length
@@ -234,7 +234,7 @@ const Profile = () => {
                       </div>
                       <div className="font-bold text-gray-800">
                         {
-                          data.filter(
+                          data?.data.filter(
                             (item) =>
                               item.status === 20 &&
                               !item.exams[0]?.userStartDate &&
@@ -252,7 +252,7 @@ const Profile = () => {
                       </div>
                       <div className="font-bold text-gray-800">
                         {
-                          data.filter(
+                          data?.data.filter(
                             (item) =>
                               item.status === 20 &&
                               item.exams[0]?.userStartDate &&
@@ -272,7 +272,7 @@ const Profile = () => {
                       <div key={index}>{renderSkeletonCard()}</div>
                     ))}
                 </div>
-              ) : data && data.length > 0 ? (
+              ) : data?.data && data?.data.length > 0 ? (
                 filteredData.length > 0 ? (
                   <HistoryCard data={filteredData} />
                 ) : (

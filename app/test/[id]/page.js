@@ -66,6 +66,8 @@ export default function Test() {
     }
   };
 
+  console.log(testHistory);
+
   const fetchHistory = async () => {
     try {
       const res = await getUserTestHistory(testId);
@@ -180,8 +182,10 @@ export default function Test() {
 
     if (
       session?.user?.role === 20 &&
-      testHistory &&
-      testHistory.some((item) => item.usedUserCount === 0 && item.status === 20)
+      testHistory?.data &&
+      testHistory?.data.some(
+        (item) => item.usedUserCount === 0 && item.status === 20
+      )
     ) {
       router.push(`/test/details/${testId}`);
       return;
@@ -383,8 +387,8 @@ export default function Test() {
                 <div className="relative bg-gradient-to-br from-main/20 to-main/10 rounded-full flex items-center justify-center border border-main/10">
                   <div className="font-extrabold bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent py-2 px-7">
                     {(session?.user?.role === 20 &&
-                      testHistory &&
-                      testHistory.some(
+                      testHistory?.data &&
+                      testHistory?.data.some(
                         (item) => item.usedUserCount === 0 && item.status === 20
                       )) ||
                     (session?.user?.role === 20 &&
@@ -450,8 +454,8 @@ export default function Test() {
                 <div className="relative bg-gradient-to-br from-main/30 to-secondary/20 rounded-full flex items-center justify-center border border-main/10">
                   <div className="font-extrabold bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent py-2 px-7">
                     {(session?.user?.role === 20 &&
-                      testHistory &&
-                      testHistory.some(
+                      testHistory?.data &&
+                      testHistory?.data.some(
                         (item) => item.usedUserCount === 0 && item.status === 20
                       )) ||
                     (session?.user?.role === 20 &&
@@ -471,8 +475,8 @@ export default function Test() {
               </div>
             </div>
             {session?.user?.role === 20 &&
-              testHistory &&
-              testHistory.length > 0 && (
+              testHistory?.data &&
+              testHistory?.data.length > 0 && (
                 <div className="bg-white/70 shadow shadow-slate-200 backdrop-blur-md rounded-3xl p-6 shadow-sm mt-12">
                   <h2 className="text-base font-extrabold mb-4 px-1 flex items-center gap-2">
                     <HistoryBoldDuotone width={20} />
@@ -480,7 +484,7 @@ export default function Test() {
                   </h2>
                   <Table
                     columns={columns}
-                    dataSource={testHistory
+                    dataSource={testHistory?.data
                       ?.filter((item) => item.status === 20)
                       .map((item) => ({
                         key: item.id,
@@ -638,14 +642,14 @@ export default function Test() {
               confirmLoading={confirmLoading}
               onPurchase={handleOrganizationPurchase}
               testPrice={assessmentData.data?.price || 0}
-              remaining={testHistory?.reduce(
+              remaining={testHistory?.data.reduce(
                 (sum, item) => sum + (item.count - item.usedUserCount),
                 0
               )}
             />
             {session?.user?.role === 30 &&
-              testHistory &&
-              testHistory.length > 0 && (
+              testHistory?.data &&
+              testHistory?.data.length > 0 && (
                 <div
                   ref={historyTableRef}
                   className="bg-white rounded-3xl p-6 shadow-sm mt-12"
@@ -662,7 +666,7 @@ export default function Test() {
                         </span>
                         <div>
                           <span className="font-extrabold text-main pr-0.5">
-                            {testHistory?.reduce(
+                            {testHistory?.data.reduce(
                               (sum, item) =>
                                 sum + (item.count - item.usedUserCount),
                               0
@@ -682,7 +686,7 @@ export default function Test() {
                   </div>
                   <Table
                     columns={columns_corp}
-                    dataSource={testHistory?.map((item) => ({
+                    dataSource={testHistory?.data.map((item) => ({
                       key: item.id,
                       date: new Date(item.createdAt).toLocaleDateString(),
                       testName: item.assessment.name,
