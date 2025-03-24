@@ -100,7 +100,7 @@ export default function News() {
               transition={{ duration: 0.7 }}
               className="text-center font-black text-3xl bg-gradient-to-r from-main to-secondary bg-clip-text text-transparent"
             >
-              Блог
+              Блог, зөвлөмжүүд
             </m.div>
           </div>
 

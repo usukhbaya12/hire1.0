@@ -107,3 +107,79 @@ export const BookmarkIcon = (props) => (
     />
   </svg>
 );
+
+export const SpinnerIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="80"
+    height="30"
+    viewBox="0 0 80 30"
+  >
+    <circle cx="20" cy="15" r="6" fill="#f36421" opacity="0.7">
+      <animate
+        attributeName="r"
+        from="6"
+        to="10"
+        dur="1.2s"
+        begin="0s"
+        repeatCount="indefinite"
+        values="6;10;6"
+        keyTimes="0;0.5;1"
+      />
+      <animate
+        attributeName="opacity"
+        from="0.7"
+        to="1"
+        dur="1.2s"
+        begin="0s"
+        repeatCount="indefinite"
+        values="0.7;1;0.7"
+        keyTimes="0;0.5;1"
+      />
+    </circle>
+    <circle cx="40" cy="15" r="6" fill="#f36421" opacity="0.7">
+      <animate
+        attributeName="r"
+        from="6"
+        to="10"
+        dur="1.2s"
+        begin="0.4s"
+        repeatCount="indefinite"
+        values="6;10;6"
+        keyTimes="0;0.5;1"
+      />
+      <animate
+        attributeName="opacity"
+        from="0.7"
+        to="1"
+        dur="1.2s"
+        begin="0.4s"
+        repeatCount="indefinite"
+        values="0.7;1;0.7"
+        keyTimes="0;0.5;1"
+      />
+    </circle>
+    <circle cx="60" cy="15" r="6" fill="#f36421" opacity="0.7">
+      <animate
+        attributeName="r"
+        from="6"
+        to="10"
+        dur="1.2s"
+        begin="0.8s"
+        repeatCount="indefinite"
+        values="6;10;6"
+        keyTimes="0;0.5;1"
+      />
+      <animate
+        attributeName="opacity"
+        from="0.7"
+        to="1"
+        dur="1.2s"
+        begin="0.8s"
+        repeatCount="indefinite"
+        values="0.7;1;0.7"
+        keyTimes="0;0.5;1"
+      />
+    </circle>
+  </svg>
+);

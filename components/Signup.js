@@ -4,7 +4,7 @@ import Image from "next/image";
 import React, { useState } from "react";
 import { Button, Form, Input, Segmented, message } from "antd";
 import { useRouter } from "next/navigation";
-import { signup } from "@/app/api/main";
+import { signup, emailVerify } from "@/app/api/main";
 import {
   Card2BoldDuotone,
   KeyBoldDuotone,
@@ -12,6 +12,9 @@ import {
   PhoneCallingRoundedBoldDuotone,
   SuitcaseBoldDuotone,
   UserIdBoldDuotone,
+  CheckCircleBoldDuotone,
+  LetterOpenedBoldDuotone,
+  RefreshCircleBoldDuotone,
 } from "solar-icons";
 import { signIn } from "next-auth/react";
 
@@ -21,6 +24,8 @@ const Signup = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState(false);
   const [isSignupComplete, setIsSignupComplete] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
+  const [resendLoading, setResendLoading] = useState(false);
   const [form] = Form.useForm();
 
   const onSegmentedChange = (value) =>
@@ -32,6 +37,7 @@ const Signup = () => {
 
     if (data.email) {
       data.email = data.email.toLowerCase();
+      setUserEmail(data.email);
     }
 
     try {
@@ -46,6 +52,28 @@ const Signup = () => {
       messageApi.error("Сервертэй холбогдоход алдаа гарлаа.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResendEmail = async () => {
+    if (!userEmail) {
+      messageApi.error("И-мейл хаяг олдсонгүй");
+      return;
+    }
+
+    setResendLoading(true);
+    try {
+      const response = await emailVerify(userEmail);
+      if (response.success) {
+        messageApi.success("Баталгаажуулах мейл дахин илгээгдлээ.");
+      } else {
+        messageApi.error(response.message || "Мейл илгээхэд алдаа гарлаа");
+      }
+    } catch (error) {
+      console.error("Дахин илгээхэд алдаа гарлаа.", error);
+      messageApi.error("Сервертэй холбогдоход алдаа гарлаа.");
+    } finally {
+      setResendLoading(false);
     }
   };
 
@@ -70,7 +98,7 @@ const Signup = () => {
             Бүртгүүлэх
           </div>
 
-          <div className="bg-white/70 backdrop-blur-md shadow-md shadow-slate-200 rounded-3xl px-8 py-10 sm:p-12">
+          <div className="bg-white/70 backdrop-blur-md shadow-md shadow-slate-200 rounded-3xl px-8 py-12 sm:p-12">
             <div className="hidden sm:flex justify-center mb-8">
               <Image
                 src="/hire-logo.png"
@@ -84,17 +112,47 @@ const Signup = () => {
               />
             </div>
 
-            <div className="text-center space-y-4">
-              <div className="text-base font-semibold leading-5">
-                Таны и-мейл хаяг руу баталгаажуулах холбоос илгээлээ.
+            <div className="flex flex-col items-center space-y-6">
+              <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center text-green-500">
+                <CheckCircleBoldDuotone width={40} height={40} />
               </div>
-              <div className="text-gray-700">Та и-мейл хаягаа шалгана уу.</div>
-              <Button
-                onClick={() => router.push("/auth/signin")}
-                className="pt-4"
-              >
-                Нэвтрэх
-              </Button>
+
+              <div className="text-center space-y-3">
+                <div className="text-lg font-bold">Бүртгэл амжилттай</div>
+                <div className="text-gray-600 max-w-xs">
+                  Таны <span className="font-semibold">{userEmail}</span> хаяг
+                  руу баталгаажуулах холбоос илгээгдлээ.
+                </div>
+              </div>
+
+              <div className="w-full space-y-4 pt-3">
+                <Button
+                  onClick={() => router.push("/auth/signin")}
+                  className="w-full"
+                >
+                  Нэвтрэх
+                </Button>
+
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-gray-200"></div>
+                  </div>
+                  <div className="relative flex justify-center text-sm">
+                    <span className="px-3 bg-white/70 text-gray-500">
+                      Эсвэл
+                    </span>
+                  </div>
+                </div>
+                <div className="flex justify-center">
+                  <Button
+                    onClick={handleResendEmail}
+                    loading={resendLoading}
+                    className="stroked-btn"
+                  >
+                    Мейл ирээгүй юу? Дахин илгээх
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         </div>

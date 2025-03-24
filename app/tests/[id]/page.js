@@ -1,13 +1,12 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { message, Spin } from "antd";
+import { Button, message, Spin } from "antd";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { getUserTestHistory } from "@/app/api/assessment";
 import {
   BuildingsBoldDuotone,
-  Card2BoldDuotone,
   DownloadMinimalisticBoldDuotone,
   FileRemoveBoldDuotone,
   GlobalLineDuotone,
@@ -17,12 +16,11 @@ import {
   UserPlusBoldDuotone,
 } from "solar-icons";
 import InviteTable from "@/components/Invite";
-import EmployeeTable from "@/components/Applicants";
-import * as XLSX from "xlsx";
-import dayjs from "dayjs";
+import EmployeeTable from "@/components/Applicants"; // Import your enhanced component
 import PurchaseModal from "@/components/modals/Purchase";
 import { purchaseTest } from "@/app/api/main";
 import { useSession } from "next-auth/react";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const MyTests = () => {
   const { data: session } = useSession();
@@ -67,48 +65,6 @@ const MyTests = () => {
     document.body.removeChild(link);
   };
 
-  const handleDownloadTable = () => {
-    const allExams = data?.flatMap((test) => test.exams) || [];
-
-    const exportData = allExams.map((exam) => {
-      let status = "Хүлээгдэж буй";
-      if (exam.userStartDate && !exam.userEndDate) {
-        status = "Эхэлсэн";
-      } else if (exam.userEndDate) {
-        status = "Дуусгасан";
-      } else if (exam.email && !exam.userStartDate) {
-        status = "Мэйл илгээсэн";
-      }
-
-      return {
-        "Илгээсэн огноо": exam.startDate
-          ? dayjs(exam.startDate).format("YYYY/MM/DD HH:mm")
-          : "-",
-        "Дуусах огноо": exam.endDate
-          ? dayjs(exam.endDate).format("YYYY/MM/DD HH:mm")
-          : "-",
-        Нэр:
-          exam.firstname && exam.lastname
-            ? `${exam.lastname.charAt(0)}.${exam.firstname}`
-            : "-",
-        "И-мейл хаяг": exam.email || "-",
-        "Тест өгсөн огноо": exam.userStartDate
-          ? dayjs(exam.userStartDate).format("YYYY/MM/DD HH:mm")
-          : "-",
-        Төлөв: status,
-        "Үр дүн": exam.userEndDate ? "93.3%" : "-",
-      };
-    });
-
-    const ws = XLSX.utils.json_to_sheet(exportData);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Шалгуулагчид");
-
-    const fileName = `шалгуулагчид_${dayjs().format("YYYYMMDD")}.xlsx`;
-
-    XLSX.writeFile(wb, fileName);
-  };
-
   const handleOrganizationPurchase = async (values) => {
     setConfirmLoading(true);
     try {
@@ -129,7 +85,12 @@ const MyTests = () => {
 
   return (
     <>
-      <Spin tip="Уншиж байна..." fullscreen spinning={loading} />
+      <Spin
+        fullscreen
+        tip="Уншиж байна..."
+        spinning={loading}
+        indicator={<LoadingOutlined style={{ color: "white" }} spin />}
+      />
       <PurchaseModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -248,18 +209,9 @@ const MyTests = () => {
               <BuildingsBoldDuotone width={20} height={20} />
               Нийт шалгуулагчид
             </h2>
-            <div
-              onClick={handleDownloadTable}
-              className="flex items-center gap-2 bg-main/90 font-semibold
-              rounded-full text-white shadow shadow-slate-200 backdrop-blur-md
-              px-3.5 py-1.5 cursor-pointer hover:bg-main transition-colors
-              duration-300"
-            >
-              <DownloadMinimalisticBoldDuotone width={18} height={18} /> Татах
-            </div>
           </div>
           <div className="px-1">
-            <EmployeeTable testData={data} />
+            <EmployeeTable testData={data} onRefresh={refetchData} />
           </div>
         </div>
       </div>

@@ -138,7 +138,7 @@ const PurchaseModal = ({
         </div>
         <Divider />
 
-        <Form form={form} onFinish={handleSubmit} initialValues={{ count: 1 }}>
+        <Form form={form} onFinish={handleSubmit}>
           <Form.Item
             className="fnp"
             name="count"

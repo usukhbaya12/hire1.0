@@ -1,21 +1,36 @@
-import React, { useState, useEffect } from "react";
-import { Table, Progress, Button, message } from "antd";
+import React, { useState, useEffect, useRef } from "react";
+import {
+  Table,
+  Progress,
+  Button,
+  message,
+  Input,
+  Space,
+  Dropdown,
+  Menu,
+} from "antd";
+import { getReport } from "@/app/api/exam";
 import dayjs from "dayjs";
 import {
   ClipboardBoldDuotone,
   EyeBoldDuotone,
   EyeClosedBold,
-  EyeClosedBoldDuotone,
+  MagniferBoldDuotone,
+  DownloadMinimalisticBoldDuotone,
+  RestartLineDuotone,
+  FilterLineDuotone,
 } from "solar-icons";
-import { getReport } from "@/app/api/exam";
+import * as XLSX from "xlsx";
 
-const EmployeeTable = ({ testData }) => {
+const EmployeeTable = ({ testData, onRefresh }) => {
   const [transformedData, setTransformedData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadingReportId, setLoadingReportId] = useState(null);
+  const [filteredInfo, setFilteredInfo] = useState({});
+  const [sortedInfo, setSortedInfo] = useState({});
+  const [searchText, setSearchText] = useState("");
   const messageApi = message;
 
-  // Process and transform the data when testData changes
   useEffect(() => {
     if (!testData || !Array.isArray(testData)) {
       console.error("Invalid testData:", testData);
@@ -23,14 +38,12 @@ const EmployeeTable = ({ testData }) => {
       return;
     }
 
-    // Create a map to quickly lookup assessment by id
     const assessmentMap = {};
     testData.forEach((test) => {
       if (test.assessment) {
         assessmentMap[test.assessment.id] = test.assessment;
       }
 
-      // Also add from assessments array if it exists
       if (test.assessments && Array.isArray(test.assessments)) {
         test.assessments.forEach((assessment) => {
           if (assessment && assessment.id) {
@@ -40,24 +53,17 @@ const EmployeeTable = ({ testData }) => {
       }
     });
 
-    // Transform all exams with proper assessment data
     const allExams = testData.flatMap((test) => {
       if (!test.exams || !Array.isArray(test.exams)) return [];
 
       return test.exams.map((exam) => {
-        // Try to find assessment data from multiple sources
         let assessmentData = null;
 
-        // 1. From exam.assessment directly
         if (exam.assessment) {
           assessmentData = exam.assessment;
-        }
-        // 2. From test.assessment using assessmentId reference
-        else if (exam.assessmentId && assessmentMap[exam.assessmentId]) {
+        } else if (exam.assessmentId && assessmentMap[exam.assessmentId]) {
           assessmentData = assessmentMap[exam.assessmentId];
-        }
-        // 3. Try to match by name
-        else if (exam.assessmentName) {
+        } else if (exam.assessmentName) {
           const matchedAssessment = Object.values(assessmentMap).find(
             (a) => a.name === exam.assessmentName
           );
@@ -80,7 +86,7 @@ const EmployeeTable = ({ testData }) => {
       } else if (exam.userEndDate) {
         status = "Дуусгасан";
       } else if (exam.email && !exam.userStartDate) {
-        status = "Мейл илгээсэн";
+        status = "Мэйл илгээсэн";
       }
 
       const formatDate = (date) => {
@@ -93,6 +99,10 @@ const EmployeeTable = ({ testData }) => {
         name:
           exam.firstname && exam.lastname
             ? `${exam.lastname.charAt(0)}.${exam.firstname}`
+            : "-",
+        fullName:
+          exam.firstname && exam.lastname
+            ? `${exam.lastname} ${exam.firstname}`
             : "-",
         email: exam.email || "-",
         testDate: exam.userStartDate ? formatDate(exam.userStartDate) : "-",
@@ -110,6 +120,12 @@ const EmployeeTable = ({ testData }) => {
 
     setTransformedData(transformed);
   }, [testData]);
+
+  const refreshData = () => {
+    if (onRefresh && typeof onRefresh === "function") {
+      onRefresh();
+    }
+  };
 
   const renderStatus = (status) => {
     switch (status) {
@@ -137,14 +153,14 @@ const EmployeeTable = ({ testData }) => {
             </div>
           </div>
         );
-      case "Мейл илгээсэн":
+      case "Мэйл илгээсэн":
         return (
           <div className="relative group w-fit">
             <div className="absolute -inset-0.5 bg-gradient-to-br from-yellow-600/50 to-orange-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
             <div className="relative bg-gradient-to-br from-yellow-400/30 to-yellow-300/20 rounded-full flex items-center justify-center border border-yellow-900/10">
               <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-1 px-3.5">
                 <div className="min-w-2 min-h-2 w-2 h-2 bg-yellow-500 rounded-full -mt-0.5"></div>
-                Мейл илгээсэн
+                Мэйл илгээсэн
               </div>
             </div>
           </div>
@@ -192,29 +208,136 @@ const EmployeeTable = ({ testData }) => {
     }
   };
 
+  const handleDownloadTable = () => {
+    const filteredData = transformedData.filter((item) => {
+      const searchMatches = searchText
+        ? item.email.toLowerCase().includes(searchText.toLowerCase()) ||
+          item.fullName.toLowerCase().includes(searchText.toLowerCase()) ||
+          item.name.toLowerCase().includes(searchText.toLowerCase())
+        : true;
+
+      let statusMatches = true;
+      if (filteredInfo.status && filteredInfo.status.length > 0) {
+        statusMatches = filteredInfo.status.includes(item.status);
+      }
+
+      let visibleMatches = true;
+      if (filteredInfo.visible && filteredInfo.visible.length > 0) {
+        visibleMatches = filteredInfo.visible.includes(
+          item.visible ? "Тийм" : "Үгүй"
+        );
+      }
+
+      return searchMatches && statusMatches && visibleMatches;
+    });
+
+    const sortedData = [...filteredData].sort((a, b) => {
+      if (sortedInfo.columnKey && sortedInfo.order) {
+        const columnKey = sortedInfo.columnKey;
+        const order = sortedInfo.order === "ascend" ? 1 : -1;
+
+        if (a[columnKey] === b[columnKey]) return 0;
+        if (a[columnKey] === "-") return order;
+        if (b[columnKey] === "-") return -order;
+
+        return a[columnKey] < b[columnKey] ? -order : order;
+      }
+      return 0;
+    });
+
+    const exportData = sortedData.map((item) => ({
+      "Илгээсэн огноо": item.date,
+      "Дуусах огноо": item.endDate,
+      Шалгуулагч: item.name,
+      "И-мейл хаяг": item.email,
+      "Тест өгсөн огноо": item.userEndDate,
+      Төлөв: item.status,
+      "Шалгуулагч үр дүнгээ харсан эсэх": item.visible ? "Тийм" : "Үгүй",
+      "Үр дүн":
+        item.userEndDate !== "-"
+          ? item.result && typeof item.result === "object"
+            ? item.result.result
+              ? `${item.result.result} • ${item.result.value}`
+              : `${Math.round(
+                  (item.result.point / item.result.total) * 100
+                )}% (${item.result.point}/${item.result.total})`
+            : "-"
+          : "-",
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(exportData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Шалгуулагчид");
+
+    const fileName = `шалгуулагчид_${dayjs().format("YYYYMMDD")}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+  };
+
+  const handleChange = (pagination, filters, sorter) => {
+    setFilteredInfo(filters);
+    setSortedInfo(sorter);
+  };
+
+  const handleReset = () => {
+    setSearchText("");
+    setFilteredInfo({});
+    setSortedInfo({});
+  };
+
+  const visibilityFilters = [
+    { text: "Тийм", value: "Тийм" },
+    { text: "Үгүй", value: "Үгүй" },
+  ];
+
+  const statusFilters = [
+    { text: "Дуусгасан", value: "Дуусгасан" },
+    { text: "Эхэлсэн", value: "Эхэлсэн" },
+    { text: "Мэйл илгээсэн", value: "Мэйл илгээсэн" },
+    { text: "Хүлээгдэж буй", value: "Хүлээгдэж буй" },
+  ];
+
   const columns = [
     {
-      title: "Урилга илгээсэн",
+      title: "Илгээсэн огноо",
       dataIndex: "date",
-      width: 180,
+      key: "date",
+      sorter: (a, b) => {
+        if (a.date === "-") return -1;
+        if (b.date === "-") return 1;
+        return dayjs(a.date, "YYYY/MM/DD HH:mm").diff(
+          dayjs(b.date, "YYYY/MM/DD HH:mm")
+        );
+      },
+      sortOrder: sortedInfo.columnKey === "date" && sortedInfo.order,
       render: (text) => <span className="text-gray-700">{text}</span>,
+      width: 80,
     },
     {
-      title: "Хугацаа дуусах",
+      title: "Дуусах огноо",
       dataIndex: "endDate",
-      width: 180,
+      key: "endDate",
+      sorter: (a, b) => {
+        if (a.endDate === "-") return -1;
+        if (b.endDate === "-") return 1;
+        return dayjs(a.endDate, "YYYY/MM/DD HH:mm").diff(
+          dayjs(b.endDate, "YYYY/MM/DD HH:mm")
+        );
+      },
+      sortOrder: sortedInfo.columnKey === "endDate" && sortedInfo.order,
       render: (text) => <span className="text-gray-700">{text}</span>,
+      width: 80,
     },
     {
       title: "Шалгуулагч",
       key: "user",
-      render: (_, record) => (
+      dataIndex: "name",
+      render: (text, record) => (
         <div className="flex items-center gap-3">
           <div className="relative group">
             <div className="absolute -inset-0.5 bg-gradient-to-br from-main/50 to-secondary/50 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
             <div className="relative min-w-10 min-h-10 bg-gradient-to-br from-main/10 to-secondary/10 rounded-full flex items-center justify-center border border-main/10">
               <div className="text-base font-bold uppercase bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent">
-                {record?.name?.[2]}
+                {record?.name?.[0]}
               </div>
             </div>
           </div>
@@ -224,27 +347,72 @@ const EmployeeTable = ({ testData }) => {
           </div>
         </div>
       ),
+      width: 80,
     },
     {
       title: "Тест өгсөн",
       dataIndex: "userEndDate",
-      width: 180,
+      key: "userEndDate",
+      sorter: (a, b) => {
+        if (a.userEndDate === "-") return -1;
+        if (b.userEndDate === "-") return 1;
+        return dayjs(a.userEndDate, "YYYY/MM/DD HH:mm").diff(
+          dayjs(b.userEndDate, "YYYY/MM/DD HH:mm")
+        );
+      },
+      sortOrder: sortedInfo.columnKey === "userEndDate" && sortedInfo.order,
       render: (text) => <span className="text-gray-700">{text}</span>,
+      width: 80,
     },
     {
       title: "Төлөв",
       dataIndex: "status",
-      width: 180,
+      key: "status",
+      filters: statusFilters,
+      filteredValue: filteredInfo.status || null,
+      onFilter: (value, record) => record.status === value,
+      sorter: (a, b) => {
+        const statusOrder = {
+          Дуусгасан: 3,
+          Эхэлсэн: 2,
+          "Мэйл илгээсэн": 1,
+          "Хүлээгдэж буй": 0,
+        };
+        return statusOrder[a.status] - statusOrder[b.status];
+      },
+      sortOrder: sortedInfo.columnKey === "status" && sortedInfo.order,
       render: (status) => renderStatus(status),
+      width: 180,
     },
     {
       title: "Үр дүн",
       dataIndex: "result",
-      width: 280,
+      key: "result",
+      sorter: (a, b) => {
+        if (a.result && b.result) {
+          const aValue = a.result.point
+            ? (a.result.point / a.result.total) * 100
+            : a.result.value
+            ? parseInt(a.result.value)
+            : 0;
+
+          const bValue = b.result.point
+            ? (b.result.point / b.result.total) * 100
+            : b.result.value
+            ? parseInt(b.result.value)
+            : 0;
+
+          return aValue - bValue;
+        }
+        if (a.result) return 1;
+        if (b.result) return -1;
+        return 0;
+      },
+      sortOrder: sortedInfo.columnKey === "result" && sortedInfo.order,
       render: (result, record) => {
         if (!result) return "-";
 
-        const reportType = record.assessment?.report || 10; // Default to 10 if not specified
+        const reportType = record.assessment?.report || 10;
 
         if (reportType === 10) {
           const percent = result.total
@@ -276,13 +444,14 @@ const EmployeeTable = ({ testData }) => {
           );
         }
       },
+      width: 180,
     },
     {
       title: "Шалгуулагч үр дүнгээ харсан эсэх",
       dataIndex: "visible",
-      width: 220,
-      render: (_, record) =>
-        record.visible ? (
+      key: "visible",
+      render: (visible) =>
+        visible ? (
           <div className="text-gray-700 flex items-center gap-1">
             <EyeBoldDuotone width={18} /> Тийм
           </div>
@@ -291,6 +460,7 @@ const EmployeeTable = ({ testData }) => {
             <EyeClosedBold width={18} /> Үгүй
           </div>
         ),
+      width: 120,
     },
     {
       title: "Тайлан",
@@ -312,19 +482,61 @@ const EmployeeTable = ({ testData }) => {
     },
   ];
 
+  const getFilteredData = () => {
+    if (!searchText) return transformedData;
+
+    return transformedData.filter(
+      (record) =>
+        record.email.toLowerCase().includes(searchText.toLowerCase()) ||
+        record.fullName.toLowerCase().includes(searchText.toLowerCase()) ||
+        record.name.toLowerCase().includes(searchText.toLowerCase())
+    );
+  };
+
   return (
-    <Table
-      loading={loading}
-      columns={columns}
-      dataSource={transformedData}
-      pagination={{
-        pageSize: 10,
-        className: "pt-4",
-        size: "small",
-      }}
-      className="test-history-table overflow-x-auto"
-      rowClassName="hover:bg-gray-50 transition-colors"
-    />
+    <div>
+      <div className="flex mb-4 gap-2 items-center">
+        <Input
+          placeholder="Шалгуулагч хайх"
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          prefix={
+            <MagniferBoldDuotone color={"#f36421"} width={18} height={18} />
+          }
+          style={{ width: 270 }}
+          allowClear
+        />
+
+        <Button onClick={handleReset} className="stroked-btn">
+          <FilterLineDuotone width={18} height={18} />
+        </Button>
+        <div className="flex-1"></div>
+        <Button onClick={refreshData} className="stroked-btn">
+          <RestartLineDuotone width={18} height={18} />
+        </Button>
+        <Button
+          onClick={handleDownloadTable}
+          className="stroked-btn flex items-center gap-2"
+        >
+          <DownloadMinimalisticBoldDuotone width={18} height={18} />
+          Excel татах
+        </Button>
+      </div>
+
+      <Table
+        loading={loading}
+        columns={columns}
+        dataSource={getFilteredData()}
+        pagination={{
+          pageSize: 10,
+          className: "pt-4",
+          size: "small",
+        }}
+        onChange={handleChange}
+        className="test-history-table overflow-x-auto"
+        rowClassName="hover:bg-gray-50 transition-colors"
+      />
+    </div>
   );
 };
 

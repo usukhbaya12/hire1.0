@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Table,
   Button,
@@ -9,6 +9,7 @@ import {
   Modal,
   Spin,
   Switch,
+  Tooltip,
 } from "antd";
 import * as XLSX from "xlsx";
 import { getCode, sendInvite } from "@/app/api/main";
@@ -17,29 +18,35 @@ import {
   AddCircleBoldDuotone,
   CalendarBoldDuotone,
   LetterOpenedBoldDuotone,
-  PenBoldDuotone,
-  PeopleNearbyBoldDuotone,
   TrashBinMinimalistic2BoldDuotone,
   UploadBoldDuotone,
+  File,
+  ShieldWarningBoldDuotone,
+  CheckCircleBoldDuotone,
+  ClockCircleBoldDuotone,
+  UserBlockRoundedBoldDuotone,
+  UserCheckBoldDuotone,
 } from "solar-icons";
 import DateTimePicker from "./DateTime";
 
-const InviteTable = ({ testData, onSuccess }) => {
+const SpreadsheetInviteTable = ({ testData, onSuccess }) => {
   const [dateRange, setDateRange] = useState([
     dayjs(),
     dayjs().add(24, "hour"),
   ]);
   const [form] = Form.useForm();
   const [data, setData] = useState([]);
-  const [editingKey, setEditingKey] = useState("");
+  const [activeCell, setActiveCell] = useState(null);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [validatedData, setValidatedData] = useState([]);
   const lastId = useRef(0);
   const [messageApi, contextHolder] = message.useMessage();
   const [show, setShow] = useState(false);
-
-  const isEditing = (record) => record.key === editingKey;
+  const [isLoading, setIsLoading] = useState(false);
+  const inputRef = useRef(null);
 
   const remainingAccesses =
     testData?.reduce(
@@ -52,136 +59,210 @@ const InviteTable = ({ testData, onSuccess }) => {
     return `${lastId.current}`;
   };
 
-  const edit = (record) => {
-    form.setFieldsValue({
-      email: record.email,
-      firstname: record.firstname,
-      lastname: record.lastname,
-      phone: record.phone,
-      ...record,
-    });
-    setEditingKey(record.key);
-  };
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (!activeCell) return;
 
-  const cancel = () => {
-    if (editingKey) {
-      const record = data.find((item) => item.key === editingKey);
+      const [rowKey, colKey] = activeCell;
+      const rowIndex = data.findIndex((row) => row.key === rowKey);
+      if (rowIndex === -1) return;
+
+      const columns = ["email", "firstname", "lastname", "phone"];
+      const colIndex = columns.indexOf(colKey);
+      if (colIndex === -1) return;
+
+      if (e.key === "Tab") {
+        e.preventDefault();
+
+        let newColIndex = colIndex;
+        let newRowIndex = rowIndex;
+
+        if (!e.shiftKey) {
+          newColIndex++;
+          if (newColIndex >= columns.length) {
+            newColIndex = 0;
+            newRowIndex++;
+          }
+        } else {
+          newColIndex--;
+          if (newColIndex < 0) {
+            newColIndex = columns.length - 1;
+            newRowIndex--;
+          }
+        }
+
+        if (newRowIndex >= 0 && newRowIndex < data.length) {
+          const newRowKey = data[newRowIndex].key;
+          const newColKey = columns[newColIndex];
+          setActiveCell([newRowKey, newColKey]);
+        }
+      }
+
+      if (e.key === "Enter") {
+        e.preventDefault();
+
+        const newRowIndex = rowIndex + 1;
+        if (newRowIndex < data.length) {
+          const newRowKey = data[newRowIndex].key;
+          setActiveCell([newRowKey, colKey]);
+        } else if (
+          newRowIndex === data.length &&
+          data.length < remainingAccesses
+        ) {
+          handleAdd(1);
+        }
+      }
+
       if (
-        !record.email &&
-        !record.firstname &&
-        !record.lastname &&
-        !record.phone
+        e.key === "ArrowUp" ||
+        e.key === "ArrowDown" ||
+        e.key === "ArrowLeft" ||
+        e.key === "ArrowRight"
       ) {
-        setData(data.filter((item) => item.key !== editingKey));
-      }
-    }
-    setEditingKey("");
-  };
+        e.preventDefault();
 
-  const save = async (key) => {
-    try {
-      const row = await form.validateFields();
-      const newData = [...data];
-      const index = newData.findIndex((item) => key === item.key);
-      if (index > -1) {
-        const item = newData[index];
-        const formattedPhone = row.phone.replace(/-/g, "");
-        newData.splice(index, 1, {
-          ...item,
-          ...row,
-          phone: formattedPhone,
-        });
+        let newRowIndex = rowIndex;
+        let newColIndex = colIndex;
+
+        if (e.key === "ArrowUp") newRowIndex--;
+        if (e.key === "ArrowDown") newRowIndex++;
+        if (e.key === "ArrowLeft") newColIndex--;
+        if (e.key === "ArrowRight") newColIndex++;
+
+        if (
+          newRowIndex >= 0 &&
+          newRowIndex < data.length &&
+          newColIndex >= 0 &&
+          newColIndex < columns.length
+        ) {
+          const newRowKey = data[newRowIndex].key;
+          const newColKey = columns[newColIndex];
+          setActiveCell([newRowKey, newColKey]);
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [activeCell, data, remainingAccesses]);
+
+  useEffect(() => {
+    const handlePaste = (e) => {
+      if (!activeCell) return;
+
+      const clipboardData = e.clipboardData.getData("text");
+      if (!clipboardData) return;
+
+      const rows = clipboardData.split(/\r?\n/).filter((row) => row.trim());
+
+      if (rows.length > 1 || rows[0].includes("\t")) {
+        e.preventDefault();
+
+        const [activeRowKey, activeColKey] = activeCell;
+        const activeRowIndex = data.findIndex(
+          (row) => row.key === activeRowKey
+        );
+        if (activeRowIndex === -1) return;
+
+        const columns = ["email", "firstname", "lastname", "phone"];
+        const activeColIndex = columns.indexOf(activeColKey);
+        if (activeColIndex === -1) return;
+
+        const pasteData = rows.map((row) => row.split("\t"));
+
+        const newData = [...data];
+
+        const rowsNeeded = activeRowIndex + pasteData.length;
+        while (newData.length < rowsNeeded) {
+          if (newData.length >= remainingAccesses) {
+            messageApi.warning(
+              `Зөвхөн ${remainingAccesses} шалгуулагч нэмэх боломжтой.`
+            );
+            break;
+          }
+          newData.push({
+            key: generateKey(),
+            email: "",
+            firstname: "",
+            lastname: "",
+            phone: "",
+          });
+        }
+
+        for (let i = 0; i < pasteData.length; i++) {
+          const targetRowIndex = activeRowIndex + i;
+          if (targetRowIndex >= newData.length) break;
+
+          const row = pasteData[i];
+          for (let j = 0; j < row.length; j++) {
+            const targetColIndex = activeColIndex + j;
+            if (targetColIndex >= columns.length) break;
+
+            const targetColKey = columns[targetColIndex];
+            newData[targetRowIndex][targetColKey] = row[j];
+          }
+        }
+
         setData(newData);
-        setEditingKey("");
       }
-    } catch (errInfo) {
-      console.error("Validate Failed:", errInfo);
+    };
+
+    window.addEventListener("paste", handlePaste);
+    return () => window.removeEventListener("paste", handlePaste);
+  }, [activeCell, data, remainingAccesses]);
+
+  const handleCellChange = (rowKey, columnKey, value) => {
+    const newData = [...data];
+    const rowIndex = newData.findIndex((item) => item.key === rowKey);
+    if (rowIndex !== -1) {
+      newData[rowIndex][columnKey] = value;
+      setData(newData);
     }
   };
 
-  const handleDelete = (key) => {
-    setData(data.filter((item) => item.key !== key));
-    setSelectedRowKeys(selectedRowKeys.filter((k) => k !== key));
-  };
-
-  const handleBulkDelete = () => {
-    setData(data.filter((item) => !selectedRowKeys.includes(item.key)));
-    setSelectedRowKeys([]);
-  };
-
-  const handleAdd = () => {
-    if (data.length >= remainingAccesses) {
+  const handleAdd = (count = 5) => {
+    if (data.length + count > remainingAccesses) {
       messageApi.error(
         `Зөвхөн ${remainingAccesses} шалгуулагч нэмэх боломжтой.`
       );
       return;
     }
-    const newKey = generateKey();
-    setData([
-      {
-        key: newKey,
+
+    const newRows = Array(count)
+      .fill(0)
+      .map(() => ({
+        key: generateKey(),
         email: "",
         firstname: "",
         lastname: "",
         phone: "",
-      },
-      ...data,
-    ]);
-    edit({ key: newKey });
+      }));
+
+    setData([...data, ...newRows]);
+
+    if (newRows.length > 0) {
+      setActiveCell([newRows[0].key, "email"]);
+    }
   };
 
-  const processExcelData = async (excelData) => {
-    try {
-      if (excelData.length + data.length > remainingAccesses) {
-        throw new Error(
-          `Зөвхөн ${remainingAccesses} шалгуулагч нэмэх боломжтой.`
-        );
-      }
-      const newData = excelData.map((row) => {
-        if (
-          !row["И-мейл хаяг"] ||
-          !row["Овог"] ||
-          !row["Нэр"] ||
-          !row["Утасны дугаар"]
-        ) {
-          throw new Error("Бүх мэдээллийг бөглөнө үү.");
-        }
-
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(row["И-мейл хаяг"])) {
-          throw new Error("И-мейл хаяг буруу байна.");
-        }
-
-        const phoneStr = row["Утасны дугаар"].toString();
-        if (!/^\d{8}$/.test(phoneStr)) {
-          throw new Error("Утасны дугаар 8 оронтой байх ёстой.");
-        }
-
-        return {
-          key: generateKey(),
-          email: row["И-мейл хаяг"],
-          lastname: row["Овог"],
-          firstname: row["Нэр"],
-          phone: row["Утасны дугаар"].toString(),
-        };
-      });
-
-      setData([...data, ...newData]);
-      messageApi.success("Файл амжилттай нэмэгдлээ.");
-    } catch (error) {
-      messageApi.error(error.message || "Алдаа гарлаа.");
-    } finally {
-      setIsUploading(false);
-      setIsModalVisible(false);
+  const handleDelete = (key) => {
+    if (activeCell && activeCell[0] === key) {
+      setActiveCell(null);
     }
+    setData(data.filter((item) => item.key !== key));
+    setSelectedRowKeys(selectedRowKeys.filter((k) => k !== key));
+  };
+
+  const handleBulkDelete = () => {
+    if (activeCell && selectedRowKeys.includes(activeCell[0])) {
+      setActiveCell(null);
+    }
+
+    setData(data.filter((item) => !selectedRowKeys.includes(item.key)));
+    setSelectedRowKeys([]);
   };
 
   const handleExcelUpload = (file) => {
-    if (file.name !== "shalguulagchid.xlsx") {
-      messageApi.error("Файлын нэр буруу байна.");
-      return Upload.LIST_IGNORE;
-    }
-
     setIsUploading(true);
 
     const reader = new FileReader();
@@ -191,23 +272,51 @@ const InviteTable = ({ testData, onSuccess }) => {
         const firstSheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[firstSheetName];
 
-        const excelData = XLSX.utils.sheet_to_json(worksheet, {
-          header: ["И-мейл хаяг", "Овог", "Нэр", "Утасны дугаар"],
-          range: 1,
+        const excelData = XLSX.utils.sheet_to_json(worksheet);
+
+        if (excelData.length + data.length > remainingAccesses) {
+          throw new Error(
+            `Зөвхөн ${remainingAccesses} шалгуулагч нэмэх боломжтой.`
+          );
+        }
+
+        const mappedData = excelData.map((row) => {
+          const result = { key: generateKey() };
+
+          Object.keys(row).forEach((key) => {
+            const lowerKey = key.toLowerCase();
+            if (lowerKey.includes("email") || lowerKey.includes("мейл")) {
+              result.email = row[key];
+            } else if (
+              (lowerKey.includes("first") || lowerKey.includes("нэр")) &&
+              !lowerKey.includes("овог") &&
+              !lowerKey.includes("last")
+            ) {
+              result.firstname = row[key];
+            } else if (
+              lowerKey.includes("last") ||
+              lowerKey.includes("овог") ||
+              lowerKey.includes("surname")
+            ) {
+              result.lastname = row[key];
+            } else if (
+              lowerKey.includes("phone") ||
+              lowerKey.includes("утас") ||
+              lowerKey.includes("дугаар")
+            ) {
+              result.phone = String(row[key]).replace(/\D/g, "");
+            }
+          });
+
+          return result;
         });
 
-        const validData = excelData.filter(
-          (row) =>
-            row["И-мейл хаяг"] &&
-            row["Овог"] &&
-            row["Нэр"] &&
-            row["Утасны дугаар"]
-        );
-
-        processExcelData(validData);
+        setData([...data, ...mappedData]);
+        messageApi.success(`${mappedData.length} мөр амжилттай нэмэгдлээ.`);
       } catch (error) {
-        setIsUploading(false);
         messageApi.error(error.message || "Excel файл уншихад алдаа гарлаа.");
+      } finally {
+        setIsUploading(false);
         setIsModalVisible(false);
       }
     };
@@ -222,24 +331,105 @@ const InviteTable = ({ testData, onSuccess }) => {
     return false;
   };
 
-  const handleSend = async () => {
+  const exportToExcel = () => {
     if (data.length === 0) {
-      messageApi.error("Шалгуулагч нэмнэ үү.");
+      messageApi.warning("Экспортлох өгөгдөл алга.");
       return;
     }
 
-    try {
-      const dataToSend =
-        selectedRowKeys.length > 0
-          ? data.filter((item) => selectedRowKeys.includes(item.key))
-          : data;
+    const worksheet = XLSX.utils.json_to_sheet(
+      data.map((row) => ({
+        "И-мейл хаяг": row.email,
+        Овог: row.lastname,
+        Нэр: row.firstname,
+        "Утасны дугаар": row.phone,
+      }))
+    );
 
-      if (dataToSend.length > remainingAccesses) {
-        messageApi.error(
-          `Зөвхөн ${remainingAccesses} шалгуулагч нэмэх боломжтой.`
-        );
-        return;
-      }
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Шалгуулагчид");
+
+    XLSX.writeFile(workbook, "shalguulagchid.xlsx");
+  };
+
+  const validateData = () => {
+    if (data.length === 0) {
+      messageApi.error("Шалгуулагч нэмнэ үү.");
+      return false;
+    }
+
+    const nonEmptyRows = data.filter(
+      (row) => row.email || row.firstname || row.lastname || row.phone
+    );
+
+    if (nonEmptyRows.length === 0) {
+      messageApi.error("Шалгуулагчийн мэдээлэл оруулна уу.");
+      return false;
+    }
+
+    const partialRows = nonEmptyRows.filter(
+      (row) => !row.email || !row.firstname || !row.lastname || !row.phone
+    );
+
+    if (partialRows.length > 0) {
+      messageApi.error(
+        `${partialRows.length} шалгуулагчийн мэдээллийг бүрэн бөглөнө үү.`
+      );
+      return false;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const invalidEmails = nonEmptyRows.filter(
+      (row) => !emailRegex.test(row.email)
+    );
+
+    if (invalidEmails.length > 0) {
+      messageApi.error(
+        `${invalidEmails.length} шалгуулагчийн и-мейл хаяг буруу байна.`
+      );
+      return false;
+    }
+
+    const phoneRegex = /^\d{8}$/;
+    const invalidPhones = nonEmptyRows.filter(
+      (row) => !phoneRegex.test(row.phone)
+    );
+
+    if (invalidPhones.length > 0) {
+      messageApi.error(
+        `${invalidPhones.length} шалгуулагчийн утасны дугаар буруу байна.`
+      );
+      return false;
+    }
+
+    return nonEmptyRows;
+  };
+
+  const prepareForSend = () => {
+    const validData = validateData();
+    if (!validData) return;
+
+    const dataToSend =
+      selectedRowKeys.length > 0
+        ? validData.filter((item) => selectedRowKeys.includes(item.key))
+        : validData;
+
+    if (dataToSend.length > remainingAccesses) {
+      messageApi.error(
+        `Зөвхөн ${remainingAccesses} шалгуулагч нэмэх боломжтой.`
+      );
+      return;
+    }
+
+    setValidatedData(dataToSend);
+    setIsConfirmModalVisible(true);
+  };
+
+  const handleSend = async () => {
+    if (!validatedData.length) return;
+
+    try {
+      setIsLoading(true);
 
       const examCodes = [];
       for (const test of testData) {
@@ -252,7 +442,7 @@ const InviteTable = ({ testData, onSuccess }) => {
               service: test.id,
               count: Math.min(
                 remainingForThisTest,
-                dataToSend.length - examCodes.length
+                validatedData.length - examCodes.length
               ),
               startDate,
               endDate,
@@ -262,19 +452,20 @@ const InviteTable = ({ testData, onSuccess }) => {
               examCodes.push(...examResponse.data);
             }
 
-            if (examCodes.length >= dataToSend.length) break;
+            if (examCodes.length >= validatedData.length) break;
           } catch (error) {
             console.error("Error getting exam codes:", error);
           }
         }
       }
 
-      if (examCodes.length < dataToSend.length) {
+      if (examCodes.length < validatedData.length) {
         messageApi.error("Сервертэй холбогдоход алдаа гарлаа.");
+        setIsLoading(false);
         return;
       }
 
-      const links = dataToSend.map((item, index) => ({
+      const links = validatedData.map((item, index) => ({
         email: item.email.toLowerCase(),
         lastname: item.lastname,
         firstname: item.firstname,
@@ -288,14 +479,19 @@ const InviteTable = ({ testData, onSuccess }) => {
       if (response.success) {
         messageApi.success(`${links.length} шалгуулагч уригдлаа.`);
 
+        // Remove sent rows from the table
         if (selectedRowKeys.length > 0) {
           setData(data.filter((item) => !selectedRowKeys.includes(item.key)));
           setSelectedRowKeys([]);
         } else {
-          setData([]);
-          setSelectedRowKeys([]);
+          setData(
+            data.filter(
+              (row) => !validatedData.some((vRow) => vRow.key === row.key)
+            )
+          );
         }
 
+        setIsConfirmModalVisible(false);
         await onSuccess();
       } else {
         messageApi.error(response.message || "Алдаа гарлаа.");
@@ -303,135 +499,107 @@ const InviteTable = ({ testData, onSuccess }) => {
     } catch (error) {
       console.error("Send error:", error);
       messageApi.error("Урилга илгээхэд алдаа гарлаа.");
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  const renderEditableCell = (text, record, dataIndex) => {
+    const isActive =
+      activeCell && activeCell[0] === record.key && activeCell[1] === dataIndex;
+
+    return (
+      <div
+        className={`editable-cell ${isActive ? "active-cell" : ""}`}
+        onClick={() => setActiveCell([record.key, dataIndex])}
+      >
+        {isActive ? (
+          <Input
+            ref={inputRef}
+            value={text}
+            onChange={(e) =>
+              handleCellChange(record.key, dataIndex, e.target.value)
+            }
+            onBlur={() => {
+              if (
+                activeCell &&
+                activeCell[0] === record.key &&
+                activeCell[1] === dataIndex
+              ) {
+                setActiveCell(null);
+              }
+            }}
+            autoFocus
+          />
+        ) : (
+          <div className="cell-content">
+            {text || (
+              <span className="text-gray-400">
+                {dataIndex === "email"
+                  ? "И-мейл хаяг"
+                  : dataIndex === "firstname"
+                  ? "Нэр"
+                  : dataIndex === "lastname"
+                  ? "Овог"
+                  : "Утасны дугаар"}
+              </span>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  useEffect(() => {
+    if (inputRef.current && activeCell) {
+      inputRef.current.focus();
+    }
+  }, [activeCell]);
 
   const columns = [
     {
       title: "И-мейл хаяг",
       dataIndex: "email",
-      width: "28%",
-      editable: true,
-      render: (_, record) => {
-        const editable = isEditing(record);
-        return editable ? (
-          <Form.Item
-            name="email"
-            rules={[
-              {
-                required: true,
-                type: "email",
-                message: "Зөв и-мейл хаяг оруулна уу.",
-              },
-            ]}
-            style={{ margin: 0 }}
-          >
-            <Input placeholder="И-мейл хаяг" />
-          </Form.Item>
-        ) : (
-          record.email
-        );
-      },
+      key: "email",
+      width: "30%",
+      render: (text, record) => renderEditableCell(text, record, "email"),
     },
     {
       title: "Нэр",
       dataIndex: "firstname",
+      key: "firstname",
       width: "20%",
-      editable: true,
-      render: (_, record) => {
-        const editable = isEditing(record);
-        return editable ? (
-          <Form.Item
-            name="firstname"
-            rules={[{ required: true, message: "Нэр оруулна уу." }]}
-            style={{ margin: 0 }}
-          >
-            <Input placeholder="Нэр" />
-          </Form.Item>
-        ) : (
-          record.firstname
-        );
-      },
+      render: (text, record) => renderEditableCell(text, record, "firstname"),
     },
     {
       title: "Овог",
       dataIndex: "lastname",
+      key: "lastname",
       width: "20%",
-      editable: true,
-      render: (_, record) => {
-        const editable = isEditing(record);
-        return editable ? (
-          <Form.Item
-            name="lastname"
-            rules={[{ required: true, message: "Овог оруулна уу." }]}
-            style={{ margin: 0 }}
-          >
-            <Input placeholder="Овог" />
-          </Form.Item>
-        ) : (
-          record.lastname
-        );
-      },
+      render: (text, record) => renderEditableCell(text, record, "lastname"),
     },
     {
       title: "Утасны дугаар",
       dataIndex: "phone",
+      key: "phone",
       width: "20%",
-      editable: true,
-      render: (_, record) => {
-        const editable = isEditing(record);
-        return editable ? (
-          <Form.Item
-            name="phone"
-            rules={[{ required: true, message: "Утасны дугаар оруулна уу." }]}
-            style={{ margin: 0 }}
-          >
-            <Input placeholder="9911-9911" />
-          </Form.Item>
-        ) : (
-          record.phone &&
-            `${record.phone.slice(0, 4)}` + "-" + `${record.phone.slice(4, 8)}`
-        );
-      },
+      render: (text, record) => renderEditableCell(text, record, "phone"),
     },
     {
       title: "Үйлдэл",
-      dataIndex: "operation",
-      width: "15%",
-      render: (_, record) => {
-        const editable = isEditing(record);
-        return editable ? (
-          <span className="flex gap-3">
-            <Button
-              onClick={() => save(record.key)}
-              type="link"
-              className="link-btn"
-            >
-              Хадгалах
-            </Button>
-            <Button onClick={cancel} className="link-btn-2">
-              Цуцлах
-            </Button>
-          </span>
-        ) : (
-          <span className="flex gap-2 py-[7px]">
-            <button
-              disabled={editingKey !== ""}
-              onClick={() => edit(record)}
-              className="text-slate-500 hover:text-blue-500 transition-colors duration-300"
-            >
-              <PenBoldDuotone width={18} height={18} />
-            </button>
-            <button
-              disabled={editingKey !== ""}
-              onClick={() => handleDelete(record.key)}
-              className="text-red-400 hover:text-blue-500 transition-colors duration-300"
-            >
-              <TrashBinMinimalistic2BoldDuotone width={18} height={18} />
-            </button>
-          </span>
-        );
-      },
+      key: "action",
+      width: "10%",
+      align: "center",
+      render: (_, record) => (
+        <Tooltip title="Устгах">
+          <button
+            className="text-red-400 hover:text-red-500 transition-colors duration-300 flex mx-auto"
+            onClick={() => handleDelete(record.key)}
+          >
+            <TrashBinMinimalistic2BoldDuotone width={18} height={18} />
+          </button>
+        </Tooltip>
+      ),
     },
   ];
 
@@ -443,45 +611,99 @@ const InviteTable = ({ testData, onSuccess }) => {
   };
 
   return (
-    <Form form={form}>
+    <div className="spreadsheet-table">
+      <style jsx global>{`
+        .spreadsheet-table .editable-cell {
+          padding: 4px;
+          cursor: cell;
+          min-height: 32px;
+          border: 1px solid transparent;
+        }
+
+        .spreadsheet-table .editable-cell:hover {
+          background-color: #f5f5f5;
+        }
+
+        .spreadsheet-table .active-cell {
+          border: 1px solid #f36421;
+          background-color: #fff;
+        }
+
+        .spreadsheet-table .cell-content {
+          padding: 4px 8px;
+          min-height: 32px;
+          display: flex;
+          align-items: center;
+        }
+
+        .spreadsheet-table .ant-table-tbody > tr > td {
+          padding: 4px;
+        }
+
+        .spreadsheet-table .ant-input {
+          border: none;
+          box-shadow: none;
+          padding: 4px 8px;
+        }
+
+        .spreadsheet-table .ant-input:focus {
+          box-shadow: none;
+        }
+      `}</style>
+
       {contextHolder}
-      <div className="flex items- gap-4 md:flex-row flex-col">
+
+      <div className="flex items-center gap-4 mb-4 flex-wrap">
         <Button
-          onClick={handleAdd}
+          onClick={() => handleAdd(5)}
           className="stroked-btn add flex items-center gap-2 text-main hover:text-secondary border-main/50 rounded-xl font-medium transition-colors duration-400"
         >
           <AddCircleBoldDuotone width={18} height={18} />
-          Шалгуулагч нэмэх
+          Мөр нэмэх
         </Button>
+
         <Button
           onClick={() => setIsModalVisible(true)}
           className="stroked-btn-2 flex items-center gap-2 rounded-xl font-medium transition-colors duration-400"
         >
-          <PeopleNearbyBoldDuotone width={18} height={18} />
-          Бөөнөөр нь нэмэх
+          <File width={18} height={18} />
+          Excel импортлох
         </Button>
+
         {selectedRowKeys.length > 0 && (
           <Button
             onClick={handleBulkDelete}
             className="stroked-btn-3 flex items-center gap-2 text-red-600 border-red-500/50 hover:text-red-500 rounded-xl remove font-medium transition-colors duration-400"
           >
             <TrashBinMinimalistic2BoldDuotone width={18} height={18} />
-            Сонгосныг устгах ({selectedRowKeys.length})
+            Устгах ({selectedRowKeys.length})
           </Button>
         )}
-        <div className="flex-1" />
       </div>
+      {data.length > 0 && (
+        <div className="bg-gray-50 p-2 px-4 rounded-xl mb-4 flex items-center text-sm text-gray-600">
+          <ShieldWarningBoldDuotone
+            className="text-main mr-2"
+            width={18}
+            height={18}
+          />
+          <div>
+            <span className="font-medium">Заавар:</span>
+          </div>
+        </div>
+      )}
 
       {data.length > 0 && (
         <Table
           rowSelection={rowSelection}
-          columns={columns}
           dataSource={data}
+          columns={columns}
           pagination={false}
           rowClassName="editable-row"
-          className="test-history-table overflow-x-auto sm:mt-4"
+          className="test-history-table overflow-x-auto"
         />
       )}
+
       {data.length > 0 && (
         <>
           <div className="pt-6">
@@ -504,7 +726,7 @@ const InviteTable = ({ testData, onSuccess }) => {
             </div>
             <Button
               disabled={data.length === 0}
-              onClick={handleSend}
+              onClick={prepareForSend}
               className="no-inline"
             >
               <LetterOpenedBoldDuotone width={18} height={18} />
@@ -514,6 +736,7 @@ const InviteTable = ({ testData, onSuccess }) => {
         </>
       )}
 
+      {/* Excel import modal */}
       <Modal
         title="Excel файл оруулах"
         open={isModalVisible}
@@ -527,7 +750,7 @@ const InviteTable = ({ testData, onSuccess }) => {
         maskClosable={!isUploading}
       >
         <Upload.Dragger
-          accept=".xlsx"
+          accept=".xlsx,.xls,.csv"
           beforeUpload={handleExcelUpload}
           className="rounded-xl"
           disabled={isUploading}
@@ -540,22 +763,120 @@ const InviteTable = ({ testData, onSuccess }) => {
             </div>
           ) : (
             <>
-              <p className="ant-upload-drag-icon">
-                <UploadBoldDuotone
-                  size={32}
-                  className="mx-auto text-gray-400"
-                />
+              <p className="ant-upload-drag-icon pt-2">
+                <UploadBoldDuotone size={40} className="mx-auto text-main" />
               </p>
-              <p className="font-bold">Excel файлаа энд чирч оруулна уу</p>
-              <p className="ant-upload-hint leading-5">
-                Зөвхөн өгөгдсөн загварын дагуу бэлтгэсэн файл дэмжигдэнэ.
+              <p className="font-bold text-base">
+                Excel файлаа энд чирч оруулна уу.
+              </p>
+              <p className="ant-upload-hint leading-5 pt-1 pb-1">
+                Хүснэгтэн форматын файлуудыг дэмжинэ.
               </p>
             </>
           )}
         </Upload.Dragger>
       </Modal>
-    </Form>
+
+      <Modal
+        title={
+          <div className="flex items-center gap-2">
+            <CheckCircleBoldDuotone className="text-main" />
+            <span className="text-[15px]">Шалгуулагч урих</span>
+          </div>
+        }
+        open={isConfirmModalVisible}
+        onCancel={() => setIsConfirmModalVisible(false)}
+        footer={null}
+        width={700}
+      >
+        <div className="bg-blue-50 p-3 rounded-lg text-blue-800 text-sm flex items-center gap-2 my-4">
+          <UserCheckBoldDuotone
+            className="text-main flex-shrink-0"
+            width={20}
+            height={20}
+          />
+          <span className="text-main">
+            Шалгуулагч:{" "}
+            <span className="font-black text-main">{validatedData.length}</span>{" "}
+          </span>
+          <span className="px-2"></span>
+          <ClockCircleBoldDuotone
+            className="text-blue-500 flex-shrink-0"
+            width={20}
+            height={20}
+          />
+          <div>
+            <p>
+              Тест өгөх хугацаа:{" "}
+              <strong>
+                {dateRange[0].format("YYYY/MM/DD HH:mm")} -{" "}
+                {dateRange[1].format("YYYY/MM/DD HH:mm")}
+              </strong>
+            </p>
+          </div>
+        </div>
+
+        <div className="max-h-[300px] overflow-auto mb-4">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50 sticky top-0">
+              <tr>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  №
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  И-мейл хаяг
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  Нэр
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  Овог
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  Утасны дугаар
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {validatedData.map((row, index) => (
+                <tr
+                  key={row.key}
+                  className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
+                >
+                  <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
+                    {index + 1}
+                  </td>
+                  <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
+                    {row.email}
+                  </td>
+                  <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
+                    {row.firstname}
+                  </td>
+                  <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
+                    {row.lastname}
+                  </td>
+                  <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
+                    {row.phone}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="flex justify-end gap-2 mt-6 pb-1">
+          <Button
+            onClick={() => setIsConfirmModalVisible(false)}
+            className="back"
+          >
+            Буцах
+          </Button>
+          <Button loading={isLoading} htmlType="submit" onClick={handleSend}>
+            Илгээх
+          </Button>
+        </div>
+      </Modal>
+    </div>
   );
 };
 
-export default InviteTable;
+export default SpreadsheetInviteTable;

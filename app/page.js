@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import {
   Buildings2BoldDuotone,
-  FilterBoldDuotone,
+  FiltersBoldDuotone,
   MagniferBoldDuotone,
   NotesBoldDuotone,
   SquareArrowRightDownBoldDuotone,
@@ -14,12 +14,11 @@ import {
   Wallet2BoldDuotone,
 } from "solar-icons";
 import { getAssessmentCategory, getAssessments } from "./api/assessment";
-import { message, Input, Select, Button } from "antd";
+import { message, Input, Select, Button, Empty } from "antd";
 import Assessment from "@/components/Assessment";
 import { DropdownIcon } from "@/components/Icons";
 import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
-import Head from "next/head";
 
 const AnimatedCounter = ({ value, duration = 2 }) => {
   const [count, setCount] = useState(0);
@@ -53,6 +52,8 @@ export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedPrice, setSelectedPrice] = useState(null);
   const [messageApi, contextHolder] = message.useMessage();
+  const testsSectionRef = useRef(null);
+  const [isTestsSectionVisible, setIsTestsSectionVisible] = useState(false);
 
   const getData = async () => {
     try {
@@ -80,6 +81,29 @@ export default function Home() {
 
   useEffect(() => {
     getData();
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsTestsSectionVisible(entry.isIntersecting);
+
+        window.dispatchEvent(
+          new CustomEvent("testsVisibility", {
+            detail: { isVisible: entry.isIntersecting },
+          })
+        );
+      },
+      { threshold: 0.1 }
+    );
+
+    if (testsSectionRef.current) {
+      observer.observe(testsSectionRef.current);
+    }
+
+    return () => {
+      if (testsSectionRef.current) {
+        observer.unobserve(testsSectionRef.current);
+      }
+    };
   }, []);
 
   const getPriceOptions = (assessmentsData) => {
@@ -124,11 +148,37 @@ export default function Home() {
     setFilteredAssessments(result);
   }, [searchTerm, selectedCategory, selectedPrice, assessments]);
 
-  const resetFilters = () => {
+  const scrollToTestsTop = () => {
+    if (testsSectionRef.current) {
+      const yOffset = -70;
+      const element = testsSectionRef.current;
+      const y =
+        element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: "smooth" });
+    }
+  };
+
+  const handleInputChange = (e) => {
+    setSearchTerm(e.target.value);
+    scrollToTestsTop();
+  };
+
+  const handleCategoryChange = (value) => {
+    setSelectedCategory(value);
+    scrollToTestsTop();
+  };
+
+  const handlePriceChange = (value) => {
+    setSelectedPrice(value);
+    scrollToTestsTop();
+  };
+
+  const handleResetFilters = () => {
     setSearchTerm("");
     setSelectedCategory(null);
     setSelectedPrice(null);
     setFilteredAssessments(assessments);
+    scrollToTestsTop();
   };
 
   const featuredTests = assessments.slice(0, 3);
@@ -433,121 +483,141 @@ export default function Home() {
               </motion.div>
             </div>
           </motion.div>
-          <motion.div
-            className="relative 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 1 }}
+
+          <div
+            ref={testsSectionRef}
+            id="tests"
+            className="bg-gray-50 relative 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6 pb-14"
           >
-            <motion.div
-              id="tests"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-              className="font-black text-xl inline-flex gap-1 text-main pt-10 scroll-mt-32" // Added scroll-mt-32 for spacing
-            >
-              <NotesBoldDuotone />
-              Тестүүд
-            </motion.div>
-
-            <motion.div
-              className="flex flex-col md:flex-row gap-3 sm:gap-6 pt-4 md:w-3/4"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 1.1 }}
-            >
-              <Input
-                className="w-full min-w-[200px]"
-                prefix={
-                  <MagniferBoldDuotone
-                    color={"#f36421"}
-                    width={18}
-                    height={18}
-                  />
-                }
-                placeholder="Нэрээр хайх"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <Select
-                prefix={
-                  <MagniferBoldDuotone
-                    width={18}
-                    height={18}
-                    color={"#f36421"}
-                  />
-                }
-                placeholder="Төрлөөр хайх"
-                suffixIcon={
-                  <DropdownIcon width={15} height={15} color={"#f36421"} />
-                }
-                options={categories.map((c) => ({
-                  value: c.id,
-                  label: c.name,
-                }))}
-                value={selectedCategory}
-                onChange={setSelectedCategory}
-                allowClear
-                className="w-full"
-              />
-              <Select
-                className="w-full"
-                suffixIcon={
-                  <DropdownIcon width={15} height={15} color={"#f36421"} />
-                }
-                prefix={
-                  <Wallet2BoldDuotone
-                    width={18}
-                    height={18}
-                    color={"#f36421"}
-                  />
-                }
-                placeholder="Төлбөрөөр шүүх"
-                options={getPriceOptions(assessments)}
-                value={selectedPrice}
-                onChange={setSelectedPrice}
-                allowClear
-              />
-              <Button
-                className="w-full sm:w-auto no-inline"
-                onClick={resetFilters}
+            <div className="sticky top-[72px] z-40 bg-gray-50 pb-2">
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5 }}
+                className="font-black text-xl inline-flex gap-1 text-main mt-6 sm:mt-10"
               >
-                <FilterBoldDuotone width={17} height={17} /> Арилгах
-              </Button>
-            </motion.div>
+                <NotesBoldDuotone />
+                Тестүүд
+              </motion.div>
 
-            <motion.div
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-6"
-              initial="hidden"
-              animate="visible"
-              variants={{
-                visible: {
-                  transition: {
-                    staggerChildren: 0.05,
-                  },
-                },
-              }}
-            >
-              {filteredAssessments.map((assessment, index) => (
-                <motion.div
-                  key={assessment.data.id}
-                  variants={{
-                    hidden: { opacity: 0, y: 50 },
-                    visible: {
-                      opacity: 1,
-                      y: 0,
-                      transition: {
-                        type: "spring",
-                        bounce: 0.4,
-                      },
-                    },
-                  }}
+              <motion.div
+                className="flex flex-col md:flex-row gap-3 sm:gap-6 pt-4 md:w-3/4"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 1.1 }}
+              >
+                <Input
+                  className="w-full min-w-[200px]"
+                  prefix={
+                    <MagniferBoldDuotone
+                      color={"#f36421"}
+                      width={18}
+                      height={18}
+                    />
+                  }
+                  placeholder="Нэрээр хайх"
+                  value={searchTerm}
+                  onChange={handleInputChange}
+                />
+                <Select
+                  prefix={
+                    <MagniferBoldDuotone
+                      width={18}
+                      height={18}
+                      color={"#f36421"}
+                    />
+                  }
+                  placeholder="Төрлөөр хайх"
+                  suffixIcon={
+                    <DropdownIcon width={15} height={15} color={"#f36421"} />
+                  }
+                  options={categories.map((c) => ({
+                    value: c.id,
+                    label: c.name,
+                  }))}
+                  value={selectedCategory}
+                  onChange={handleCategoryChange}
+                  allowClear
+                  className="w-full"
+                />
+                <Select
+                  className="w-full"
+                  suffixIcon={
+                    <DropdownIcon width={15} height={15} color={"#f36421"} />
+                  }
+                  prefix={
+                    <Wallet2BoldDuotone
+                      width={18}
+                      height={18}
+                      color={"#f36421"}
+                    />
+                  }
+                  placeholder="Төлбөрөөр шүүх"
+                  options={getPriceOptions(assessments)}
+                  value={selectedPrice}
+                  onChange={handlePriceChange}
+                  allowClear
+                />
+
+                <div
+                  className="relative group cursor-pointer"
+                  onClick={handleResetFilters}
                 >
-                  <Assessment assessment={assessment} />
-                </motion.div>
-              ))}
-            </motion.div>
-          </motion.div>
+                  <div className="absolute -inset-0.5 bg-gradient-to-br from-main/50 to-main/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+                  <div className="relative bg-gradient-to-br from-main/30 to-secondary/20 rounded-full flex items-center justify-center border border-main/10">
+                    <div className="flex items-center gap-1.5 font-extrabold bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent py-1.5 px-7">
+                      <FiltersBoldDuotone
+                        width={17}
+                        height={17}
+                        className="text-main"
+                      />
+                      Арилгах
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+            {filteredAssessments.length > 0 ? (
+              <motion.div
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4"
+                initial="hidden"
+                animate="visible"
+                variants={{
+                  visible: {
+                    transition: {
+                      staggerChildren: 0.05,
+                    },
+                  },
+                }}
+              >
+                {filteredAssessments.map((assessment, index) => (
+                  <motion.div
+                    key={assessment.data.id}
+                    variants={{
+                      hidden: { opacity: 0, y: 50 },
+                      visible: {
+                        opacity: 1,
+                        y: 0,
+                        transition: {
+                          type: "spring",
+                          bounce: 0.4,
+                        },
+                      },
+                    }}
+                  >
+                    <Assessment assessment={assessment} />
+                  </motion.div>
+                ))}
+              </motion.div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-16">
+                <div className="text-gray-300 mb-4">
+                  <Empty description="Тест олдсонгүй." />
+                </div>
+              </div>
+            )}
+          </div>
+
           <motion.footer
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

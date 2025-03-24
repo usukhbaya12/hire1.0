@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Button,
   Form,
@@ -11,7 +11,7 @@ import {
   Typography,
   Divider,
 } from "antd";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import {
   Card2BoldDuotone,
@@ -31,6 +31,7 @@ const { Title, Text } = Typography;
 
 const Signin = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [userType, setUserType] = useState("Шалгуулагч");
   const [loading, setLoading] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
@@ -43,6 +44,19 @@ const Signin = () => {
   const [verificationCode, setVerificationCode] = useState("");
   const [resetLoading, setResetLoading] = useState(false);
   const [resetForm] = Form.useForm();
+
+  useEffect(() => {
+    const email = searchParams.get("email");
+    if (email) {
+      form.setFieldsValue({ email });
+
+      messageApi.success({
+        content:
+          "Амжилттай баталгаажлаа. Та бүртгүүлсэн нууц үгээ ашиглан нэвтэрнэ үү.",
+        duration: 5,
+      });
+    }
+  }, [searchParams, form, messageApi]);
 
   const handleSegmentChange = (value) => {
     setUserType(value);

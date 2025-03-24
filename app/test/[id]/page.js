@@ -31,11 +31,13 @@ import PurchaseModal from "@/components/modals/Purchase";
 import { purchaseTest, userService } from "@/app/api/main";
 import QPay from "@/components/modals/QPay";
 import { getReport } from "@/app/api/exam";
+import { motion } from "framer-motion";
+import { LoadingOutlined } from "@ant-design/icons";
 
 export default function Test() {
   const params = useParams();
   const testId = params.id;
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [assessmentData, setAssessmentData] = useState([]);
   const { data: session } = useSession();
   const router = useRouter();
@@ -45,11 +47,10 @@ export default function Test() {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
+  const historyTableRef = useRef(null);
 
   const fetchData = async () => {
     try {
-      setLoading(true);
-
       const assessmentResponse = await getAssessmentById(testId);
       if (assessmentResponse.success) {
         setAssessmentData(assessmentResponse.data);
@@ -62,8 +63,6 @@ export default function Test() {
     } catch (error) {
       console.error("GET / Aлдаа гарлаа.", error);
       messageApi.error("Сервертэй холбогдоход алдаа гарлаа.");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -223,7 +222,14 @@ export default function Test() {
         messageApi.success("Худалдан авалт амжилттай.");
         setIsModalOpen(false);
         fetchHistory();
-        //router.push("/me");
+        setTimeout(() => {
+          if (historyTableRef.current) {
+            historyTableRef.current.scrollIntoView({
+              behavior: "smooth",
+              block: "center",
+            });
+          }
+        }, 100);
       }
     } catch (error) {
       console.error("Худалдан авалтад алдаа гарлаа.", error);
@@ -261,15 +267,24 @@ export default function Test() {
     }
   };
 
-  console.log(testHistory);
-
   return (
     <>
-      <Spin tip="Уншиж байна..." fullscreen spinning={loading} />
+      <Spin
+        fullscreen
+        tip="Уншиж байна..."
+        spinning={loading}
+        indicator={<LoadingOutlined style={{ color: "white" }} spin />}
+      />
       <title>{assessmentData?.data?.name + " – Hire.mn"}</title>
       {contextHolder}
       {assessmentData.category && (
-        <div className="relative overflow-hidden">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="relative overflow-hidden"
+        >
+          {" "}
           <div className="inset-0 fixed">
             <div className="absolute left-[-5%] w-[200px] h-[200px] md:w-[400px] md:h-[400px] rounded-full bg-orange-600/5 blur-[80px]" />
             <div className="absolute bottom-[-20%] right-[-10%] w-[200px] h-[200px] md:w-[500px] md:h-[500px] rounded-full bg-orange-600/5 blur-[100px]" />
@@ -631,7 +646,10 @@ export default function Test() {
             {session?.user?.role === 30 &&
               testHistory &&
               testHistory.length > 0 && (
-                <div className="bg-white rounded-3xl p-6 shadow-sm mt-12">
+                <div
+                  ref={historyTableRef}
+                  className="bg-white rounded-3xl p-6 shadow-sm mt-12"
+                >
                   <div className="sm:justify-between flex flex-col sm:flex-row justify-start mb-4 sm:items-center gap-2">
                     <h2 className="text-base font-extrabold px-1 flex items-center gap-2">
                       <HistoryBoldDuotone width={20} />
@@ -684,7 +702,7 @@ export default function Test() {
                 </div>
               )}
           </div>
-        </div>
+        </motion.div>
       )}
     </>
   );

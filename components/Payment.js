@@ -11,6 +11,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { GraphUpBold, GraphUpBoldDuotone } from "solar-icons";
 
 const PaymentHistoryChart = ({ paymentData }) => {
   const [chartData, setChartData] = useState([]);
@@ -99,9 +100,12 @@ const PaymentHistoryChart = ({ paymentData }) => {
   }
 
   return (
-    <div className="bg-white/80 backdrop-blur-md rounded-2xl p-6 shadow shadow-slate-200">
-      <h3 className="font-bold text-gray-700 mb-4">Гүйлгээний задаргаа</h3>
-      <div className="h-64">
+    <div className="bg-white/40 backdrop-blur-md rounded-2xl p-6 shadow shadow-slate-200">
+      <h2 className="text-base font-extrabold mb-4 flex items-center gap-2">
+        <GraphUpBoldDuotone width={20} />
+        Гүйлгээний задаргаа
+      </h2>
+      <div className="h-64 pt-2">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={chartData}

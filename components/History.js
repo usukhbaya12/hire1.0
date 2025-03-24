@@ -78,8 +78,6 @@ const AssessmentCard = ({ assessment }) => {
     }
   };
 
-  console.log("j", histories);
-
   const AssessmentTimeline = ({ histories }) => (
     <Timeline
       items={histories.map((history) => ({
@@ -201,7 +199,7 @@ const AssessmentCard = ({ assessment }) => {
                     onClick={() => router.push(`/tests/${assessment.id}`)}
                   >
                     <UserPlusBoldDuotone width={18} />
-                    Шалгуулагч урих
+                    Дэлгэрэнгүй
                   </Button>
                 </div>
               ) : (
@@ -249,24 +247,29 @@ const AssessmentCard = ({ assessment }) => {
 const HistoryCard = ({ data }) => {
   if (!data || !Array.isArray(data)) return null;
 
+  const { data: session } = useSession();
+  const isOrganization = session?.user?.role === 30;
+
   const groupedData = data.reduce((acc, item) => {
-    const assessment = item.assessment;
-    if (!acc[assessment.id]) {
-      acc[assessment.id] = {
-        ...assessment,
-        histories: [],
-      };
+    if (isOrganization || item.status === 20) {
+      const assessment = item.assessment;
+      if (!acc[assessment.id]) {
+        acc[assessment.id] = {
+          ...assessment,
+          histories: [],
+        };
+      }
+      acc[assessment.id].histories.push({
+        createdAt: item.createdAt,
+        completed: item.exams[0]?.userEndDate,
+        price: item.price,
+        count: item.count,
+        left: item.count - item.usedUserCount,
+        examStarted: item.exams[0]?.userStartDate,
+        exams: item.exams[0],
+        assessment: item.assessment.id,
+      });
     }
-    acc[assessment.id].histories.push({
-      createdAt: item.createdAt,
-      completed: item.exams[0]?.userEndDate,
-      price: item.price,
-      count: item.count,
-      left: item.count - item.usedUserCount,
-      examStarted: item.exams[0]?.userStartDate,
-      exams: item.exams[0],
-      assessment: item.assessment.id,
-    });
     return acc;
   }, {});
 

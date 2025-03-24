@@ -1,18 +1,63 @@
-import React, { useState } from "react";
-import { Modal, Button, message } from "antd";
+import React, { useState, useEffect, useRef } from "react";
+import { Modal, message } from "antd";
 import { checkPayment } from "@/app/api/main";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const QPay = ({ isOpen, onClose, paymentData, serviceId, onSuccess }) => {
   const [checking, setChecking] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   const [error, setError] = useState(null);
+  const [autoCheckActive, setAutoCheckActive] = useState(false);
+  const intervalRef = useRef(null);
+  const timerRef = useRef(null);
+  const checkCountRef = useRef(0);
 
-  const handleCheckPayment = async () => {
-    if (!paymentData?.invoice?.invoice_id || checking) return;
+  useEffect(() => {
+    if (isOpen && paymentData?.invoice?.invoice_id) {
+      startAutoCheck();
+    }
+    return () => {
+      stopAutoCheck();
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
+  }, [isOpen, paymentData]);
+
+  const startAutoCheck = () => {
+    setAutoCheckActive(true);
+    checkCountRef.current = 0;
+
+    intervalRef.current = setInterval(() => {
+      checkCountRef.current += 1;
+      handleCheckPayment(true);
+
+      if (checkCountRef.current >= 10) {
+        stopAutoCheck();
+      }
+    }, 5000);
+
+    timerRef.current = setTimeout(() => {
+      stopAutoCheck();
+    }, 60000);
+  };
+
+  const stopAutoCheck = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+    setAutoCheckActive(false);
+  };
+
+  const handleCheckPayment = async (isAuto = false) => {
+    if (!paymentData?.invoice?.invoice_id || (checking && !isAuto)) return;
 
     const invoiceId = paymentData.invoice.invoice_id;
     setChecking(true);
-    setError(null);
+    if (!isAuto) {
+      setError(null);
+    }
 
     try {
       const res = await checkPayment(serviceId, invoiceId);
@@ -22,34 +67,41 @@ const QPay = ({ isOpen, onClose, paymentData, serviceId, onSuccess }) => {
         return;
       }
 
-      if (!res.token) {
-        messageApi.error("Таны session дууссан байна.");
-        return;
-      }
-
       if (res.success) {
         if (res.data === true) {
           messageApi.success("Төлбөр амжилттай төлөгдлөө.");
+          stopAutoCheck();
           onSuccess();
           onClose();
-        } else {
+        } else if (!isAuto) {
           setError("Төлбөр төлөгдөөгүй байна.");
         }
-      } else {
+      } else if (!isAuto) {
         setError("Сервертэй холбогдоход алдаа гарлаа.");
       }
     } catch (error) {
-      setError("Төлбөр шалгахад алдаа гарлаа.");
+      if (!isAuto) {
+        setError("Төлбөр шалгахад алдаа гарлаа.");
+      }
     } finally {
       setChecking(false);
     }
   };
 
+  const getTimeLeft = () => {
+    if (!autoCheckActive) return null;
+    const checksLeft = 12 - checkCountRef.current;
+    if (checksLeft <= 0) return null;
+    return checksLeft * 5;
+  };
+
+  const timeLeft = getTimeLeft();
+
   return (
     <Modal
       open={isOpen}
       onCancel={onClose}
-      title="qPay-р төлбөрөө төлөх"
+      title="QPay-р төлбөрөө төлөх"
       footer={null}
       width={400}
       centered
@@ -66,6 +118,11 @@ const QPay = ({ isOpen, onClose, paymentData, serviceId, onSuccess }) => {
             />
           </div>
         )}
+
+        <div className="mb-5 text-gray-700 text-sm font-medium text-center">
+          Санамж: Төлбөрөө төлсөн бол{" "}
+          <span className="font-bold">Төлбөр шалгах</span> товч дээр дарна уу.
+        </div>
 
         {error && (
           <div className="mb-5 text-red-500 text-sm font-medium text-center">
@@ -94,13 +151,29 @@ const QPay = ({ isOpen, onClose, paymentData, serviceId, onSuccess }) => {
           ))}
         </div>
 
-        <Button
-          onClick={handleCheckPayment}
-          loading={checking}
-          className="w-full"
+        <div
+          className="relative group cursor-pointer w-full"
+          onClick={() => handleCheckPayment()}
         >
-          Төлбөр шалгах
-        </Button>
+          <div className="absolute -inset-0.5 bg-gradient-to-br from-main/50 to-main/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+          <div className="relative bg-gradient-to-br from-main/30 to-secondary/20 rounded-full flex items-center justify-center border border-main/10">
+            <div className="flex items-center gap-1.5 font-extrabold bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent py-2 px-7 w-full justify-center">
+              {checking ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-5 h-5 flex items-center justify-center">
+                    <LoadingOutlined
+                      style={{ fontSize: 16, color: "white" }}
+                      spin
+                    />
+                  </div>
+                  Шалгаж байна...
+                </div>
+              ) : (
+                "Төлбөр шалгах"
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     </Modal>
   );

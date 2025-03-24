@@ -8,10 +8,14 @@ import {
   getUserAnswer,
   postUserAnswers,
 } from "@/app/api/exam";
-import { InfoCircleBoldDuotone, LibraryBoldDuotone } from "solar-icons";
+import {
+  History2Bold,
+  InfoCircleBoldDuotone,
+  LibraryBoldDuotone,
+} from "solar-icons";
 import Timer from "@/components/Timer";
 import { useSession, signIn } from "next-auth/react";
-
+import { LoadingOutlined } from "@ant-design/icons";
 import QuestionCard from "@/components/exam/Question";
 import QuestionNavigation from "@/components/exam/Navigation";
 import SidePanel from "@/components/exam/Panel";
@@ -351,7 +355,12 @@ export default function Exam() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Spin fullscreen tip="Уншиж байна..." spinning={loading} />
+        <Spin
+          fullscreen
+          tip="Уншиж байна..."
+          spinning={loading}
+          indicator={<LoadingOutlined style={{ color: "white" }} spin />}
+        />
       </div>
     );
   }

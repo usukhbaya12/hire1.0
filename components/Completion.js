@@ -5,6 +5,7 @@ import { Spin } from "antd";
 import { getReport } from "@/app/api/exam";
 import { message } from "antd";
 import { useRouter } from "next/navigation";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const Completion = ({ examId, onClose, questionData, showReport }) => {
   const [messageApi, contextHolder] = message.useMessage();
@@ -41,7 +42,12 @@ const Completion = ({ examId, onClose, questionData, showReport }) => {
 
   return (
     <>
-      <Spin tip="Уншиж байна..." fullscreen spinning={loading} />
+      <Spin
+        fullscreen
+        tip="Уншиж байна..."
+        spinning={loading}
+        indicator={<LoadingOutlined style={{ color: "white" }} spin />}
+      />
       {contextHolder}
       <div className="fixed inset-0 bg-gray-100 z-50 flex items-center justify-center">
         <div className="w-full max-w-lg text-center space-y-8 px-6">

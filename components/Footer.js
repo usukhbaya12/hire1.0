@@ -23,7 +23,7 @@ export default function Footer() {
     { key: "3", label: "Нууцлалын бодлого" },
   ];
   return (
-    <div className="bg-white/70 backdrop-blur-md mt-12 pt-14 pb-8 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6">
+    <div className="bg-white/70 backdrop-blur-md border-t border-slate-200 pt-12 pb-8 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6">
       <div className="sm:grid grid-cols-5">
         <div className="flex flex-col gap-4 col-span-2">
           <div>

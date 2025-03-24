@@ -1,19 +1,52 @@
 "use client";
 
 import Image from "next/image";
-import React, { useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import React, { useState, useEffect } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { Button, Divider, Dropdown } from "antd";
 import { DropdownIcon, HamburgerIcon, XIcon } from "./Icons";
-import { Login3BoldDuotone } from "solar-icons";
+import {
+  CheckCircleBoldDuotone,
+  Login3BoldDuotone,
+  MentionCircleBoldDuotone,
+  NotesBoldDuotone,
+  UserBlockBoldDuotone,
+  UserCircleLineDuotone,
+} from "solar-icons";
 
 const Navbar = () => {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { data: session } = useSession();
   const [isExpanded, setIsExpanded] = useState(false);
   const [dropdown, setDropdown] = useState(null);
+  const [isTestsSectionVisible, setIsTestsSectionVisible] = useState(false);
+
+  useEffect(() => {
+    if (pathname === "/" && searchParams.get("scrollTo") === "tests") {
+      setTimeout(() => {
+        scrollToTests();
+      }, 500);
+    }
+
+    if (!searchParams.get("scrollTo") && pathname !== "/") {
+      window.scrollTo(0, 0);
+    }
+  }, [pathname, searchParams]);
+
+  useEffect(() => {
+    const handleTestsVisibility = (event) => {
+      setIsTestsSectionVisible(event.detail.isVisible);
+    };
+
+    window.addEventListener("testsVisibility", handleTestsVisibility);
+
+    return () => {
+      window.removeEventListener("testsVisibility", handleTestsVisibility);
+    };
+  }, []);
 
   const knowledge = [
     {
@@ -25,6 +58,10 @@ const Navbar = () => {
   ];
 
   const handleKnowledgeClick = (item) => {
+    if (isExpanded) {
+      setIsExpanded(false);
+    }
+
     if (item.href) {
       router.push(item.href);
     }
@@ -36,31 +73,49 @@ const Navbar = () => {
 
   const profile = [
     {
-      key: "userInfo",
+      key: "profile",
       label: (
-        <div className="px-2 py-1" onClick={() => router.push("/me")}>
-          <div className="font-bold">
-            {session?.user.role === 30
-              ? session?.user?.name
-              : session?.user?.lastname
-              ? session?.user?.lastname?.[0] + "." + session?.user?.firstname
-              : session?.user?.name}
-          </div>
-          <div className="text-gray-700 font-medium">
-            {session?.user?.email}
-          </div>
+        <div
+          className="cursor-pointer font-semibold flex items-center gap-1.5"
+          onClick={() => {
+            if (isExpanded) {
+              setIsExpanded(false);
+            }
+            router.push("/me");
+          }}
+        >
+          <NotesBoldDuotone width={18} height={18} className="text-main" />
+          {session?.user?.role === 30 ? "Миний тестүүд" : "Өгсөн тестүүд"}
         </div>
       ),
     },
     {
-      type: "divider",
+      key: "info",
+      label: (
+        <div
+          className="cursor-pointer font-semibold flex items-center gap-1.5"
+          onClick={() => {
+            if (isExpanded) {
+              setIsExpanded(false);
+            }
+            router.push("/me/account");
+          }}
+        >
+          <MentionCircleBoldDuotone
+            width={18}
+            height={18}
+            className="text-blue-500"
+          />
+          Миний бүртгэл
+        </div>
+      ),
     },
     {
       key: "signout",
       label: (
         <div
           onClick={handleSignOut}
-          className="text-red-500 cursor-pointer px-2 font-semibold flex items-center gap-1.5"
+          className="text-red-500 cursor-pointer font-semibold flex items-center gap-1.5"
         >
           <Login3BoldDuotone width={18} height={18} />
           Гарах
@@ -78,6 +133,28 @@ const Navbar = () => {
     setDropdown(dropdown === type ? null : type);
   };
 
+  const scrollToTests = () => {
+    const testsElement = document.getElementById("tests");
+    if (testsElement) {
+      const headerHeight = 8;
+      const y = testsElement.offsetTop - headerHeight;
+      window.scrollTo({ top: y, behavior: "smooth" });
+    }
+  };
+
+  const handleTestsClick = () => {
+    // Close mobile menu if open
+    if (isExpanded) {
+      setIsExpanded(false);
+    }
+
+    if (pathname === "/") {
+      scrollToTests();
+    } else {
+      router.push("/?scrollTo=tests");
+    }
+  };
+
   return (
     <nav className="w-full px-6 md:px-10 py-5 relative shadow shadow-slate-200 sm:rounded-full bg-white/70 backdrop-blur-md">
       <div className="flex justify-between items-center gap-4">
@@ -87,7 +164,15 @@ const Navbar = () => {
               {isExpanded ? <XIcon /> : <HamburgerIcon />}
             </button>
           </div>
-          <div className="cursor-pointer" onClick={() => router.push("/")}>
+          <div
+            className="cursor-pointer"
+            onClick={() => {
+              if (isExpanded) {
+                setIsExpanded(false);
+              }
+              router.push("/");
+            }}
+          >
             <Image
               src="/hire-logo.png"
               alt="Hire logo"
@@ -104,28 +189,14 @@ const Navbar = () => {
           <div className="hidden md:flex space-x-8 items-center">
             <div>
               <div className="relative py-1">
-                <button
-                  className="font-bold"
-                  onClick={() => {
-                    router.push("/#tests");
-                    // Smooth scroll with offset
-                    const element = document.getElementById("tests");
-                    if (element) {
-                      const yOffset = -100; // Adjust this value for desired spacing
-                      const y =
-                        element.getBoundingClientRect().top +
-                        window.pageYOffset +
-                        yOffset;
-                      window.scrollTo({ top: y, behavior: "smooth" });
-                    }
-                  }}
-                >
+                <button className="font-bold" onClick={handleTestsClick}>
                   Тестүүд
                 </button>
-                {/* Active indicator for Tests section */}
                 <div
                   className={`absolute bottom-0 left-0 w-full h-0.5 bg-main rounded-full transition-all duration-300 origin-left ${
-                    pathname === "/" ? "scale-x-100" : "scale-x-0"
+                    pathname === "/" && isTestsSectionVisible
+                      ? "scale-x-100"
+                      : "scale-x-0"
                   }`}
                 />
               </div>
@@ -146,7 +217,6 @@ const Navbar = () => {
               <div className="flex items-center gap-1.5 cursor-pointer">
                 <div className="relative py-1">
                   <span className="font-bold">Мэдлэгийн сан</span>
-                  {/* Active indicator for Blog page */}
                   <div
                     className={`absolute bottom-0 left-0 w-full h-0.5 bg-main rounded-full transition-all duration-300 origin-left ${
                       pathname === "/news" ? "scale-x-100" : "scale-x-0"
@@ -161,7 +231,12 @@ const Navbar = () => {
 
             <div>
               <button
-                onClick={() => router.push("/contact")}
+                onClick={() => {
+                  if (isExpanded) {
+                    setIsExpanded(false);
+                  }
+                  router.push("/contact");
+                }}
                 className="font-bold"
               >
                 Бидэнтэй холбогдох
@@ -197,11 +272,20 @@ const Navbar = () => {
                         </span>
                       </div>
                     )}
-                    <span className="hidden sm:block font-bold pt-0.5">
-                      {session?.user.role === 20
-                        ? session?.user?.name?.split(" ")[0]
-                        : session?.user?.name}
-                    </span>
+                    <div className="relative">
+                      <span className="hidden sm:block font-bold pt-0.5">
+                        {session?.user.role === 20
+                          ? session?.user?.name?.split(" ")[0]
+                          : session?.user?.name}
+                      </span>
+                      <div
+                        className={`absolute bottom-0 left-0 w-full h-0.5 bg-main rounded-full transition-all duration-300 origin-left ${
+                          pathname.startsWith("/me")
+                            ? "scale-x-100"
+                            : "scale-x-0"
+                        }`}
+                      />
+                    </div>
                     <div className="pt-0.5">
                       <DropdownIcon width={15} height={15} color={"#94a3b8"} />
                     </div>
@@ -211,7 +295,12 @@ const Navbar = () => {
             ) : (
               <>
                 <Button
-                  onClick={() => router.push("/auth/signin")}
+                  onClick={() => {
+                    if (isExpanded) {
+                      setIsExpanded(false);
+                    }
+                    router.push("/auth/signin");
+                  }}
                   className="nav-btn shadow-lg shadow-orange-600/50"
                 >
                   Нэвтрэх
@@ -230,7 +319,10 @@ const Navbar = () => {
       >
         <div className="flex flex-col gap-3 mt-4 px-[6px]">
           <div>
-            <div className="flex items-center gap-[6px] cursor-pointer">
+            <div
+              className="flex items-center gap-[6px] cursor-pointer"
+              onClick={handleTestsClick}
+            >
               <span className="font-bold">Тестүүд</span>
             </div>
           </div>
@@ -253,11 +345,11 @@ const Navbar = () => {
                 dropdown === "knowledge" ? "max-h-40" : "max-h-0"
               }`}
             >
-              <div className="mt-3 px-5 flex flex-col gap-3">
+              <div className="mt-4 px-3 flex flex-col gap-4 mb-1">
                 {knowledge.map((item) => (
                   <div
                     key={item.key}
-                    className={`transition-all duration-200 hover:translate-x-1 cursor-pointer font-semibold ${
+                    className={`transition-all duration-200 hover:translate-x-1 cursor-pointer font-bold ${
                       pathname === "/news" && item.href === "/news"
                         ? "text-main"
                         : ""
@@ -271,7 +363,15 @@ const Navbar = () => {
             </div>
           </div>
           <Divider className="no-margin" />
-          <div className="cursor-pointer font-bold">Бидэнтэй холбогдох</div>
+          <div
+            className="cursor-pointer font-bold"
+            onClick={() => {
+              setIsExpanded(false);
+              router.push("/contact");
+            }}
+          >
+            Бидэнтэй холбогдох
+          </div>
         </div>
       </div>
     </nav>
