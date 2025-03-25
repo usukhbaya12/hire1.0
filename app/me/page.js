@@ -334,6 +334,7 @@ const Profile = () => {
                   rowKey={(record, index) => index}
                   pagination={{
                     pageSize: 10,
+                    size: "small",
                     hideOnSinglePage: true,
                     showSizeChanger: false,
                   }}
@@ -569,7 +570,7 @@ const Profile = () => {
                 </div>
               </div>
 
-              {data && data.length > 0 && (
+              {paymentData?.payments && paymentData?.payments.length > 0 && (
                 <PaymentHistoryChart paymentData={paymentData?.payments} />
               )}
 
@@ -585,6 +586,7 @@ const Profile = () => {
                   rowKey={(record, index) => index}
                   pagination={{
                     pageSize: 10,
+                    size: "small",
                     hideOnSinglePage: true,
                     showSizeChanger: false,
                   }}
@@ -700,6 +702,8 @@ const Profile = () => {
     }
   };
 
+  console.log(data);
+  console.log(filteredData);
   return (
     <>
       <title>Hire.mn</title>
