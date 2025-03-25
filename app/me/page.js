@@ -248,7 +248,7 @@ const Profile = () => {
                     <div className="flex items-center gap-2">
                       <div className="text-orange-500 text-sm flex items-center font-bold gap-1">
                         <MouseBoldDuotone width={16} />
-                        Дутуу:
+                        Дуусгаагүй:
                       </div>
                       <div className="font-bold text-gray-800">
                         {
@@ -702,8 +702,6 @@ const Profile = () => {
     }
   };
 
-  console.log(data);
-  console.log(filteredData);
   return (
     <>
       <title>Hire.mn</title>

@@ -8,6 +8,7 @@ import { Breadcrumb, Button, message, Progress, Spin, Table } from "antd";
 import {
   AlarmBoldDuotone,
   BookBookmarkBoldDuotone,
+  Buildings2BoldDuotone,
   CaseRoundMinimalisticBoldDuotone,
   ClipboardTextBoldDuotone,
   CloudDownloadLineDuotone,
@@ -19,6 +20,7 @@ import {
   FolderCloudBoldDuotone,
   HistoryBoldDuotone,
   MouseBoldDuotone,
+  NotificationLinesRemoveBoldDuotone,
   QuestionCircleBoldDuotone,
   SquareArrowRightDownBoldDuotone,
   TicketSaleBoldDuotone,
@@ -130,6 +132,38 @@ export default function Test() {
     },
     {
       title: "Төлбөрийн хэлбэр",
+      dataIndex: "payment",
+      key: "payment",
+      align: "center",
+    },
+    {
+      title: "Тайлан",
+      key: "action",
+      dataIndex: "report",
+      align: "center",
+    },
+  ];
+
+  const columns2 = [
+    {
+      title: "Огноо",
+      dataIndex: "date",
+      key: "date",
+    },
+    {
+      title: "Төлөв",
+      dataIndex: "status",
+      key: "status",
+    },
+
+    {
+      title: "Үр дүн",
+      dataIndex: "result",
+      key: "result",
+      sorter: (a, b) => a.result - b.result,
+    },
+    {
+      title: "Байгууллагын нэр",
       dataIndex: "payment",
       key: "payment",
       align: "center",
@@ -636,7 +670,7 @@ export default function Test() {
                     Байгууллагаас уригдсан
                   </h2>
                   <Table
-                    columns={columns}
+                    columns={columns2}
                     dataSource={testHistory?.invited.map((item) => ({
                       key: item.id,
                       date: new Date(item.createdAt).toLocaleDateString(),
@@ -708,16 +742,15 @@ export default function Test() {
                           Байгууллагад илгээсэн
                         </div>
                       ),
-                      payment:
-                        item.price > 0 ? (
-                          <div className="flex items-center gap-2 justify-center">
-                            <img src="/qpay.png" width={40}></img>•
-                            <div>{item.price.toLocaleString()}₮</div>
-                          </div>
-                        ) : (
-                          "Үнэгүй"
-                        ),
-                      report:
+                      payment: item.service.user ? (
+                        <div className="flex items-center gap-2 justify-center text-blue-700 font-bold">
+                          <Buildings2BoldDuotone width={18} />
+                          <div>{item.service.user.organizationName}</div>
+                        </div>
+                      ) : (
+                        <></>
+                      ),
+                      report: item.visible ? (
                         item.userStartDate == null &&
                         item.userEndDate == null ? (
                           <div
@@ -752,7 +785,14 @@ export default function Test() {
                               Татах
                             </button>
                           </div>
-                        ),
+                        )
+                      ) : (
+                        <div className="flex justify-center">
+                          <button className="text-main flex text-center">
+                            <NotificationLinesRemoveBoldDuotone width={18} />
+                          </button>
+                        </div>
+                      ),
                     }))}
                     className="test-history-table overflow-x-auto"
                     pagination={false}

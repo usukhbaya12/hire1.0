@@ -39,7 +39,7 @@ export default function TestDetails() {
         const testHistoryResponse = await getUserTestHistory(testId);
 
         if (testHistoryResponse.success) {
-          const unusedTestRows = testHistoryResponse.data?.filter(
+          const unusedTestRows = testHistoryResponse.data?.data?.filter(
             (item) => item.usedUserCount === 0 && item.status === 20
           );
 
