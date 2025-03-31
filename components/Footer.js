@@ -6,22 +6,44 @@ import {
   PhoneBold,
   PhoneCallingRoundedBoldDuotone,
 } from "solar-icons";
+import { useRouter } from "next/navigation";
 
 export default function Footer() {
+  const router = useRouter();
   const items = [
-    { key: "1", label: "Тестийн сан" },
-    { key: "2", label: "Онцлох" },
-    { key: "3", label: "Эрэлттэй" },
+    { key: "1", label: "Тестийн сан", link: "/#tests" },
+    { key: "2", label: "Онцлох", link: "/#starred" },
+    { key: "3", label: "Эрэлттэй", link: "/#popular" },
   ];
   const knowledge = [
-    { key: "1", label: "Блог, зөвлөмжүүд" },
-    { key: "2", label: "Нэр томьёоны тайлбар" },
+    { key: "1", label: "Блог, зөвлөмжүүд", link: "/news" },
+    { key: "2", label: "Нэр томьёоны тайлбар", link: "/glossary" },
   ];
   const support = [
-    { key: "1", label: "Түгээмэл асуултууд" },
-    { key: "2", label: "Үйлчилгээний нөхцөл" },
-    { key: "3", label: "Нууцлалын бодлого" },
+    { key: "1", label: "Түгээмэл асуултууд", link: "/faq" },
+    { key: "2", label: "Үйлчилгээний нөхцөл", link: "/" },
+    { key: "3", label: "Нууцлалын бодлого", link: "/" },
   ];
+
+  const handleLinkClick = (link) => {
+    if (link) {
+      router.push(link);
+    }
+  };
+
+  const handleScrollToSection = (sectionId) => {
+    if (window.location.pathname === "/") {
+      const section = document.getElementById(sectionId);
+      if (section) {
+        const headerHeight = 72;
+        const y = section.offsetTop - headerHeight;
+        window.scrollTo({ top: y, behavior: "smooth" });
+      }
+    } else {
+      router.push(`/?scrollTo=${sectionId}`);
+    }
+  };
+
   return (
     <div className="bg-white/70 backdrop-blur-md border-t border-slate-200 pt-12 pb-8 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6">
       <div className="sm:grid grid-cols-5">
@@ -63,7 +85,22 @@ export default function Footer() {
           <div className="pt-2 sm:pt-4 text-gray-700">
             {items.map((item) => (
               <div className="pt-1" key={item.key}>
-                {item.label}
+                <span
+                  className="text-gray-700 hover:text-black hover:underline transition duration-300 cursor-pointer"
+                  onClick={() => {
+                    if (item.key === "1") {
+                      handleScrollToSection("tests");
+                    } else if (item.key === "2") {
+                      handleScrollToSection("starred");
+                    } else if (item.key === "3") {
+                      handleScrollToSection("popular");
+                    } else {
+                      handleLinkClick(item.link);
+                    }
+                  }}
+                >
+                  {item.label}
+                </span>
               </div>
             ))}
           </div>
@@ -73,7 +110,12 @@ export default function Footer() {
           <div className="pt-2 sm:pt-4 text-gray-700">
             {knowledge.map((item) => (
               <div className="pt-1" key={item.key}>
-                {item.label}
+                <span
+                  className="text-gray-700 hover:text-black hover:underline transition duration-300 cursor-pointer"
+                  onClick={() => handleLinkClick(item.link)}
+                >
+                  {item.label}
+                </span>
               </div>
             ))}
           </div>
@@ -83,7 +125,12 @@ export default function Footer() {
           <div className="pt-2 sm:pt-4 text-gray-700">
             {support.map((item) => (
               <div className="pt-1" key={item.key}>
-                {item.label}
+                <span
+                  className="text-gray-700 hover:text-black hover:underline transition duration-300 cursor-pointer"
+                  onClick={() => handleLinkClick(item.link)}
+                >
+                  {item.label}
+                </span>
               </div>
             ))}
           </div>
@@ -93,31 +140,52 @@ export default function Footer() {
         <Divider />
       </div>
       <div className="flex justify-between">
-        <div className="w-2/3 sm:w-full">
+        <div className="w-2/3 sm:w-full text-gray-700">
           © 2025 Аксиом Инк. Бүх эрх хуулиар хамгаалагдсан.
         </div>
         <div className="flex items-center gap-3">
-          <Image
-            src="/facebook.png"
-            alt="Facebook icon"
-            width={16}
-            height={16}
-            priority
-          />
-          <Image
-            src="/youtube.png"
-            alt="YouTube icon"
-            width={16}
-            height={16}
-            priority
-          />
-          <Image
-            src="/linkedin.png"
-            alt="LinkedIn icon"
-            width={16}
-            height={16}
-            priority
-          />
+          <a
+            href="https://facebook.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:opacity-80 transition-opacity"
+          >
+            <Image
+              src="/facebook.png"
+              alt="Facebook icon"
+              width={16}
+              height={16}
+              priority
+            />
+          </a>
+          <a
+            href="https://youtube.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:opacity-80 transition-opacity"
+          >
+            <Image
+              src="/youtube.png"
+              alt="YouTube icon"
+              width={16}
+              height={16}
+              priority
+            />
+          </a>
+          <a
+            href="https://linkedin.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:opacity-80 transition-opacity"
+          >
+            <Image
+              src="/linkedin.png"
+              alt="LinkedIn icon"
+              width={16}
+              height={16}
+              priority
+            />
+          </a>
         </div>
       </div>
     </div>

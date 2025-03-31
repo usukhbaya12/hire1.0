@@ -582,12 +582,13 @@ const ApplicantsTable = ({ data, loading }) => {
         </div>
       </div>
       <Table
-        loc
+        // loc
         className="applicants-table overflow-x-auto"
         dataSource={filteredApplicants}
         loading={loading}
         rowKey={(record) => record.examId}
         pagination={{
+          size: "small",
           pageSize: 10,
           hideOnSinglePage: true,
           showSizeChanger: false,

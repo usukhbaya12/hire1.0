@@ -280,6 +280,7 @@ function SigninForm() {
                 </Form.Item>
                 <Form.Item className="mb-0 pb-4">
                   <Button
+                    className="login"
                     block
                     onClick={handleSendVerificationCode}
                     loading={resetLoading}
@@ -379,7 +380,7 @@ function SigninForm() {
                   block
                   onClick={handleVerifyCode}
                   loading={resetLoading}
-                  className="mb-4"
+                  className="mb-4 login"
                 >
                   Баталгаажуулах
                 </Button>
@@ -486,7 +487,7 @@ function SigninForm() {
                 </Form.Item>
                 <Form.Item className="mb-0">
                   <Button
-                    className="mb-4"
+                    className="mb-4 login"
                     block
                     onClick={handleResetPassword}
                     loading={resetLoading}

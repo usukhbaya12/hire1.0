@@ -357,6 +357,7 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
               className="pt-12"
+              id="starred"
             >
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
@@ -438,6 +439,7 @@ export default function Home() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 1 }}
+            id="popular"
           >
             <div className="pt-8 sm:pt-6 pb-14">
               <motion.div

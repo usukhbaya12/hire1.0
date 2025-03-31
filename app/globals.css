@@ -225,6 +225,16 @@ body {
   /* backdrop-filter: blur(12px); */
 }
 
+.link-btn-4.ant-btn {
+  color: rgba(130, 130, 130, 0.7);
+  background-color: transparent;
+  box-shadow: none;
+  padding-inline: 0px;
+  padding-block: 0px;
+  font-weight: 700;
+  /* backdrop-filter: blur(12px); */
+}
+
 .link-btn-3.ant-btn-variant-outlined:not(:disabled):not(
     .ant-btn-disabled
   ):hover {

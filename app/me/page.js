@@ -22,6 +22,8 @@ import {
   RoundDoubleAltArrowRightBoldDuotone,
   RefreshCircleBoldDuotone,
   ChartBoldDuotone,
+  Buildings2BoldDuotone,
+  Buildings3BoldDuotone,
 } from "solar-icons";
 
 import { getUserTestHistory } from "../api/assessment";
@@ -95,8 +97,6 @@ const Profile = () => {
 
   if (!session) return null;
 
-  console.log(paymentData);
-
   const menuItems = [
     {
       name: session?.user?.role === 20 ? "Өгсөн тестүүд" : "Миний тестүүд",
@@ -108,6 +108,14 @@ const Profile = () => {
           className="text-main"
         />
       ),
+    },
+    {
+      name: "Уригдсан тестүүд",
+      key: "orgtests",
+      icon: (
+        <Buildings3BoldDuotone width={17} height={17} className="text-main" />
+      ),
+      show: session?.user?.role === 20,
     },
     {
       name: "Нийт шалгуулагчид",
@@ -135,6 +143,14 @@ const Profile = () => {
         item.assessment.name.toLowerCase().includes(searchTerm.toLowerCase())
       )
     : [];
+
+  const filteredData2 = data?.invited
+    ? data?.invited.filter((item) =>
+        item.assessment.name.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : [];
+
+  console.log(data);
 
   const renderSkeletonCard = () => (
     <div className="w-full h-full relative overflow-hidden rounded-3xl shadow shadow-slate-200 bg-white/70 backdrop-blur-md px-6 pt-6 pb-4 animate-pulse">
@@ -302,6 +318,143 @@ const Profile = () => {
             </div>
           </>
         );
+      case "orgtests":
+        return (
+          <>
+            <div className="md:shadow md:shadow-slate-200 md:rounded-3xl md:p-6 md:bg-white/40 md:backdrop-blur-md">
+              <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-5">
+                <h2 className="hidden md:flex text-base font-extrabold px-1  items-center gap-2">
+                  <Buildings3BoldDuotone width={20} height={20} />
+                  Байгууллагаас уригдсан тестүүд
+                </h2>
+                <div>
+                  <Input
+                    prefix={
+                      <MagniferBoldDuotone
+                        color={"#f36421"}
+                        width={18}
+                        height={18}
+                      />
+                    }
+                    placeholder="Нэрээр хайх"
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+              </div>
+              {session.user.role === 20 && data && (
+                <div className="bg-white/40 backdrop-blur-md shadow shadow-slate-200 rounded-3xl px-6 py-4 sm:py-3 mb-6">
+                  <div className="flex items-center gap-3 sm:gap-6 flex-wrap md:flex-nowrap">
+                    <div className="flex items-center gap-2">
+                      <div className="text-main text-sm flex items-center font-bold gap-1">
+                        <NotesBoldDuotone width={16} />
+                        Тестүүд:
+                      </div>
+                      <div className="font-bold text-gray-800">
+                        {
+                          Object.keys(
+                            data.invited.reduce((acc, item) => {
+                              acc[item.assessment.id] = true;
+                              return acc;
+                            }, {})
+                          ).length
+                        }
+                      </div>
+                    </div>
+                    <Divider type="vertical" className="hidden md:block h-10" />
+
+                    <div className="flex items-center gap-2">
+                      <div className="text-main text-sm flex items-center font-bold gap-1">
+                        <HistoryLineDuotone width={16} />
+                        Оролдлогын тоо:
+                      </div>
+                      <div className="font-bold text-gray-800">
+                        {data.invited.length}
+                      </div>
+                    </div>
+                    <Divider type="vertical" className="hidden md:block h-10" />
+
+                    <div className="flex items-center gap-2">
+                      <div className="text-green-600 text-sm flex items-center font-bold gap-1">
+                        <CheckCircleBoldDuotone width={16} />
+                        Дууссан:
+                      </div>
+                      <div className="font-bold text-gray-800">
+                        {
+                          data.invited.filter(
+                            (item) => item.userStartDate && item.userEndDate
+                          ).length
+                        }
+                      </div>
+                    </div>
+                    <Divider type="vertical" className="hidden md:block h-10" />
+
+                    <div className="flex items-center gap-2">
+                      <div className="text-yellow-600 text-sm flex items-center font-bold gap-1">
+                        <ClockCircleBoldDuotone width={16} />
+                        Өгөөгүй:
+                      </div>
+                      <div className="font-bold text-gray-800">
+                        {
+                          data.invited.filter(
+                            (item) => !item.userStartDate && !item.userEndDate
+                          ).length
+                        }
+                      </div>
+                    </div>
+                    <Divider type="vertical" className="hidden md:block h-10" />
+
+                    <div className="flex items-center gap-2">
+                      <div className="text-orange-500 text-sm flex items-center font-bold gap-1">
+                        <MouseBoldDuotone width={16} />
+                        Дуусгаагүй:
+                      </div>
+                      <div className="font-bold text-gray-800">
+                        {
+                          data.invited.filter(
+                            (item) => item.userStartDate && !item.userEndDate
+                          ).length
+                        }
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              {loading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {Array(3)
+                    .fill(0)
+                    .map((_, index) => (
+                      <div key={index}>{renderSkeletonCard()}</div>
+                    ))}
+                </div>
+              ) : data?.invited && data?.invited.length > 0 ? (
+                filteredData2.length > 0 ? (
+                  <HistoryCard data={filteredData2} isInvited={true} />
+                ) : (
+                  <Empty description="Байгууллагаас уригдсан тест олдсонгүй." />
+                )
+              ) : (
+                <>
+                  <Empty description="Та тест өгөөгүй байна." />
+                  <div className="flex py-6 justify-center">
+                    <div
+                      className="relative group cursor-pointer"
+                      onClick={() => router.push("/#tests")}
+                    >
+                      <div className="absolute -inset-0.5 bg-gradient-to-br from-main/50 to-main/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+                      <div className="relative bg-gradient-to-br from-main/30 to-secondary/20 rounded-full flex items-center justify-center border border-main/10">
+                        <div className="flex items-center gap-1.5 font-extrabold bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent py-1.5 px-7">
+                          Тестийн сан
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </>
+        );
+
       case "applicants":
         return (
           <>

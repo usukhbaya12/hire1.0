@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, message } from "antd";
+import { Modal, message, Divider } from "antd";
 import {
   CopyBoldDuotone,
   ShieldWarningBoldDuotone,
@@ -7,6 +7,10 @@ import {
   PhoneCallingRoundedBoldDuotone,
   CheckCircleBoldDuotone,
   LetterBoldDuotone,
+  DocumentBoldDuotone,
+  ClockCircleBoldDuotone,
+  NotesBoldDuotone,
+  AlarmBoldDuotone,
 } from "solar-icons";
 
 const ChargeModal = ({ isOpen, onClose }) => {
@@ -18,7 +22,7 @@ const ChargeModal = ({ isOpen, onClose }) => {
     banks: [
       {
         src: "https://qpay.mn/q/logo/khanbank.png",
-        name: "Хаан банк",
+        name: "ХААН БАНК",
         account: "5009375211",
       },
     ],
@@ -28,7 +32,7 @@ const ChargeModal = ({ isOpen, onClose }) => {
     navigator.clipboard.writeText(text);
     messageApi.open({
       type: "success",
-      content: "Хуулагдлаа.",
+      content: "Хуулагдлаа",
       duration: 2,
     });
     setCopiedAccount(type);
@@ -42,7 +46,7 @@ const ChargeModal = ({ isOpen, onClose }) => {
         open={isOpen}
         onCancel={onClose}
         footer={null}
-        width={400}
+        width={420}
         className="charge-modal"
         title={
           <div className="flex items-center gap-2">
@@ -50,72 +54,90 @@ const ChargeModal = ({ isOpen, onClose }) => {
             <span className="text-[15px]">Хэтэвч цэнэглэх</span>
           </div>
         }
+        closeIcon={
+          <div className="bg-gray-100 hover:bg-gray-200 p-1 rounded-full transition-colors">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M6 18L18 6M6 6l12 12"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
+        }
       >
-        <div className="mt-4 space-y-6">
+        <div className="mt-4 space-y-4">
           {/* Bank Accounts Section */}
-          <div className="space-y-4">
-            {bankInfo.banks.map((bank, index) => (
+          <div className="space-y-3">
+            {bankInfo.banks.map((bank) => (
               <div
                 key={bank.name}
-                className="flex items-start bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow"
+                className="bg-gradient-to-br from-gray-50 to-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
               >
-                <div className="w-14 h-14 flex items-center justify-center bg-white rounded-2xl border border-gray-100 p-1 shadow-sm overflow-hidden mr-4">
-                  <img
-                    src={bank.src}
-                    alt={bank.name}
-                    className="w-full h-full object-contain"
-                  />
+                <div className="flex items-center p-2 border-b border-gray-100 bg-gray-50">
+                  <div className="w-10 h-10 flex items-center justify-center mr-1">
+                    <img
+                      src={bank.src}
+                      alt={bank.name}
+                      className="w-8 h-8 object-contain rounded-lg"
+                    />
+                  </div>
+                  <div className="font-bold text-gray-700">{bank.name}</div>
                 </div>
 
-                <div className="flex-1 space-y-3">
-                  <div className="pt-1">
-                    <div className="text-gray-700 font-medium">
+                <div className="p-4 space-y-4">
+                  <div className="leading-4">
+                    <div className="text-gray-500 font-medium">
                       Дансны дугаар
                     </div>
                     <div className="flex items-center justify-between">
-                      <div className="font-semibold tracking-wide text-base">
+                      <div className="font-mono text-base font-extrabold text-gray-800 tracking-wider">
                         {bank.account}
                       </div>
                       <button
                         onClick={() => copyToClipboard(bank.account, bank.name)}
-                        className="w-8 h-8 flex items-center justify-center bg-gray-50 hover:bg-main/10 rounded-full transition-colors"
+                        className={`text-xs font-bold flex items-center gap-1.5 py-1.5 px-3 rounded-full transition-all ${
+                          copiedAccount === bank.name
+                            ? "bg-green-50 text-green-600"
+                            : "bg-gray-100 hover:bg-main/10 text-gray-700 hover:text-main"
+                        }`}
                         title="Дансны дугаар хуулах"
                       >
-                        {copiedAccount === bank.name ? (
-                          <CheckCircleBoldDuotone
-                            width={20}
-                            className="text-green-600"
-                          />
-                        ) : (
-                          <CopyBoldDuotone width={18} className="text-main" />
-                        )}
+                        <CopyBoldDuotone width={16} height={16} />
+                        Хуулах
                       </button>
                     </div>
                   </div>
 
-                  <div>
-                    <div className="text-gray-700 text-sm font-medium">
+                  <div className="leading-4">
+                    <div className="text-gray-500 font-medium">
                       Хүлээн авагч
                     </div>
                     <div className="flex items-center justify-between">
-                      <div className="font-semibold tracking-wide text-base">
+                      <div className="font-extrabold text-gray-800">
                         {bankInfo.accountName}
                       </div>
                       <button
                         onClick={() =>
                           copyToClipboard(bankInfo.accountName, "accountName")
                         }
-                        className="w-8 h-8 flex items-center justify-center bg-gray-50 hover:bg-main/10 rounded-full transition-colors"
+                        className={`flex items-center gap-1.5 py-1.5 px-3 rounded-full text-xs font-bold transition-all ${
+                          copiedAccount === "accountName"
+                            ? "bg-green-50 text-green-600"
+                            : "bg-gray-100 hover:bg-main/10 text-gray-700 hover:text-main"
+                        }`}
                         title="Хүлээн авагчийн нэр хуулах"
                       >
-                        {copiedAccount === "accountName" ? (
-                          <CheckCircleBoldDuotone
-                            width={20}
-                            className="text-green-600"
-                          />
-                        ) : (
-                          <CopyBoldDuotone width={18} className="text-main" />
-                        )}
+                        <CopyBoldDuotone width={16} height={16} />
+                        Хуулах
                       </button>
                     </div>
                   </div>
@@ -124,41 +146,51 @@ const ChargeModal = ({ isOpen, onClose }) => {
             ))}
           </div>
 
-          {/* Transaction Info */}
-          <div className="p-4 rounded-xl bg-gradient-to-br from-orange-50 to-orange-100/50 border border-orange-100">
-            <div className="flex items-start gap-3">
-              <div className="mt-0.5">
-                <ShieldWarningBoldDuotone
-                  size={20}
-                  className="text-orange-500"
-                />
+          <div className="rounded-2xl overflow-hidden shadow-sm border border-gray-100">
+            {/* <div className="bg-gray-50 border-b border-gray-100 px-4 py-3">
+              <h3 className="font-bold text-gray-800 flex items-center gap-2">
+                <DocumentBoldDuotone width={18} className="text-main" />
+                Шилжүүлэг хийх заавар
+              </h3>
+            </div> */}
+            <div className="p-4 space-y-4">
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-main/10 text-main font-bold text-sm">
+                  <NotesBoldDuotone width={14} />
+                </div>
+                <div>
+                  <p className="text-main font-bold">Гүйлгээний утга</p>
+                  <p className="text-sm text-gray-600">
+                    Байгууллагын регистрийн дугаар, холбогдох утасны дугаар
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-semibold text-gray-800 mb-1">
-                  Гүйлгээний утга:
-                </h3>
-                <div className="text-sm text-gray-700">
-                  Байгууллагын регистрийн дугаар, холбогдох утасны дугаар
+
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-main/10 text-main font-bold text-sm">
+                  <ClockCircleBoldDuotone width={14} />
+                </div>
+                <div>
+                  <p className="text-main font-bold">Шилжүүлэг хийсний дараа</p>
+                  <p className="text-sm text-gray-600">
+                    Шилжүүлэг хийснээс хойш 24 цагийн дотор таны хэтэвч
+                    цэнэглэгдэнэ.
+                  </p>
                 </div>
               </div>
             </div>
           </div>
-
-          {/* Contact Info */}
-          <div className="p-4 rounded-xl bg-gray-50 border border-gray-100">
-            <h3 className="font-semibold text-gray-800 mb-2">Холбоо барих</h3>
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <PhoneCallingRoundedBoldDuotone
-                  size={16}
-                  className="text-main"
-                />
-                <span className="text-sm text-gray-700">(+976) 8005-3904</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <LetterBoldDuotone size={16} className="text-main" />
-                <span className="text-sm text-gray-700">support@hire.mn</span>
-              </div>
+          <div className="flex items-center justify-between p-1 px-2">
+            <div className="flex items-center gap-2">
+              <PhoneCallingRoundedBoldDuotone
+                width={18}
+                className="text-main"
+              />
+              <span className="text-sm text-gray-700">(+976) 8005-3904</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <LetterBoldDuotone width={18} className="text-main" />
+              <span className="text-sm text-gray-700">support@hire.mn</span>
             </div>
           </div>
         </div>

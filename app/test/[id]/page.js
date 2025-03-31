@@ -56,6 +56,10 @@ export default function Test() {
     try {
       const assessmentResponse = await getAssessmentById(testId);
       if (assessmentResponse.success) {
+        if (assessmentResponse.data.data.status === 20) {
+          router.push("/");
+          return;
+        }
         setAssessmentData(assessmentResponse.data);
       }
 
@@ -68,8 +72,6 @@ export default function Test() {
       messageApi.error("Сервертэй холбогдоход алдаа гарлаа.");
     }
   };
-
-  console.log(testHistory);
 
   const fetchHistory = async () => {
     try {
@@ -805,6 +807,18 @@ export default function Test() {
                                   <NotificationLinesRemoveBoldDuotone
                                     width={18}
                                   />
+                                </button>
+                              </div>
+                            ) : item.userStartDate && !item.userEndDate ? (
+                              <div
+                                className="flex justify-center"
+                                onClick={() =>
+                                  router.push(`/exam/${item.code}`)
+                                }
+                              >
+                                <button className="text-main hover:text-secondary flex items-center gap-2 font-semibold">
+                                  <MouseBoldDuotone width={18} />
+                                  Үргэлжлүүлэх
                                 </button>
                               </div>
                             ) : item.userEndDate == null ? (

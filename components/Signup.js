@@ -128,7 +128,7 @@ const Signup = () => {
               <div className="w-full space-y-4 pt-3">
                 <Button
                   onClick={() => router.push("/auth/signin")}
-                  className="w-full"
+                  className="w-full login"
                 >
                   Нэвтрэх
                 </Button>

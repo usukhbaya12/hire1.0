@@ -405,7 +405,7 @@ export const getPaymentHistory = async (
   role = 0,
   id,
   page = 1,
-  limit = 100
+  limit = 1000
 ) => {
   try {
     const token = await getAuthToken();
@@ -442,16 +442,12 @@ export const extendExamDate = async (id, endDate) => {
   const token = await getAuthToken();
   if (!token) return { token: false };
   try {
-    const response = await axios.patch(
-      `${api}userService/date/${id}`,
-      endDate,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await axios.patch(`${api}exam/date/${id}`, endDate, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     return {
       data: response.data.payload,

@@ -335,7 +335,7 @@ const EmployeeTable = ({ testData, onRefresh }) => {
       render: (text, record) => {
         const isExpired =
           text !== "-" &&
-          dayjs(text, "YYYY/MM/DD").isBefore(dayjs(), "day") &&
+          dayjs(text, "YYYY/MM/DD HH:mm").isBefore(dayjs(), "minute") &&
           record.userEndDate === "-";
         return (
           <div>
@@ -496,8 +496,10 @@ const EmployeeTable = ({ testData, onRefresh }) => {
       render: (_, record) => {
         const isReportAvailable = record.status === "Дуусгасан";
         const isExpired =
-          dayjs(record.endDate, "YYYY/MM/DD").isBefore(dayjs(), "day") &&
-          record.userEndDate === "-";
+          dayjs(record.endDate, "YYYY/MM/DD HH:mm").isBefore(
+            dayjs(),
+            "minute"
+          ) && record.userEndDate === "-";
 
         return (
           <>

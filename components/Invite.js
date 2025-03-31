@@ -224,12 +224,12 @@ const SpreadsheetInviteTable = ({ testData, onSuccess }) => {
   };
 
   const handleAdd = (count = 5) => {
-    if (data.length + count > remainingAccesses) {
-      messageApi.error(
-        `Зөвхөн ${remainingAccesses} шалгуулагч нэмэх боломжтой.`
-      );
-      return;
-    }
+    // if (data.length + count > remainingAccesses) {
+    //   messageApi.error(
+    //     `Зөвхөн ${remainingAccesses} шалгуулагч нэмэх боломжтой.`
+    //   );
+    //   return;
+    // }
 
     const newRows = Array(count)
       .fill(0)
