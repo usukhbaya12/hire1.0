@@ -7,6 +7,7 @@ import {
   SettingsBoldDuotone,
 } from "solar-icons";
 import { postFeedback } from "@/app/api/exam";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const FlagModal = ({ open, onClose, assessment }) => {
   const [selected, setSelected] = useState(null);
@@ -73,21 +74,74 @@ const FlagModal = ({ open, onClose, assessment }) => {
         onCancel={onClose}
         footer={
           <div className="flex gap-4 justify-end">
-            <Button
-              className="back border rounded-xl text-[13px] font-medium"
-              onClick={onClose}
-              disabled={loading}
+            <div
+              className={`relative group ${
+                loading ? "cursor-not-allowed opacity-60" : "cursor-pointer"
+              }`}
+              onClick={loading ? undefined : onClose}
             >
-              Буцах
-            </Button>
-            <Button
-              className="border-none rounded-xl font-semibold text-white bg-main hover:bg-secondary disabled:opacity-50"
-              onClick={handleSubmit}
-              disabled={!feedback.trim()}
-              loading={loading}
+              <div className="absolute -inset-0.5 bg-gradient-to-br from-gray-200/50 to-gray-500/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+              <div className="relative bg-gradient-to-br from-gray-400/30 to-gray-300/20 rounded-full flex items-center justify-center border border-gray-500/10">
+                <div className="flex items-center gap-1.5 font-extrabold bg-gradient-to-br from-gray-500 to-gray-600 bg-clip-text text-transparent py-1 px-6">
+                  Буцах
+                </div>
+              </div>
+            </div>
+
+            <div
+              className={`relative group ${
+                !feedback.trim() || loading
+                  ? "cursor-not-allowed opacity-60"
+                  : "cursor-pointer"
+              }`}
+              onClick={!feedback.trim() || loading ? undefined : handleSubmit}
+              style={{ width: "auto" }}
             >
-              Илгээх
-            </Button>
+              <div
+                className={`absolute -inset-0.5 bg-gradient-to-br ${
+                  !feedback.trim()
+                    ? "from-gray-400/50 to-gray-500/70"
+                    : "from-main/50 to-main/70"
+                } rounded-full blur opacity-30 ${
+                  !feedback.trim() ? "" : "group-hover:opacity-40"
+                } transition duration-300`}
+              ></div>
+
+              <div
+                className={`relative bg-gradient-to-br ${
+                  !feedback.trim()
+                    ? "from-gray-300/30 to-gray-400/20"
+                    : "from-main/30 to-secondary/20"
+                } rounded-full flex items-center justify-center border ${
+                  !feedback.trim() ? "border-gray-300/10" : "border-main/10"
+                }`}
+              >
+                <div
+                  className={`flex items-center gap-1.5 font-extrabold ${
+                    !feedback.trim()
+                      ? "bg-gradient-to-br from-gray-400 to-gray-500 bg-clip-text text-transparent"
+                      : "bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent"
+                  } py-1 px-8 justify-center`}
+                >
+                  {loading ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-5 h-5 flex items-center justify-center">
+                        <LoadingOutlined
+                          style={{
+                            fontSize: 16,
+                            color: !feedback.trim() ? "#888" : "white",
+                          }}
+                          spin
+                        />
+                      </div>
+                      Илгээх
+                    </div>
+                  ) : (
+                    "Илгээх"
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
         }
       >

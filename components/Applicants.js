@@ -19,8 +19,12 @@ import {
   DownloadMinimalisticBoldDuotone,
   RestartLineDuotone,
   FilterLineDuotone,
+  ClockCircleBoldDuotone,
+  AlarmBoldDuotone,
 } from "solar-icons";
 import * as XLSX from "xlsx";
+import { customLocale } from "@/app/utils/values";
+import RenewModal from "./modals/Renew";
 
 const EmployeeTable = ({ testData, onRefresh }) => {
   const [transformedData, setTransformedData] = useState([]);
@@ -29,7 +33,11 @@ const EmployeeTable = ({ testData, onRefresh }) => {
   const [filteredInfo, setFilteredInfo] = useState({});
   const [sortedInfo, setSortedInfo] = useState({});
   const [searchText, setSearchText] = useState("");
+  const [isExtendModalVisible, setIsExtendModalVisible] = useState(false);
+  const [selectedExam, setSelectedExam] = useState(null);
   const messageApi = message;
+
+  console.log(testData);
 
   useEffect(() => {
     if (!testData || !Array.isArray(testData)) {
@@ -252,7 +260,7 @@ const EmployeeTable = ({ testData, onRefresh }) => {
       "И-мейл хаяг": item.email,
       "Тест өгсөн огноо": item.userEndDate,
       Төлөв: item.status,
-      "Шалгуулагч үр дүнгээ харсан эсэх": item.visible ? "Тийм" : "Үгүй",
+      "Шалгуулагч үр дүнгээ харах эсэх": item.visible ? "Тийм" : "Үгүй",
       "Үр дүн":
         item.userEndDate !== "-"
           ? item.result && typeof item.result === "object"
@@ -284,10 +292,10 @@ const EmployeeTable = ({ testData, onRefresh }) => {
     setSortedInfo({});
   };
 
-  const visibilityFilters = [
-    { text: "Тийм", value: "Тийм" },
-    { text: "Үгүй", value: "Үгүй" },
-  ];
+  const showExtendModal = (record) => {
+    setSelectedExam(record);
+    setIsExtendModalVisible(true);
+  };
 
   const statusFilters = [
     { text: "Дуусгасан", value: "Дуусгасан" },
@@ -324,7 +332,26 @@ const EmployeeTable = ({ testData, onRefresh }) => {
         );
       },
       sortOrder: sortedInfo.columnKey === "endDate" && sortedInfo.order,
-      render: (text) => <span className="text-gray-700">{text}</span>,
+      render: (text, record) => {
+        const isExpired =
+          text !== "-" &&
+          dayjs(text, "YYYY/MM/DD").isBefore(dayjs(), "day") &&
+          record.userEndDate === "-";
+        return (
+          <div>
+            <span className="text-gray-700">{text}</span>
+            {isExpired && (
+              <div
+                className="flex items-center gap-1 text-red-500 text-xs font-bold mt-1"
+                // onClick={() => showModal(record)}
+              >
+                <AlarmBoldDuotone width={16} />
+                Дууссан
+              </div>
+            )}
+          </div>
+        );
+      },
       width: 80,
     },
     {
@@ -447,7 +474,7 @@ const EmployeeTable = ({ testData, onRefresh }) => {
       width: 180,
     },
     {
-      title: "Шалгуулагч үр дүнгээ харсан эсэх",
+      title: "Шалгуулагч үр дүнгээ харах эсэх",
       dataIndex: "visible",
       key: "visible",
       render: (visible) =>
@@ -466,19 +493,41 @@ const EmployeeTable = ({ testData, onRefresh }) => {
       title: "Тайлан",
       key: "action",
       width: 100,
-      render: (_, record) =>
-        record.status === "Дуусгасан" ? (
-          <Button
-            className="link-btn-2"
-            loading={loadingReportId === record.code}
-            onClick={() => downloadReport(record.code)}
-          >
-            {loadingReportId !== record.code && (
-              <ClipboardBoldDuotone width={18} />
+      render: (_, record) => {
+        const isReportAvailable = record.status === "Дуусгасан";
+        const isExpired =
+          dayjs(record.endDate, "YYYY/MM/DD").isBefore(dayjs(), "day") &&
+          record.userEndDate === "-";
+
+        return (
+          <>
+            {isReportAvailable && (
+              <Button
+                className="link-btn-2 border-none"
+                loading={loadingReportId === record.code}
+                onClick={() => downloadReport(record.code)}
+              >
+                {loadingReportId !== record.code && (
+                  <ClipboardBoldDuotone width={18} />
+                )}
+                Татах
+              </Button>
             )}
-            Татах
-          </Button>
-        ) : null,
+
+            {isExpired && (
+              <Button
+                className="link-btn-3 border-none"
+                onClick={() => showExtendModal(record)}
+              >
+                {loadingReportId !== record.code && (
+                  <AlarmBoldDuotone width={18} />
+                )}
+                Сунгах
+              </Button>
+            )}
+          </>
+        );
+      },
     },
   ];
 
@@ -524,6 +573,7 @@ const EmployeeTable = ({ testData, onRefresh }) => {
       </div>
 
       <Table
+        locale={customLocale}
         loading={loading}
         columns={columns}
         dataSource={getFilteredData()}
@@ -536,6 +586,14 @@ const EmployeeTable = ({ testData, onRefresh }) => {
         className="test-history-table overflow-x-auto"
         rowClassName="hover:bg-gray-50 transition-colors"
       />
+      {selectedExam && (
+        <RenewModal
+          isVisible={isExtendModalVisible}
+          onClose={() => setIsExtendModalVisible(false)}
+          examData={selectedExam}
+          onSuccess={refreshData}
+        />
+      )}
     </div>
   );
 };

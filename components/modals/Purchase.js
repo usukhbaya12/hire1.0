@@ -9,6 +9,7 @@ import {
   RefreshCircleBoldDuotone,
 } from "solar-icons";
 import { getCurrentUser } from "@/app/api/main";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const PurchaseModal = ({
   isOpen,
@@ -186,24 +187,83 @@ const PurchaseModal = ({
       )}
 
       <div className="flex justify-end gap-2 mt-6 pb-1">
-        <Button onClick={onClose} className="back">
-          Буцах
-        </Button>
-        <Button
-          loading={confirmLoading}
-          htmlType="submit"
-          onClick={() => form.submit()}
-          disabled={
+        <div className="relative group cursor-pointer" onClick={onClose}>
+          <div className="absolute -inset-0.5 bg-gradient-to-br from-gray-200/50 to-gray-500/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+          <div className="relative bg-gradient-to-br from-gray-400/30 to-gray-300/20 rounded-full flex items-center justify-center border border-gray-500/10">
+            <div className="flex items-center gap-1.5 font-extrabold bg-gradient-to-br from-gray-500 to-gray-600 bg-clip-text text-transparent py-1 px-6">
+              Буцах
+            </div>
+          </div>
+        </div>
+        <div
+          className={`relative group ${
             calculateTotal(quantity) > balance || isRefreshing || fetchError
-          }
-          className={`${
-            calculateTotal(quantity) > balance || isRefreshing || fetchError
-              ? "bg-gray-400 cursor-not-allowed"
-              : ""
+              ? "cursor-not-allowed opacity-60"
+              : "cursor-pointer"
           }`}
+          onClick={
+            calculateTotal(quantity) > balance ||
+            isRefreshing ||
+            fetchError ||
+            confirmLoading
+              ? undefined
+              : () => form.submit()
+          }
         >
-          Худалдаж авах
-        </Button>
+          <div
+            className={`absolute -inset-0.5 bg-gradient-to-br ${
+              calculateTotal(quantity) > balance || isRefreshing || fetchError
+                ? "from-gray-400/50 to-gray-500/70"
+                : "from-main/50 to-main/70"
+            } rounded-full blur opacity-30 ${
+              calculateTotal(quantity) > balance || isRefreshing || fetchError
+                ? ""
+                : "group-hover:opacity-40"
+            } transition duration-300`}
+          ></div>
+
+          <div
+            className={`relative bg-gradient-to-br ${
+              calculateTotal(quantity) > balance || isRefreshing || fetchError
+                ? "from-gray-300/30 to-gray-400/20"
+                : "from-main/30 to-secondary/20"
+            } rounded-full flex items-center justify-center border ${
+              calculateTotal(quantity) > balance || isRefreshing || fetchError
+                ? "border-gray-300/10"
+                : "border-main/10"
+            }`}
+          >
+            <div
+              className={`flex items-center gap-1.5 font-extrabold ${
+                calculateTotal(quantity) > balance || isRefreshing || fetchError
+                  ? "bg-gradient-to-br from-gray-400 to-gray-500 bg-clip-text text-transparent"
+                  : "bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent"
+              } py-1 px-8 justify-center`}
+            >
+              {confirmLoading ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-5 h-5 flex items-center justify-center">
+                    <LoadingOutlined
+                      style={{
+                        fontSize: 16,
+                        color:
+                          calculateTotal(quantity) > balance ||
+                          isRefreshing ||
+                          fetchError
+                            ? "#888"
+                            : "white",
+                      }}
+                      spin
+                    />
+                  </div>
+                  Худалдаж авах
+                </div>
+              ) : (
+                "Худалдаж авах"
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     </Modal>
   );

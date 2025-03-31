@@ -85,6 +85,8 @@ const MyTests = () => {
 
   return (
     <>
+      <title>Hire.mn</title>
+
       <Spin
         fullscreen
         tip="Уншиж байна..."

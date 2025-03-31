@@ -28,6 +28,7 @@ import {
 import { getReport } from "@/app/api/exam";
 import * as XLSX from "xlsx";
 import dayjs from "dayjs";
+import { customLocale } from "@/app/utils/values";
 
 const ApplicantsTable = ({ data, loading }) => {
   const [applicants, setApplicants] = useState([]);
@@ -248,7 +249,7 @@ const ApplicantsTable = ({ data, loading }) => {
                 ((item.result.point || 0) / (item.result.total || 1)) * 100
               )}%`
           : "-",
-        "Харсан эсэх": item.visible ? "Тийм" : "Үгүй",
+        "Шалгуулагч үр дүнгээ харах эсэх": item.visible ? "Тийм" : "Үгүй",
       }));
 
       // Create worksheet
@@ -486,7 +487,7 @@ const ApplicantsTable = ({ data, loading }) => {
       render: (_, record) => getScore(record),
     },
     {
-      title: "Шалгуулагч үр дүнгээ харсан эсэх",
+      title: "Шалгуулагч үр дүнгээ харах эсэх",
       dataIndex: "visible",
       key: "visible",
       render: (visible) =>
@@ -508,7 +509,7 @@ const ApplicantsTable = ({ data, loading }) => {
       render: (_, record) =>
         record.endDate && record.result ? (
           <Button
-            className="link-btn-2"
+            className="link-btn-2 border-none"
             loading={loadingReportId === record.code}
             onClick={() => downloadReport(record.code)}
           >
@@ -581,6 +582,7 @@ const ApplicantsTable = ({ data, loading }) => {
         </div>
       </div>
       <Table
+        loc
         className="applicants-table overflow-x-auto"
         dataSource={filteredApplicants}
         loading={loading}
@@ -591,15 +593,7 @@ const ApplicantsTable = ({ data, loading }) => {
           showSizeChanger: false,
         }}
         onChange={handleTableChange}
-        locale={{
-          emptyText: (
-            <Empty
-              description="Өгөгдөл олдсонгүй."
-              className="py-6"
-              image={Empty.PRESENTED_IMAGE_DEFAULT}
-            />
-          ),
-        }}
+        locale={customLocale}
         columns={columns}
       />
     </>

@@ -579,6 +579,7 @@ export default function Exam() {
 
   return (
     <>
+      <title>{questionData?.assessment.name}</title>
       {contextHolder}
       {renderContent()}
     </>

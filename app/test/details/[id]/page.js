@@ -19,6 +19,7 @@ import {
   NotesBoldDuotone,
 } from "solar-icons";
 import { LoadingOutlined } from "@ant-design/icons";
+import Error from "@/components/Error";
 
 export default function TestDetails() {
   const params = useParams();
@@ -115,24 +116,7 @@ export default function TestDetails() {
   }
 
   if (!assessmentData || !assessmentData.questionCategories) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center text-gray-500">
-          <QuestionCircleBoldDuotone
-            width={48}
-            height={48}
-            className="mx-auto mb-4 opacity-50"
-          />
-          <p className="text-lg">Тестийн мэдээлэл олдсонгүй</p>
-          <Button
-            onClick={() => router.push("/me")}
-            className="mt-4 bg-main text-white"
-          >
-            Буцах
-          </Button>
-        </div>
-      </div>
-    );
+    return <Error message="Тест өгөх эрхгүй байна." />;
   }
 
   const sections = assessmentData.questionCategories
@@ -155,6 +139,7 @@ export default function TestDetails() {
 
   return (
     <>
+      <title>{assessmentData?.data.name}</title>
       {contextHolder}
       <div className="relative">
         <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">

@@ -668,7 +668,8 @@ function SigninForm() {
                   >
                     Бүртгүүлэх
                   </div>
-                  <Button htmlType="submit" loading={loading}>
+
+                  <Button htmlType="submit" loading={loading} className="login">
                     Нэвтрэх
                   </Button>
                 </div>

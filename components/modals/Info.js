@@ -29,21 +29,52 @@ const InfoModal = ({
       onCancel={onCancel}
       footer={
         <div className="flex gap-4 justify-end">
-          <Button
-            className="back border rounded-xl text-[13px] font-medium"
-            onClick={onCancel}
-          >
-            Буцах
-          </Button>
-          <Button
-            className={`border-none rounded-xl font-semibold text-white ${
-              hasAgreed ? "bg-main hover:bg-secondary" : "bg-gray-400"
+          <div className="relative group cursor-pointer" onClick={onCancel}>
+            <div className="absolute -inset-0.5 bg-gradient-to-br from-gray-200/50 to-gray-500/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+            <div className="relative bg-gradient-to-br from-gray-400/30 to-gray-300/20 rounded-full flex items-center justify-center border border-gray-500/10">
+              <div className="flex items-center gap-1.5 font-extrabold bg-gradient-to-br from-gray-500 to-gray-600 bg-clip-text text-transparent py-1 px-6">
+                Буцах
+              </div>
+            </div>
+          </div>
+
+          <div
+            className={`relative group ${
+              !hasAgreed ? "cursor-not-allowed opacity-60" : "cursor-pointer"
             }`}
-            onClick={handleOk}
-            disabled={!hasAgreed}
+            onClick={!hasAgreed ? undefined : handleOk}
+            style={{ width: "auto" }}
           >
-            Эхлүүлэх
-          </Button>
+            <div
+              className={`absolute -inset-0.5 bg-gradient-to-br ${
+                !hasAgreed
+                  ? "from-gray-400/50 to-gray-500/70"
+                  : "from-main/50 to-main/70"
+              } rounded-full blur opacity-30 ${
+                !hasAgreed ? "" : "group-hover:opacity-40"
+              } transition duration-300`}
+            ></div>
+
+            <div
+              className={`relative bg-gradient-to-br ${
+                !hasAgreed
+                  ? "from-gray-300/30 to-gray-400/20"
+                  : "from-main/30 to-secondary/20"
+              } rounded-full flex items-center justify-center border ${
+                !hasAgreed ? "border-gray-300/10" : "border-main/10"
+              }`}
+            >
+              <div
+                className={`flex items-center gap-1.5 font-extrabold ${
+                  !hasAgreed
+                    ? "bg-gradient-to-br from-gray-400 to-gray-500 bg-clip-text text-transparent"
+                    : "bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent"
+                } py-1 px-8 justify-center`}
+              >
+                Эхлүүлэх
+              </div>
+            </div>
+          </div>
         </div>
       }
     >

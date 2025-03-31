@@ -84,8 +84,9 @@ const BlogCard = ({ featured = false }) => {
 
 export default function News() {
   return (
-    <div className="min-h-screen">
-      {/* Background gradients */}
+    <div>
+      <title>Hire.mn</title>
+
       <div className="inset-0 fixed">
         <div className="absolute left-[-5%] w-[200px] h-[200px] md:w-[400px] md:h-[400px] rounded-full bg-orange-600/25 blur-[80px]" />
         <div className="absolute bottom-[-20%] right-[-10%] w-[200px] h-[200px] md:w-[500px] md:h-[500px] rounded-full bg-orange-600/25 blur-[100px]" />
@@ -135,16 +136,20 @@ export default function News() {
             </div>
           </div>
 
-          {/* Load More Button */}
           <m.div
             className="flex justify-center pb-14"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <button className="bg-main hover:bg-secondary text-white font-bold py-3 px-8 rounded-full transition-colors duration-300">
-              Цааш үзэх
-            </button>
+            <div className="relative group cursor-pointer">
+              <div className="absolute -inset-0.5 bg-gradient-to-br from-main/50 to-main/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+              <div className="relative bg-gradient-to-br from-main/20 to-main/10 rounded-full flex items-center justify-center border border-main/10">
+                <div className="font-extrabold bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent py-2 px-7">
+                  Цааш үзэх
+                </div>
+              </div>
+            </div>
           </m.div>
         </div>
 

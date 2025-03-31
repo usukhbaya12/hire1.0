@@ -26,8 +26,11 @@ import {
   ClockCircleBoldDuotone,
   UserBlockRoundedBoldDuotone,
   UserCheckBoldDuotone,
+  LetterBoldDuotone,
 } from "solar-icons";
 import DateTimePicker from "./DateTime";
+import { customLocale } from "@/app/utils/values";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const SpreadsheetInviteTable = ({ testData, onSuccess }) => {
   const [dateRange, setDateRange] = useState([
@@ -695,6 +698,7 @@ const SpreadsheetInviteTable = ({ testData, onSuccess }) => {
 
       {data.length > 0 && (
         <Table
+          locale={customLocale}
           rowSelection={rowSelection}
           dataSource={data}
           columns={columns}
@@ -724,14 +728,22 @@ const SpreadsheetInviteTable = ({ testData, onSuccess }) => {
               />
               <div>Тестийн үр дүнг шалгуулагчдад харуулах эсэх</div>
             </div>
-            <Button
-              disabled={data.length === 0}
+            <div
+              className="relative group cursor-pointer"
               onClick={prepareForSend}
-              className="no-inline"
             >
-              <LetterOpenedBoldDuotone width={18} height={18} />
-              Мейл илгээх
-            </Button>
+              <div className="absolute -inset-0.5 bg-gradient-to-br from-main/50 to-main/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+              <div className="relative bg-gradient-to-br from-main/30 to-secondary/20 rounded-full flex items-center justify-center border border-main/10">
+                <div className="flex items-center gap-1.5 font-extrabold bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent py-1.5 px-7">
+                  <LetterBoldDuotone
+                    width={18}
+                    height={18}
+                    className="text-main"
+                  />
+                  Мейл илгээх
+                </div>
+              </div>
+            </div>
           </div>
         </>
       )}
@@ -778,12 +790,7 @@ const SpreadsheetInviteTable = ({ testData, onSuccess }) => {
       </Modal>
 
       <Modal
-        title={
-          <div className="flex items-center gap-2">
-            <CheckCircleBoldDuotone className="text-main" />
-            <span className="text-[15px]">Шалгуулагч урих</span>
-          </div>
-        }
+        title="Шалгуулагч урих"
         open={isConfirmModalVisible}
         onCancel={() => setIsConfirmModalVisible(false)}
         footer={null}
@@ -863,16 +870,53 @@ const SpreadsheetInviteTable = ({ testData, onSuccess }) => {
             </tbody>
           </table>
         </div>
-        <div className="flex justify-end gap-2 mt-6 pb-1">
-          <Button
-            onClick={() => setIsConfirmModalVisible(false)}
-            className="back"
+        <div className="flex justify-end gap-4 mt-6 pb-1">
+          {/* Буцах (Back) Button */}
+          <div
+            className={`relative group ${
+              isLoading ? "cursor-not-allowed opacity-60" : "cursor-pointer"
+            }`}
+            onClick={
+              isLoading ? undefined : () => setIsConfirmModalVisible(false)
+            }
           >
-            Буцах
-          </Button>
-          <Button loading={isLoading} htmlType="submit" onClick={handleSend}>
-            Илгээх
-          </Button>
+            <div className="absolute -inset-0.5 bg-gradient-to-br from-gray-200/50 to-gray-500/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+            <div className="relative bg-gradient-to-br from-gray-400/30 to-gray-300/20 rounded-full flex items-center justify-center border border-gray-500/10">
+              <div className="flex items-center gap-1.5 font-extrabold bg-gradient-to-br from-gray-500 to-gray-600 bg-clip-text text-transparent py-1 px-6">
+                Буцах
+              </div>
+            </div>
+          </div>
+
+          {/* Илгээх (Submit) Button */}
+          <div
+            className={`relative group ${
+              isLoading ? "cursor-wait" : "cursor-pointer"
+            }`}
+            onClick={isLoading ? undefined : handleSend}
+          >
+            <div className="absolute -inset-0.5 bg-gradient-to-br from-main/50 to-main/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+            <div className="relative bg-gradient-to-br from-main/30 to-secondary/20 rounded-full flex items-center justify-center border border-main/10">
+              <div className="flex items-center gap-1.5 font-extrabold bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent py-1 px-8">
+                {isLoading ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-5 h-5 flex items-center justify-center">
+                      <LoadingOutlined
+                        style={{
+                          fontSize: 16,
+                          color: "white",
+                        }}
+                        spin
+                      />
+                    </div>
+                    Илгээх
+                  </div>
+                ) : (
+                  "Илгээх"
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </Modal>
     </div>

@@ -437,3 +437,35 @@ export const getPaymentHistory = async (
     };
   }
 };
+
+export const extendExamDate = async (id, endDate) => {
+  const token = await getAuthToken();
+  if (!token) return { token: false };
+  try {
+    const response = await axios.patch(
+      `${api}userService/date/${id}`,
+      endDate,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return {
+      data: response.data.payload,
+      message: response.data?.message,
+      status: response.data?.status,
+      success: response.data.succeed,
+    };
+  } catch (error) {
+    console.error(error);
+
+    return {
+      success: false,
+      message:
+        error.response?.data?.message || "Сервертэй холбогдоход алдаа гарлаа.",
+    };
+  }
+};

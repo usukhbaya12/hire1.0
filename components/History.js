@@ -114,7 +114,7 @@ const AssessmentCard = ({ assessment }) => {
                 <div>•</div>
                 <Button
                   type="link"
-                  className="link-btn-2"
+                  className="link-btn-2 border-none"
                   onClick={() => handleButtonClick(history)}
                 >
                   {history.completed ? (

@@ -31,6 +31,7 @@ import ChargeModal from "@/components/modals/Charge";
 import PaymentHistoryChart from "@/components/Payment";
 import Footer from "@/components/Footer";
 import ApplicantsTable from "@/components/All";
+import { customLocale } from "../utils/values";
 
 const Profile = () => {
   const router = useRouter();
@@ -93,6 +94,8 @@ const Profile = () => {
   }, [session?.user?.id]);
 
   if (!session) return null;
+
+  console.log(paymentData);
 
   const menuItems = [
     {
@@ -330,7 +333,7 @@ const Profile = () => {
               <div className="bg-white/40 shadow shadow-slate-200 backdrop-blur-md rounded-3xl shadow-sm">
                 <Table
                   className="test-history-table overflow-x-auto"
-                  dataSource={paymentData?.payments || []}
+                  dataSource={paymentData?.payments.data || []}
                   rowKey={(record, index) => index}
                   pagination={{
                     pageSize: 10,
@@ -338,15 +341,7 @@ const Profile = () => {
                     hideOnSinglePage: true,
                     showSizeChanger: false,
                   }}
-                  locale={{
-                    emptyText: (
-                      <Empty
-                        description="Өгөгдөл олдсонгүй."
-                        className="py-6"
-                        image={Empty.PRESENTED_IMAGE_DEFAULT}
-                      />
-                    ),
-                  }}
+                  locale={customLocale}
                   rowClassName={(record) =>
                     record.assessment ? "" : "bg-orange-50/30"
                   }
@@ -514,7 +509,7 @@ const Profile = () => {
                         Нийт зарцуулалт
                       </div>
                       <div className="text-xl font-bold text-red-500 mt-1">
-                        {paymentData?.payments
+                        {paymentData?.payments.data
                           .reduce(
                             (sum, item) =>
                               sum + (item.assessment ? item.price : 0),
@@ -537,7 +532,7 @@ const Profile = () => {
                         Нийт цэнэглэлт
                       </div>
                       <div className="text-xl font-bold text-green-500 mt-1">
-                        {paymentData?.payments
+                        {paymentData?.payments.data
                           ?.reduce(
                             (sum, item) =>
                               sum + (!item.assessment ? item.price : 0),
@@ -570,9 +565,12 @@ const Profile = () => {
                 </div>
               </div>
 
-              {paymentData?.payments && paymentData?.payments.length > 0 && (
-                <PaymentHistoryChart paymentData={paymentData?.payments} />
-              )}
+              {paymentData?.payments.data &&
+                paymentData?.payments.data.length > 0 && (
+                  <PaymentHistoryChart
+                    paymentData={paymentData?.payments.data}
+                  />
+                )}
 
               <div className="bg-white/40 shadow shadow-slate-200 backdrop-blur-md rounded-3xl p-6 shadow-sm mt-6">
                 <h2 className="text-base font-extrabold mb-4 px-1 flex items-center gap-2">
@@ -581,7 +579,7 @@ const Profile = () => {
                 </h2>
                 <Table
                   className="test-history-table overflow-x-auto"
-                  dataSource={paymentData?.payments || []}
+                  dataSource={paymentData?.payments.data || []}
                   //   loading={loading}
                   rowKey={(record, index) => index}
                   pagination={{
@@ -590,15 +588,7 @@ const Profile = () => {
                     hideOnSinglePage: true,
                     showSizeChanger: false,
                   }}
-                  locale={{
-                    emptyText: (
-                      <Empty
-                        description="Өгөгдөл олдсонгүй."
-                        className="py-6"
-                        image={Empty.PRESENTED_IMAGE_DEFAULT}
-                      />
-                    ),
-                  }}
+                  locale={customLocale}
                   rowClassName={(record) =>
                     record.assessment ? "" : "bg-orange-50/30"
                   }

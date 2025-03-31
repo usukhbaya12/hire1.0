@@ -80,13 +80,17 @@ const ExamFooter = ({
             <LibraryBoldDuotone />
           </div>
         </Dropdown>
-
-        <Button
+        <div
+          className="relative group cursor-pointer"
           onClick={onSectionChange}
-          className="flex-1 lg:flex-none items-center gap-2 border-none rounded-xl font-semibold text-white bg-main"
         >
-          {hasMoreCategories ? "Дараагийн хэсэг" : "Дуусгах"}
-        </Button>
+          <div className="absolute -inset-0.5 bg-gradient-to-br from-main/50 to-main/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+          <div className="relative bg-gradient-to-br from-main/30 to-secondary/20 rounded-full flex items-center justify-center border border-main/10">
+            <div className="flex items-center gap-1.5 font-extrabold bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent py-1.5 px-7">
+              {hasMoreCategories ? "Дараагийн хэсэг" : "Дуусгах"}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -197,12 +197,12 @@ const Error = ({ message }) => {
             {message || "Сервертэй холбогдоход алдаа гарлаа."}
           </h1>
           <div
-            className="relative group cursor-pointer mt-2"
             onClick={() => router.push("/")}
+            className="relative group cursor-pointer mt-4"
           >
-            <div className="absolute -inset-0.5 bg-gradient-to-br from-main/50 to-secondary/50 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-            <div className="relative bg-gradient-to-br from-main/10 to-secondary/10 rounded-full flex items-center justify-center border border-main/10">
-              <div className="text-base font-extrabold bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent py-2.5 px-7">
+            <div className="absolute -inset-0.5 bg-gradient-to-br from-main/50 to-main/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+            <div className="relative bg-gradient-to-br from-main/30 to-secondary/20 rounded-full flex items-center justify-center border border-main/10">
+              <div className="text-base font-extrabold bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent py-2.5 px-10">
                 Нүүр хуудас
               </div>
             </div>

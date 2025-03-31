@@ -73,7 +73,7 @@ body {
   font-size: 12px;
 }
 
-.ant-btn {
+.login.ant-btn {
   color: white;
   background-color: #f26522;
   border: none;
@@ -81,6 +81,21 @@ body {
   padding-inline: 32px;
   padding-block: 16px;
   font-weight: 700;
+}
+
+.ant-btn-sm {
+  font-weight: 500;
+}
+
+.ant-btn-variant-solid {
+  background-color: #f36421;
+  padding: 12px 10px;
+  border-radius: 9px;
+  box-shadow: none;
+}
+
+.ant-btn-variant-link {
+  color: #f36421;
 }
 
 .back.ant-btn {
@@ -196,6 +211,24 @@ body {
     .ant-btn-disabled
   ):hover {
   color: rgba(239, 68, 68);
+  background-color: transparent;
+  transition: all 0.3s;
+}
+
+.link-btn-3.ant-btn {
+  color: rgba(68, 108, 239, 0.7);
+  background-color: transparent;
+  box-shadow: none;
+  padding-inline: 0px;
+  padding-block: 0px;
+  font-weight: 700;
+  /* backdrop-filter: blur(12px); */
+}
+
+.link-btn-3.ant-btn-variant-outlined:not(:disabled):not(
+    .ant-btn-disabled
+  ):hover {
+  color: rgba(68, 108, 239);
   background-color: transparent;
   transition: all 0.3s;
 }

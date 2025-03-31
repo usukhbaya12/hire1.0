@@ -35,6 +35,7 @@ import QPay from "@/components/modals/QPay";
 import { getReport } from "@/app/api/exam";
 import { motion } from "framer-motion";
 import { LoadingOutlined } from "@ant-design/icons";
+import { customLocale } from "@/app/utils/values";
 
 export default function Test() {
   const params = useParams();
@@ -146,9 +147,14 @@ export default function Test() {
 
   const columns2 = [
     {
-      title: "Огноо",
+      title: "Уригдсан огноо",
       dataIndex: "date",
       key: "date",
+    },
+    {
+      title: "Дуусах огноо",
+      dataIndex: "endDate",
+      key: "endDate",
     },
     {
       title: "Төлөв",
@@ -313,7 +319,7 @@ export default function Test() {
         spinning={loading}
         indicator={<LoadingOutlined style={{ color: "white" }} spin />}
       />
-      <title>{assessmentData?.data?.name + " – Hire.mn"}</title>
+      <title>{assessmentData?.data?.name}</title>
       {contextHolder}
       {assessmentData.category && (
         <motion.div
@@ -517,6 +523,7 @@ export default function Test() {
                     Тест өгсөн түүх
                   </h2>
                   <Table
+                    locale={customLocale}
                     columns={columns}
                     dataSource={testHistory?.data
                       ?.filter((item) => item.status === 20)
@@ -659,146 +666,188 @@ export default function Test() {
                     className="test-history-table overflow-x-auto"
                     pagination={false}
                   />
+                  {testHistory?.invited && testHistory?.invited.length > 0 && (
+                    <div className="mt-6">
+                      <h2 className="text-base font-extrabold mb-4 px-1 flex items-center gap-2">
+                        <Buildings2BoldDuotone width={20} />
+                        Байгууллагаас уригдсан
+                      </h2>
+                      <Table
+                        locale={customLocale}
+                        columns={columns2}
+                        rowClassName={(record) =>
+                          record.isExpired
+                            ? "opacity-60 pointer-events-none"
+                            : ""
+                        }
+                        dataSource={testHistory?.invited.map((item) => {
+                          const date = new Date(item.endDate);
+                          const isExpired =
+                            date < new Date() && !item.userEndDate;
+
+                          return {
+                            key: item.id,
+                            date: new Date(item.createdAt).toLocaleDateString(),
+                            endDate: isExpired ? (
+                              <div>
+                                {date.toLocaleString("en-US", {
+                                  month: "numeric",
+                                  day: "numeric",
+                                  year: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                  hour12: false,
+                                })}
+                                <div className="flex items-center gap-1 text-red-500 text-xs font-bold mt-1">
+                                  <AlarmBoldDuotone width={16} />
+                                  Дууссан
+                                </div>
+                              </div>
+                            ) : (
+                              date.toLocaleString("en-US", {
+                                month: "numeric",
+                                day: "numeric",
+                                year: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: false,
+                              })
+                            ),
+                            isExpired,
+
+                            status:
+                              item.userStartDate == null &&
+                              item.userEndDate == null ? (
+                                <div className="relative group w-fit">
+                                  <div className="absolute -inset-0.5 bg-gradient-to-br from-yellow-600/50 to-orange-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+                                  <div className="relative bg-gradient-to-br from-yellow-400/30 to-yellow-300/20 rounded-full flex items-center justify-center border border-yellow-900/10">
+                                    <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-1 px-3.5">
+                                      <div className="w-2 h-2 bg-yellow-500 rounded-full -mt-0.5"></div>
+                                      Өгөөгүй
+                                    </div>
+                                  </div>
+                                </div>
+                              ) : item.userStartDate != null &&
+                                item.userEndDate == null ? (
+                                <div className="relative group w-fit">
+                                  <div className="absolute -inset-0.5 bg-gradient-to-br from-blue-600/50 to-blue-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+                                  <div className="relative bg-gradient-to-br from-blue-400/30 to-blue-300/20 rounded-full flex items-center justify-center border border-blue-900/10">
+                                    <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-1 px-3.5">
+                                      <div className="w-2 h-2 bg-blue-500 rounded-full -mt-0.5"></div>
+                                      Дуусгаагүй
+                                    </div>
+                                  </div>
+                                </div>
+                              ) : (
+                                <div className="relative group w-fit">
+                                  <div className="absolute -inset-0.5 bg-gradient-to-br from-lime-800/50 to-green-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+                                  <div className="relative bg-gradient-to-br from-lime-600/20 to-green-600/30 rounded-full flex items-center justify-center border border-yellow-900/10">
+                                    <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-black/60 to-black/70 bg-clip-text text-transparent py-1 px-3.5">
+                                      <div className="w-2 h-2 bg-lime-600 rounded-full -mt-0.5"></div>
+                                      Дуусгасан
+                                    </div>
+                                  </div>
+                                </div>
+                              ),
+
+                            result: item.visible ? (
+                              item.assessment.report === 10 && item.result ? (
+                                <div className="flex items-center gap-2">
+                                  <Progress
+                                    size="small"
+                                    percent={Math.round(
+                                      (item.result.point / item.result.total) *
+                                        100
+                                    )}
+                                    format={(percent) => `${percent}%`}
+                                    strokeColor={{
+                                      "0%": "#FF8400",
+                                      "100%": "#FF5C00",
+                                    }}
+                                  />
+                                  <span>
+                                    ({item.result.point}/{item.result.total})
+                                  </span>
+                                </div>
+                              ) : (
+                                <div>
+                                  {item.result
+                                    ? item.result.result +
+                                      " • " +
+                                      item.result.value
+                                    : ""}
+                                </div>
+                              )
+                            ) : item.userEndDate ? (
+                              <div className="items-center gap-2 flex">
+                                <EyeClosedLineDuotone
+                                  width={18}
+                                  className="text-main"
+                                />
+                                Байгууллагад илгээсэн
+                              </div>
+                            ) : (
+                              <></>
+                            ),
+
+                            payment: item.service.user ? (
+                              <div className="flex items-center gap-2 justify-center text-blue-700 font-bold">
+                                <Buildings2BoldDuotone width={18} />
+                                <div>{item.service.user.organizationName}</div>
+                              </div>
+                            ) : (
+                              <></>
+                            ),
+
+                            report: isExpired ? (
+                              <div className="flex justify-center">
+                                <button className="text-main flex text-center">
+                                  <NotificationLinesRemoveBoldDuotone
+                                    width={18}
+                                  />
+                                </button>
+                              </div>
+                            ) : item.userEndDate == null ? (
+                              <div
+                                className="flex justify-center"
+                                onClick={() =>
+                                  router.push(`/exam/${item.code}`)
+                                }
+                              >
+                                <button className="text-main hover:text-secondary flex items-center gap-2 text-center font-semibold">
+                                  <CursorLineDuotone width={18} />
+                                  Тест өгөх
+                                </button>
+                              </div>
+                            ) : item.visible ? (
+                              <div
+                                className="flex justify-center"
+                                onClick={() => downloadReport(item.code)}
+                              >
+                                <button className="text-main hover:text-secondary flex items-center gap-2 font-semibold">
+                                  <ClipboardTextBoldDuotone width={18} />
+                                  Татах
+                                </button>
+                              </div>
+                            ) : (
+                              <div className="flex justify-center">
+                                <button className="text-main flex text-center">
+                                  <NotificationLinesRemoveBoldDuotone
+                                    width={18}
+                                  />
+                                </button>
+                              </div>
+                            ),
+                          };
+                        })}
+                        className="test-history-table overflow-x-auto"
+                        pagination={false}
+                      />
+                    </div>
+                  )}
                 </div>
               )}
-            {session?.user?.role === 20 &&
-              testHistory?.invited &&
-              testHistory?.invited.length > 0 && (
-                <div className="bg-white/70 shadow shadow-slate-200 backdrop-blur-md rounded-3xl p-6 shadow-sm mt-12">
-                  <h2 className="text-base font-extrabold mb-4 px-1 flex items-center gap-2">
-                    <HistoryBoldDuotone width={20} />
-                    Байгууллагаас уригдсан
-                  </h2>
-                  <Table
-                    columns={columns2}
-                    dataSource={testHistory?.invited.map((item) => ({
-                      key: item.id,
-                      date: new Date(item.createdAt).toLocaleDateString(),
-                      status:
-                        item.userStartDate == null &&
-                        item.userEndDate == null ? (
-                          <div className="relative group w-fit">
-                            <div className="absolute -inset-0.5 bg-gradient-to-br from-yellow-600/50 to-orange-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-                            <div className="relative bg-gradient-to-br from-yellow-400/30 to-yellow-300/20 rounded-full flex items-center justify-center border border-yellow-900/10">
-                              <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-1 px-3.5">
-                                <div className="w-2 h-2 bg-yellow-500 rounded-full -mt-0.5"></div>
-                                Өгөөгүй
-                              </div>
-                            </div>
-                          </div>
-                        ) : item.userStartDate != null &&
-                          item.userEndDate == null ? (
-                          <div className="relative group w-fit">
-                            <div className="absolute -inset-0.5 bg-gradient-to-br from-blue-600/50 to-blue-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-                            <div className="relative bg-gradient-to-br from-blue-400/30 to-blue-300/20 rounded-full flex items-center justify-center border border-blue-900/10">
-                              <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-1 px-3.5">
-                                <div className="w-2 h-2 bg-blue-500 rounded-full -mt-0.5"></div>
-                                Дуусгаагүй
-                              </div>
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="relative group w-fit">
-                            <div className="absolute -inset-0.5 bg-gradient-to-br from-lime-800/50 to-green-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-                            <div className="relative bg-gradient-to-br from-lime-600/20 to-green-600/30 rounded-full flex items-center justify-center border border-yellow-900/10">
-                              <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-black/60 to-black/70 bg-clip-text text-transparent py-1 px-3.5">
-                                <div className="w-2 h-2 bg-lime-600 rounded-full -mt-0.5"></div>
-                                Дуусгасан
-                              </div>
-                            </div>
-                          </div>
-                        ),
-                      result: item.visible ? (
-                        item.assessment.report === 10 && item.result ? (
-                          <div className="flex items-center gap-2">
-                            <Progress
-                              size="small"
-                              percent={Math.round(
-                                (item.result.point / item.result.total) * 100
-                              )}
-                              format={(percent) => `${percent}%`}
-                              strokeColor={{
-                                "0%": "#FF8400",
-                                "100%": "#FF5C00",
-                              }}
-                            />
-                            <span>
-                              ({item.result.point}/{item.result.total})
-                            </span>
-                          </div>
-                        ) : (
-                          <div>
-                            {item.result
-                              ? item.result.result + " • " + item.result.value
-                              : ""}
-                          </div>
-                        )
-                      ) : (
-                        <div className="items-center gap-2 flex">
-                          <EyeClosedLineDuotone
-                            width={18}
-                            className="text-main"
-                          />
-                          Байгууллагад илгээсэн
-                        </div>
-                      ),
-                      payment: item.service.user ? (
-                        <div className="flex items-center gap-2 justify-center text-blue-700 font-bold">
-                          <Buildings2BoldDuotone width={18} />
-                          <div>{item.service.user.organizationName}</div>
-                        </div>
-                      ) : (
-                        <></>
-                      ),
-                      report: item.visible ? (
-                        item.userStartDate == null &&
-                        item.userEndDate == null ? (
-                          <div
-                            className="flex justify-center"
-                            onClick={() =>
-                              router.push(`/test/details/${testId}`)
-                            }
-                          >
-                            <button className="text-main hover:text-secondary flex items-center gap-2 text-center font-semibold">
-                              <CursorLineDuotone width={18} />
-                              Тест өгөх
-                            </button>
-                          </div>
-                        ) : item.userStartDate != null &&
-                          item.userEndDate == null ? (
-                          <div
-                            className="flex justify-center"
-                            onClick={() => router.push(`/exam/${item.code}`)}
-                          >
-                            <button className="text-main hover:text-secondary flex items-center gap-2 font-semibold">
-                              <MouseBoldDuotone width={18} />
-                              Үргэлжлүүлэх
-                            </button>
-                          </div>
-                        ) : (
-                          <div
-                            className="flex justify-center"
-                            onClick={() => downloadReport(item.code)}
-                          >
-                            <button className="text-main hover:text-secondary flex items-center gap-2 font-semibold">
-                              <ClipboardTextBoldDuotone width={18} />
-                              Татах
-                            </button>
-                          </div>
-                        )
-                      ) : (
-                        <div className="flex justify-center">
-                          <button className="text-main flex text-center">
-                            <NotificationLinesRemoveBoldDuotone width={18} />
-                          </button>
-                        </div>
-                      ),
-                    }))}
-                    className="test-history-table overflow-x-auto"
-                    pagination={false}
-                  />
-                </div>
-              )}
+
             <QPay
               isOpen={showPaymentModal}
               onClose={() => setShowPaymentModal(false)}
@@ -857,6 +906,7 @@ export default function Test() {
                     </div>
                   </div>
                   <Table
+                    locale={customLocale}
                     columns={columns_corp}
                     dataSource={testHistory?.data.map((item) => ({
                       key: item.id,
