@@ -52,8 +52,13 @@ export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedPrice, setSelectedPrice] = useState(null);
   const [messageApi, contextHolder] = message.useMessage();
+
   const testsSectionRef = useRef(null);
+  const starredSectionRef = useRef(null);
+  const popularSectionRef = useRef(null);
   const [isTestsSectionVisible, setIsTestsSectionVisible] = useState(false);
+  const [isStarredSectionVisible, setIsStarredSectionVisible] = useState(false);
+  const [isPopularSectionVisible, setIsPopularSectionVisible] = useState(false);
 
   const getData = async () => {
     try {
@@ -67,9 +72,10 @@ export default function Home() {
       }
 
       if (assessmentsResponse.success) {
-        const filteredData = assessmentsResponse.data.res.filter(
-          (item) => item.data.status === 10
+        const filteredData = assessmentsResponse.data.res.filter((item) =>
+          [10, 30].includes(item.data.status)
         );
+
         setAssessments(filteredData);
         setFilteredAssessments(filteredData);
       }
@@ -82,7 +88,7 @@ export default function Home() {
   useEffect(() => {
     getData();
 
-    const observer = new IntersectionObserver(
+    const testsObserver = new IntersectionObserver(
       ([entry]) => {
         setIsTestsSectionVisible(entry.isIntersecting);
 
@@ -95,13 +101,55 @@ export default function Home() {
       { threshold: 0.1 }
     );
 
+    const starredObserver = new IntersectionObserver(
+      ([entry]) => {
+        setIsStarredSectionVisible(entry.isIntersecting);
+
+        window.dispatchEvent(
+          new CustomEvent("starredVisibility", {
+            detail: { isVisible: entry.isIntersecting },
+          })
+        );
+      },
+      { threshold: 0.1 }
+    );
+
+    const popularObserver = new IntersectionObserver(
+      ([entry]) => {
+        setIsPopularSectionVisible(entry.isIntersecting);
+
+        window.dispatchEvent(
+          new CustomEvent("popularVisibility", {
+            detail: { isVisible: entry.isIntersecting },
+          })
+        );
+      },
+      { threshold: 0.1 }
+    );
+
     if (testsSectionRef.current) {
-      observer.observe(testsSectionRef.current);
+      testsObserver.observe(testsSectionRef.current);
+    }
+
+    if (starredSectionRef.current) {
+      starredObserver.observe(starredSectionRef.current);
+    }
+
+    if (popularSectionRef.current) {
+      popularObserver.observe(popularSectionRef.current);
     }
 
     return () => {
       if (testsSectionRef.current) {
-        observer.unobserve(testsSectionRef.current);
+        testsObserver.unobserve(testsSectionRef.current);
+      }
+
+      if (starredSectionRef.current) {
+        starredObserver.unobserve(starredSectionRef.current);
+      }
+
+      if (popularSectionRef.current) {
+        popularObserver.unobserve(popularSectionRef.current);
       }
     };
   }, []);
@@ -181,7 +229,9 @@ export default function Home() {
     scrollToTestsTop();
   };
 
-  const featuredTests = assessments.slice(0, 3);
+  console.log(assessments);
+
+  const featuredTests = assessments.filter((test) => test.data.status === 30);
   const popularTests = assessments.slice(3, 6);
 
   return (
@@ -358,6 +408,7 @@ export default function Home() {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="pt-12"
               id="starred"
+              ref={starredSectionRef}
             >
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
@@ -440,6 +491,7 @@ export default function Home() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 1 }}
             id="popular"
+            ref={popularSectionRef}
           >
             <div className="pt-8 sm:pt-6 pb-14">
               <motion.div

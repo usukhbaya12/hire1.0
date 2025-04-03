@@ -219,7 +219,7 @@ const Signup = () => {
                 </div>
               </div>
               {!isOrganization ? (
-                <div className="min-w-64">
+                <div className="min-w-64 pb-6 sm:pb-0">
                   <div
                     onClick={googleSignIn}
                     className="flex items-center bg-white gap-3 border border-gray-200 shadow shadow-slate-200 rounded-lg cursor-pointer sm:px-8 py-3 justify-center hover:bg-gray-50 transition-colors"

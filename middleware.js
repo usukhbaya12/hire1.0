@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
-import { api } from "./app/utils/routes";
 
 export async function middleware(request) {
   const { pathname } = request.nextUrl;
@@ -26,6 +25,10 @@ export async function middleware(request) {
       return NextResponse.redirect(url);
     }
   } else {
+    if (pathname.startsWith("/auth/")) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+
     if (userRole === 20 && pathname.startsWith("/tests/")) {
       return NextResponse.redirect(new URL("/", request.url));
     }

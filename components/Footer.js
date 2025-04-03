@@ -35,7 +35,8 @@ export default function Footer() {
     if (window.location.pathname === "/") {
       const section = document.getElementById(sectionId);
       if (section) {
-        const headerHeight = 72;
+        const headerHeight =
+          sectionId === "tests" ? 5 : sectionId === "starred" ? 0 : 20;
         const y = section.offsetTop - headerHeight;
         window.scrollTo({ top: y, behavior: "smooth" });
       }
