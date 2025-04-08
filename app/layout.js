@@ -59,6 +59,42 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
+        <meta
+          name="description"
+          content="Онлайн тест, хөндлөнгийн үнэлгээний платформ"
+        />
+
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://www.hire.mn" />
+        <meta
+          property="og:title"
+          content="Hire.mn | Онлайн тест, хөндлөнгийн үнэлгээ"
+        />
+        <meta
+          property="og:description"
+          content="Онлайн тест, хөндлөнгийн үнэлгээний платформ"
+        />
+        <meta property="og:image" content="https://www.hire.mn/hire-logo.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:locale" content="mn_MN" />
+        <meta property="og:site_name" content="Hire.mn" />
+
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content="https://www.hire.mn" />
+        <meta
+          property="twitter:title"
+          content="Hire.mn | Онлайн тест, хөндлөнгийн үнэлгээ"
+        />
+        <meta
+          property="twitter:description"
+          content="Онлайн тест, хөндлөнгийн үнэлгээний платформ"
+        />
+        <meta
+          property="twitter:image"
+          content="https://www.hire.mn/hire-logo.png"
+        />
+
         <link rel="icon" href="/favicon.ico" sizes="any" />
       </head>
       <body className={`${gilroy.variable} ${geistMono.variable} antialiased`}>

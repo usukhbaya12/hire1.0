@@ -258,7 +258,7 @@ export default function News() {
 
           {loading && pagination.current === 1 && !error && (
             <div className="text-center py-20">
-              <Spin size="large" />
+              <Spin />
             </div>
           )}
 
@@ -279,7 +279,7 @@ export default function News() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="mb-14"
+                className="mb-6 md:mb-12"
               >
                 <BlogCard blog={featuredBlog} featured />
               </m.div>
@@ -292,7 +292,7 @@ export default function News() {
           )}
 
           {blogs.length > 0 && (
-            <div className="pb-14">
+            <div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {blogs.map((blog, index) => (
                   <m.div

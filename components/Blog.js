@@ -14,6 +14,7 @@ import { api } from "@/app/utils/routes";
 import { getBlogById } from "@/app/api/main";
 import DOMPurify from "dompurify";
 import Link from "next/link";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const createMarkup = (htmlContent) => {
   if (typeof window !== "undefined") {
@@ -54,7 +55,6 @@ export default function BlogDetailPage() {
       } catch (err) {
         setError(err.message);
         messageApi.error(err.message);
-        console.error("Fetch blog by ID error:", err);
       } finally {
         setLoading(false);
       }
@@ -88,6 +88,7 @@ export default function BlogDetailPage() {
     }
   };
 
+  console.log(blog);
   return (
     <div>
       <title>{blog?.title}</title>
@@ -96,10 +97,16 @@ export default function BlogDetailPage() {
       <div className="relative flex flex-col">
         <main className="flex-grow py-3 sm:py-12">
           {loading && (
-            <div className="text-center py-20">
-              <Spin size="large" />
+            <div className="min-h-screen flex items-center justify-center">
+              <Spin
+                fullscreen
+                tip="Уншиж байна..."
+                spinning={loading}
+                indicator={<LoadingOutlined style={{ color: "white" }} spin />}
+              />
             </div>
           )}
+
           {error && !loading && (
             <div className="text-center py-20 text-red-600">
               Алдаа гарлаа: {error}{" "}

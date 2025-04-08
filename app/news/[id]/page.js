@@ -15,7 +15,6 @@ export async function generateMetadata({ params }) {
       title: blog.title,
       openGraph: {
         title: blog.title,
-        description: blog.description || blog.title.substring(0, 100),
         images: imageUrl
           ? [
               {
