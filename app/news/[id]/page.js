@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import BlogDetailPage from "@/components/BlogDetailPage";
+import BlogDetailPage from "@/components/Blog";
 import { getBlogById } from "@/app/api/main";
 import { api } from "@/app/utils/routes";
 
