@@ -401,6 +401,56 @@ export const getCurrentUser = async () => {
   }
 };
 
+export const getBlogById = async (id) => {
+  try {
+    const res = await fetch(`${api}blog/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((d) => d.json());
+
+    return {
+      data: res.payload,
+      token: true,
+      message: res?.message,
+      status: res?.status,
+      success: res.succeed,
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      success: false,
+      message: "Сервертэй холбогдоход алдаа гарлаа.",
+    };
+  }
+};
+
+export const getBlogs = async (type = 0, limit = 10, page = 1) => {
+  try {
+    const res = await fetch(`${api}blog/all/${type}/${limit}/${page}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((d) => d.json());
+
+    return {
+      data: res.payload,
+      token: true,
+      message: res?.message,
+      status: res?.status,
+      success: res.succeed,
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      success: false,
+      message: "Сервертэй холбогдоход алдаа гарлаа.",
+    };
+  }
+};
+
 export const getPaymentHistory = async (
   role = 0,
   id,
