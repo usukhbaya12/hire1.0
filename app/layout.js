@@ -59,7 +59,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        <meta
+        {/* <meta
           name="description"
           content="Онлайн тест, хөндлөнгийн үнэлгээний платформ"
         />
@@ -84,7 +84,7 @@ export default function RootLayout({ children }) {
           property="twitter:description"
           content="Онлайн тест, хөндлөнгийн үнэлгээ"
         />
-        <meta property="twitter:image" content="https://www.hire.mn/misc.png" />
+        <meta property="twitter:image" content="https://www.hire.mn/misc.png" /> */}
 
         <link rel="icon" href="/favicon.ico" sizes="any" />
       </head>
