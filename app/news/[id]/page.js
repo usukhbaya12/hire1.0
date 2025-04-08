@@ -1,4 +1,5 @@
-import BlogDetailPage from "@/components/Blog";
+import { Suspense } from "react";
+import BlogDetailPage from "@/components/BlogDetailPage";
 import { getBlogById } from "@/app/api/main";
 import { api } from "@/app/utils/routes";
 
@@ -9,33 +10,36 @@ export async function generateMetadata({ params }) {
 
     if (!blog) return { title: "Blog Post" };
 
-    const imageUrl = blog.image ? `${api}file/${blog.image}` : null;
+    const imageUrl = blog.image
+      ? `${api}file/${blog.image}`
+      : "https://www.hire.mn/misc.png";
 
     return {
       title: blog.title,
+      description: blog.description || blog.title,
       openGraph: {
         title: blog.title,
-        images: imageUrl
-          ? [
-              {
-                url: imageUrl,
-                width: 1200,
-                height: 630,
-                alt: blog.title,
-              },
-            ]
-          : [],
-        locale: "mn_MN",
+        description: blog.description || blog.title,
+        images: [
+          {
+            url: imageUrl,
+            width: 1200,
+            height: 630,
+            alt: blog.title,
+          },
+        ],
         type: "article",
       },
     };
   } catch (error) {
-    return {
-      title: "Blog Post",
-    };
+    return { title: "Blog Post" };
   }
 }
 
 export default function Page({ params }) {
-  return <BlogDetailPage params={params} />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <BlogDetailPage params={params} />
+    </Suspense>
+  );
 }

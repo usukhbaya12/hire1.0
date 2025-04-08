@@ -66,15 +66,12 @@ export default function RootLayout({ children }) {
 
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://www.hire.mn" />
-        <meta
-          property="og:title"
-          content="Hire.mn | Онлайн тест, хөндлөнгийн үнэлгээ"
-        />
+        <meta property="og:title" content="Hire.mn" />
         <meta
           property="og:description"
-          content="Онлайн тест, хөндлөнгийн үнэлгээний платформ"
+          content="Онлайн тест, хөндлөнгийн үнэлгээ"
         />
-        <meta property="og:image" content="https://www.hire.mn/hire-logo.png" />
+        <meta property="og:image" content="https://www.hire.mn/misc.png" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
         <meta property="og:locale" content="mn_MN" />
@@ -82,18 +79,12 @@ export default function RootLayout({ children }) {
 
         <meta property="twitter:card" content="summary_large_image" />
         <meta property="twitter:url" content="https://www.hire.mn" />
-        <meta
-          property="twitter:title"
-          content="Hire.mn | Онлайн тест, хөндлөнгийн үнэлгээ"
-        />
+        <meta property="twitter:title" content="Hire.mn" />
         <meta
           property="twitter:description"
-          content="Онлайн тест, хөндлөнгийн үнэлгээний платформ"
+          content="Онлайн тест, хөндлөнгийн үнэлгээ"
         />
-        <meta
-          property="twitter:image"
-          content="https://www.hire.mn/hire-logo.png"
-        />
+        <meta property="twitter:image" content="https://www.hire.mn/misc.png" />
 
         <link rel="icon" href="/favicon.ico" sizes="any" />
       </head>
