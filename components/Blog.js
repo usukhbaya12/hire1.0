@@ -15,6 +15,7 @@ import { getBlogById } from "@/app/api/main";
 import DOMPurify from "dompurify";
 import Link from "next/link";
 import { LoadingOutlined } from "@ant-design/icons";
+import DynamicMetaTags from "./Meta";
 
 const createMarkup = (htmlContent) => {
   if (typeof window !== "undefined") {
@@ -64,6 +65,18 @@ export default function BlogDetailPage() {
   }, [blogId, messageApi, router]);
 
   const imageUrl = blog?.image ? `${api}file/${blog.image}` : null;
+
+  const metadata = blog
+    ? {
+        title: blog.title,
+        description:
+          blog.content?.replace(/<[^>]*>/g, "").substring(0, 160) || blog.title,
+        image: imageUrl,
+        url: typeof window !== "undefined" ? window.location.href : "",
+        type: "article",
+      }
+    : null;
+
   const formattedDate = blog?.createdAt
     ? new Date(blog.createdAt).toLocaleDateString("mn-MN", {
         year: "numeric",
@@ -91,8 +104,9 @@ export default function BlogDetailPage() {
   console.log(blog);
   return (
     <div>
-      <title>{blog?.title}</title>
+      {blog && <DynamicMetaTags metadata={metadata} />}
 
+      <title>{blog?.title}</title>
       {contextHolder}
       <div className="relative flex flex-col">
         <main className="flex-grow py-3 sm:py-12">
