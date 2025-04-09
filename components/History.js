@@ -23,7 +23,7 @@ import { DropdownIcon } from "./Icons";
 const AssessmentCard = ({ assessment, isInvited = false }) => {
   const router = useRouter();
   const { data: session } = useSession();
-  const [loading, setLoading] = useState(false);
+  const [loadingCodes, setLoadingCodes] = useState({});
   const [messageApi, setMessageApi] = useState(null);
 
   const histories = assessment.histories.sort(
@@ -46,7 +46,7 @@ const AssessmentCard = ({ assessment, isInvited = false }) => {
 
   const downloadReport = async (code) => {
     try {
-      setLoading(true);
+      setLoadingCodes((prev) => ({ ...prev, [code]: true }));
       const res = await getReport(code);
 
       if (res.success && res.data) {
@@ -72,7 +72,7 @@ const AssessmentCard = ({ assessment, isInvited = false }) => {
         messageApi.error("Сервертэй холбогдоход алдаа гарлаа.");
       }
     } finally {
-      setLoading(false);
+      setLoadingCodes((prev) => ({ ...prev, [code]: false }));
     }
   };
 
@@ -113,6 +113,9 @@ const AssessmentCard = ({ assessment, isInvited = false }) => {
             isInvitedTest &&
             history.exams &&
             !history.exams.visible;
+
+          const code = history.exams?.code;
+          const isLoading = code ? loadingCodes[code] : false;
 
           return {
             dot: (
@@ -162,7 +165,7 @@ const AssessmentCard = ({ assessment, isInvited = false }) => {
                       </Button>
                     ) : (
                       <Button
-                        loading={loading}
+                        loading={isLoading}
                         type="link"
                         className="link-btn-2 border-none"
                         onClick={() => handleButtonClick(history)}

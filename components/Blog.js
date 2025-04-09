@@ -16,6 +16,7 @@ import DOMPurify from "dompurify";
 import Link from "next/link";
 import { LoadingOutlined } from "@ant-design/icons";
 import DynamicMetaTags from "./Meta";
+import NotFoundPage from "@/app/not-found";
 
 const createMarkup = (htmlContent) => {
   if (typeof window !== "undefined") {
@@ -120,14 +121,7 @@ export default function BlogDetailPage() {
             </div>
           )}
 
-          {error && !loading && (
-            <div className="text-center py-20 text-red-600">
-              Алдаа гарлаа: {error}{" "}
-              <Button onClick={() => router.push("/news")}>
-                Блог руу буцах
-              </Button>
-            </div>
-          )}
+          {error && !loading && <NotFoundPage />}
           {!loading && !error && blog && (
             <>
               {imageUrl && (

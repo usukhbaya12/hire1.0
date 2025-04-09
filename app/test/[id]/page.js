@@ -11,8 +11,6 @@ import {
   Buildings2BoldDuotone,
   CaseRoundMinimalisticBoldDuotone,
   ClipboardTextBoldDuotone,
-  CloudDownloadLineDuotone,
-  CloudPlusLineDuotone,
   CursorLineDuotone,
   EyeBoldDuotone,
   EyeClosedLineDuotone,
@@ -36,6 +34,7 @@ import { getReport } from "@/app/api/exam";
 import { motion } from "framer-motion";
 import { LoadingOutlined } from "@ant-design/icons";
 import { customLocale } from "@/app/utils/values";
+import NotFoundPage from "@/app/not-found";
 
 export default function Test() {
   const params = useParams();
@@ -51,16 +50,19 @@ export default function Test() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const historyTableRef = useRef(null);
+  const [error, setError] = useState(null);
 
   const fetchData = async () => {
     try {
       const assessmentResponse = await getAssessmentById(testId);
-      if (assessmentResponse.success) {
+      if (assessmentResponse.success && assessmentResponse.data) {
         if (assessmentResponse.data.data.status === 20) {
           router.push("/");
           return;
         }
         setAssessmentData(assessmentResponse.data);
+      } else {
+        throw new Error(response.message || "Тест олдсонгүй.");
       }
 
       const res = await getUserTestHistory(testId);
@@ -68,8 +70,8 @@ export default function Test() {
         setTestHistory(res.data);
       }
     } catch (error) {
-      console.error("GET / Aлдаа гарлаа.", error);
-      messageApi.error("Сервертэй холбогдоход алдаа гарлаа.");
+      setError("Тест олдсонгүй.");
+      messageApi.error("Тест олдсонгүй.");
     }
   };
 
@@ -351,6 +353,8 @@ export default function Test() {
       />
       <title>{assessmentData?.data?.name}</title>
       {contextHolder}
+      {error && !loading && <NotFoundPage />}
+
       {assessmentData.category && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -358,7 +362,6 @@ export default function Test() {
           transition={{ duration: 0.5 }}
           className="relative overflow-hidden"
         >
-          {" "}
           <div className="inset-0 fixed">
             <div className="absolute left-[-5%] w-[200px] h-[200px] md:w-[400px] md:h-[400px] rounded-full bg-orange-600/5 blur-[80px]" />
             <div className="absolute bottom-[-20%] right-[-10%] w-[200px] h-[200px] md:w-[500px] md:h-[500px] rounded-full bg-orange-600/5 blur-[100px]" />
@@ -607,7 +610,6 @@ export default function Test() {
                                         item.exams[0].result.total) *
                                         100
                                     )}
-                                    format={(percent) => `${percent}%`}
                                     strokeColor={{
                                       "0%": "#FF8400",
                                       "100%": "#FF5C00",
@@ -620,10 +622,17 @@ export default function Test() {
                                 </div>
                               ) : (
                                 <div>
-                                  {item.exams[0].result
-                                    ? item.exams[0].result.result +
-                                      " • " +
+                                  {item.exams[0]?.result
+                                    ? (item.exams[0].result.result
+                                        ? `${item.exams[0].result.result}`
+                                        : "") +
+                                      (item.exams[0].result.result &&
                                       item.exams[0].result.value
+                                        ? " • "
+                                        : "") +
+                                      (item.exams[0].result.value
+                                        ? `${item.exams[0].result.value}`
+                                        : "")
                                     : ""}
                                 </div>
                               )
