@@ -155,3 +155,31 @@ export const postFeedback = async (data) => {
     };
   }
 };
+
+export const getExamResults = async (id) => {
+  const token = await getAuthToken();
+
+  try {
+    const { data } = await axios.post(`${api}exam/calculation/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    return {
+      data: data.payload,
+      token: true,
+      message: data?.message,
+      status: data?.status,
+      success: data.succeed,
+    };
+  } catch (error) {
+    console.error(error);
+
+    return {
+      success: false,
+      message:
+        error.response?.data?.message || "Сервертэй холбогдоход алдаа гарлаа.",
+    };
+  }
+};

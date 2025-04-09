@@ -69,8 +69,7 @@ export default function BlogDetailPage() {
   const metadata = blog
     ? {
         title: blog.title,
-        description:
-          blog.content?.replace(/<[^>]*>/g, "").substring(0, 160) || blog.title,
+        description: "",
         image: imageUrl,
         url: typeof window !== "undefined" ? window.location.href : "",
         type: "article",

@@ -6,7 +6,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { CalendarBoldDuotone, UserCircleBoldDuotone } from "solar-icons";
 import { motion as m } from "framer-motion";
-import { Spin, message, Button, Tag, Segmented } from "antd";
+
+import { message, Button, Tag, Segmented } from "antd";
 import { getBlogs } from "../api/main";
 import { api } from "../utils/routes";
 
@@ -57,7 +58,6 @@ const BlogCard = ({ blog, featured = false }) => {
                   <span>{blog?.author?.name || "Hire.mn"}</span>
                 </div>
                 <div>•</div>
-
                 <Tag
                   color="blue"
                   className="rounded-full font-semibold px-2.5 shadow"
@@ -96,6 +96,7 @@ const BlogCard = ({ blog, featured = false }) => {
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className="object-cover transform transition-transform duration-500 group-hover:scale-105"
+          loading="lazy"
         />
       </div>
       <div className="px-6 pb-6 pt-1 flex flex-col flex-grow">
@@ -108,7 +109,6 @@ const BlogCard = ({ blog, featured = false }) => {
             <span>{blog?.author?.name || "Hire.mn"}</span>
           </div>
           <div>•</div>
-
           <Tag
             color="blue"
             className="rounded-full font-semibold px-2.5 shadow self-start"
@@ -160,6 +160,9 @@ export default function News() {
     ) => {
       if (!loadMore) {
         setLoading(true);
+
+        setBlogs([]);
+        setFeaturedBlog(null);
       } else {
         setLoadMoreLoading(true);
       }
@@ -178,12 +181,11 @@ export default function News() {
             setFeaturedBlog(pinned);
           } else {
             regular = fetchedBlogs;
+
             if (page === 1) setFeaturedBlog(null);
           }
 
-          setBlogs((prev) =>
-            page === 1 || loadMore === false ? regular : [...prev, ...regular]
-          );
+          setBlogs((prev) => (page === 1 ? regular : [...prev, ...regular]));
 
           setPagination((prev) => ({
             ...prev,
@@ -199,6 +201,8 @@ export default function News() {
         setError(err.message);
         messageApi.error(err.message);
         console.error("Fetch blogs error:", err);
+        setBlogs([]);
+        setFeaturedBlog(null);
       } finally {
         setLoading(false);
         setLoadMoreLoading(false);
@@ -209,7 +213,7 @@ export default function News() {
 
   useEffect(() => {
     setPagination((prev) => ({ ...prev, current: 1 }));
-    fetchBlogData(1, activeCategory);
+    fetchBlogData(1, activeCategory, pagination.pageSize, false);
   }, [activeCategory]);
 
   const handleLoadMore = () => {
@@ -218,18 +222,16 @@ export default function News() {
   };
 
   const displayedCount = blogs.length + (featuredBlog ? 1 : 0);
-  const hasMoreBlogs = displayedCount < pagination.total;
+  const hasMoreBlogs = !loading && displayedCount < pagination.total;
 
   return (
     <div>
       {contextHolder}
       <title>Hire.mn</title>
-
       <div className="inset-0 fixed -z-10">
         <div className="absolute left-[-5%] w-[200px] h-[200px] md:w-[400px] md:h-[400px] rounded-full bg-orange-600/25 blur-[80px]" />
         <div className="absolute bottom-[-20%] right-[-10%] w-[200px] h-[200px] md:w-[500px] md:h-[500px] rounded-full bg-orange-600/25 blur-[100px]" />
       </div>
-
       <div className="relative">
         <div className="relative 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6">
           <div className="pt-20 pb-8">
@@ -250,32 +252,37 @@ export default function News() {
               <Segmented
                 options={categoryOptions}
                 value={activeCategory}
-                onChange={setActiveCategory}
+                disabled={
+                  loading && pagination.current === 1 && !loadMoreLoading
+                }
+                onChange={(value) => {
+                  if (!loading) {
+                    setActiveCategory(value);
+                  }
+                }}
                 className="bg-white/70 backdrop-blur-md"
               />
             </m.div>
           </div>
 
-          {loading && pagination.current === 1 && !error && (
-            <div className="text-center py-20">
-              <Spin />
-            </div>
-          )}
-
           {error && !loading && (
             <div className="text-center py-20 text-red-600">
               Алдаа гарлаа: {error}{" "}
-              <Button onClick={() => fetchBlogData(1, activeCategory)}>
+              <Button
+                onClick={() =>
+                  fetchBlogData(1, activeCategory, pagination.pageSize, false)
+                }
+              >
                 Дахин оролдох
               </Button>
             </div>
           )}
-
           {!loading &&
             featuredBlog &&
             activeCategory === 0 &&
             pagination.current === 1 && (
               <m.div
+                key="featured-blog"
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
@@ -286,44 +293,48 @@ export default function News() {
             )}
 
           {!loading && blogs.length === 0 && !featuredBlog && !error && (
-            <div className="text-center py-20 text-gray-500">
-              Блог олдсонгүй.
-            </div>
+            <m.div
+              key="no-blogs-found"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="text-center py-20 text-gray-500"
+            >
+              Мэдээлэл олдсонгүй.
+            </m.div>
           )}
-
           {blogs.length > 0 && (
-            <div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {blogs.map((blog, index) => (
-                  <m.div
-                    key={blog.id}
-                    initial={{ opacity: 0, y: 50 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      duration: 0.5,
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {blogs.map((blog, index) => (
+                <m.div
+                  key={blog.id}
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.5,
 
-                      delay:
-                        (index % pagination.pageSize) * 0.05 +
-                        (pagination.current === 1 ? 0.3 : 0),
-                    }}
-                  >
-                    <BlogCard blog={blog} />
-                  </m.div>
-                ))}
-              </div>
+                    delay:
+                      (index % pagination.pageSize) * 0.07 +
+                      (pagination.current === 1 && featuredBlog ? 0.3 : 0.1),
+                  }}
+                >
+                  <BlogCard blog={blog} />
+                </m.div>
+              ))}
             </div>
           )}
 
-          <div className="flex justify-center pb-14">
-            {hasMoreBlogs && (
+          <div className="flex justify-center pt-8 pb-14 min-h-[80px]">
+            {hasMoreBlogs && !error && (
               <m.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
               >
                 <Button
                   onClick={handleLoadMore}
                   loading={loadMoreLoading}
+                  disabled={loadMoreLoading}
                   size="large"
                   className="relative group !rounded-full !border !border-main/10 !bg-gradient-to-br !from-main/20 !to-main/10 hover:!border-main/30 transition-all duration-300"
                 >
@@ -334,7 +345,7 @@ export default function News() {
               </m.div>
             )}
           </div>
-        </div>{" "}
+        </div>
         <Footer />
       </div>
     </div>

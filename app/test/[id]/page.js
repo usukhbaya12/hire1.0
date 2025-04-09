@@ -313,6 +313,34 @@ export default function Test() {
     }
   };
 
+  // const shareToFacebook = (examCode) => {
+  //   const shareUrl = `https://www.hire.mn/test/${testId}`;
+  //   const shareImageUrl = `https://www.hire.mn/api/share-image/${examCode}`;
+
+  //   const tempWindow = window.open("", "_blank");
+  //   tempWindow.document.write(`
+  //   <!DOCTYPE html>
+  //   <html>
+  //   <head>
+  //     <title>Sharing Test Result</title>
+  //     <meta property="og:url" content="${shareUrl}" />
+  //     <meta property="og:type" content="article" />
+  //     <meta property="og:title" content="My Test Result on Hire.mn" />
+  //     <meta property="og:description" content="Check out my test result on Hire.mn" />
+  //     <meta property="og:image" content="${shareImageUrl}" />
+  //     <script>
+  //       window.location.href = "https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+  //         shareUrl
+  //       )}";
+  //     </script>
+  //   </head>
+  //   <body>
+  //     <p>Redirecting to Facebook...</p>
+  //   </body>
+  //   </html>
+  // `);
+  // };
+
   return (
     <>
       <Spin
@@ -650,18 +678,32 @@ export default function Test() {
                               </button>
                             </div>
                           ) : (
-                            <div
-                              className="flex justify-center"
-                              onClick={() =>
-                                item.exams &&
-                                item.exams.length > 0 &&
-                                downloadReport(item.exams[0].code)
-                              }
-                            >
-                              <button className="text-main hover:text-secondary flex items-center gap-2 font-semibold">
+                            <div className="flex justify-center items-center gap-2">
+                              <button
+                                className="text-main hover:text-secondary flex items-center gap-2 font-semibold"
+                                onClick={() =>
+                                  item.exams &&
+                                  item.exams.length > 0 &&
+                                  downloadReport(item.exams[0].code)
+                                }
+                              >
                                 <ClipboardTextBoldDuotone width={18} />
                                 Татах
                               </button>
+                              {/* <span>•</span>
+                              <button
+                                onClick={() => shareToFacebook(record.code)}
+                                className="flex items-center justify-center transition-opacity hover:opacity-70"
+                                title="Share on Facebook"
+                              >
+                                <Image
+                                  src="/facebook.png"
+                                  alt="Facebook icon"
+                                  width={18}
+                                  height={18}
+                                  priority
+                                />
+                              </button> */}
                             </div>
                           ),
                       }))}
@@ -834,14 +876,28 @@ export default function Test() {
                                 </button>
                               </div>
                             ) : item.visible ? (
-                              <div
-                                className="flex justify-center"
-                                onClick={() => downloadReport(item.code)}
-                              >
-                                <button className="text-main hover:text-secondary flex items-center gap-2 font-semibold">
+                              <div className="flex justify-center items-center gap-2">
+                                <button
+                                  className="text-main hover:text-secondary flex items-center gap-2 font-semibold"
+                                  onClick={() => downloadReport(item.code)}
+                                >
                                   <ClipboardTextBoldDuotone width={18} />
                                   Татах
                                 </button>
+                                {/* <span>•</span>
+                                <button
+                                  onClick={() => shareToFacebook(record.code)}
+                                  className="flex items-center justify-center transition-opacity hover:opacity-70"
+                                  title="Share on Facebook"
+                                >
+                                  <Image
+                                    src="/facebook.png"
+                                    alt="Facebook icon"
+                                    width={18}
+                                    height={18}
+                                    priority
+                                  />
+                                </button> */}
                               </div>
                             ) : (
                               <div className="flex justify-center">
