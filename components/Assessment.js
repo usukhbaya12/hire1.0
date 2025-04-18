@@ -55,17 +55,19 @@ const Assessment = ({ assessment }) => {
       onClick={() => router.push(`/test/${assessment.data.id}`)}
     >
       <div className="flex flex-col gap-3">
-        {assessment.data.icons && (
-          <BlurImage
-            src={`${api}file/${assessment.data.icons}`}
-            alt={assessment.data.name}
-          />
-        )}
+        <BlurImage
+          src={
+            assessment.data.icons
+              ? `${api}file/${assessment.data.icons}`
+              : "/placeholder.png"
+          }
+          alt={assessment.data.name}
+        />
         <div className="space-y-3 pb-5 pt-3 px-9">
           <h3 className="font-extrabold text-lg transition-colors duration-500 group-hover:text-main leading-5">
             {assessment.data.name}
           </h3>
-          <p className="leading-6 text-justify text-gray-700">
+          <p className="leading-6 text-justify text-gray-700 line-clamp-4">
             {assessment.data.description}
           </p>
           <div className="font-semibold flex items-center text-gray-800">

@@ -29,10 +29,10 @@ const BlogCard = ({ blog, featured = false }) => {
     return (
       <Link
         href={`/news/${blog.id}`}
-        className="block group bg-white/70 backdrop-blur-md overflow-hidden transition-all duration-500 shadow hover:shadow-md hover:shadow-slate-200 shadow-slate-200 rounded-3xl lg:rounded-full cursor-pointer relative"
+        className="block group bg-white/70 backdrop-blur-md overflow-hidden transition-all duration-500 shadow hover:shadow-md hover:shadow-slate-200 shadow-slate-200 rounded-3xl cursor-pointer relative"
       >
         <div className="flex flex-col lg:flex-row">
-          <div className="relative lg:w-1/2 aspect-video lg:aspect-auto h-64 lg:h-96 overflow-hidden rounded-t-3xl lg:rounded-l-full lg:rounded-tr-none">
+          <div className="relative lg:w-1/2 aspect-video lg:aspect-auto h-64 lg:h-96 overflow-hidden rounded-t-3xl lg:rounded-tr-none">
             {blog.pinned && (
               <div className="absolute top-4 right-4 font-semibold bg-gradient-to-r from-main/90 to-main/70 text-white px-3 py-1 rounded-full text-xs backdrop-blur-md z-10 shadow-sm">
                 Онцлох

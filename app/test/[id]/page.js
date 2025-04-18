@@ -98,7 +98,10 @@ export default function Test() {
     {
       icon: <AlarmBoldDuotone width={36} height={36} />,
       label: "Хугацаа",
-      value: assessmentData.data?.duration + " " + "минут",
+      value:
+        assessmentData.data?.duration > 0
+          ? assessmentData.data?.duration + " " + "минут"
+          : "Хугацаагүй",
     },
     {
       icon: <Flag2BoldDuotone width={36} height={36} />,
@@ -378,7 +381,11 @@ export default function Test() {
                 />
                 <div className="absolute top-1 inset-x-0 h-[200px] sm:h-[150px] md:h-[150px] xl:h-[200px] 2xl:h-[250px] flex items-start justify-center overflow-hidden">
                   <Image
-                    src={`${api}file/${assessmentData.data.icons}`}
+                    src={
+                      assessmentData.data.icons
+                        ? `${api}file/${assessmentData.data.icons}`
+                        : "/placeholder.png"
+                    }
                     alt="Assessment Icon"
                     width={600}
                     height={200}
