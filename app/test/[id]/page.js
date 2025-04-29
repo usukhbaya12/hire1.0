@@ -318,33 +318,50 @@ export default function Test() {
     }
   };
 
-  // const shareToFacebook = (examCode) => {
-  //   const shareUrl = `https://www.hire.mn/test/${testId}`;
-  //   const shareImageUrl = `https://www.hire.mn/api/share-image/${examCode}`;
+  const shareToFacebookWithMeta = (examCode, testName, userName, result) => {
+    const siteUrl = "https://www.hire.mn";
 
-  //   const tempWindow = window.open("", "_blank");
-  //   tempWindow.document.write(`
-  //   <!DOCTYPE html>
-  //   <html>
-  //   <head>
-  //     <title>Sharing Test Result</title>
-  //     <meta property="og:url" content="${shareUrl}" />
-  //     <meta property="og:type" content="article" />
-  //     <meta property="og:title" content="My Test Result on Hire.mn" />
-  //     <meta property="og:description" content="Check out my test result on Hire.mn" />
-  //     <meta property="og:image" content="${shareImageUrl}" />
-  //     <script>
-  //       window.location.href = "https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-  //         shareUrl
-  //       )}";
-  //     </script>
-  //   </head>
-  //   <body>
-  //     <p>Redirecting to Facebook...</p>
-  //   </body>
-  //   </html>
-  // `);
-  // };
+    const shareUrl = `${siteUrl}/test/${testId}`;
+
+    let resultText = "";
+    if (result && typeof result === "object") {
+      if (result.result && result.value) {
+        resultText = `${result.result} • ${result.value}`;
+      } else if (result.point && result.total) {
+        const percent = Math.round((result.point / result.total) * 100);
+        resultText = `${percent}% (${result.point}/${result.total})`;
+      }
+    }
+
+    const description = `${userName} өгсөн "${testName}" тестийн үр дүн: ${resultText}`;
+
+    const imageUrl = `${siteUrl}/api/share/${examCode}`;
+
+    const tempWindow = window.open("", "_blank");
+    tempWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Hire.mn - ${testName} | ${userName}</title>
+        <meta property="og:url" content="${shareUrl}" />
+        <meta property="og:type" content="article" />
+        <meta property="og:title" content="Hire.mn - ${testName}" />
+        <meta property="og:description" content="${description}" />
+        <meta property="og:image" content="${imageUrl}" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <script>
+          window.location.href = "https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+            shareUrl
+          )}&quote=${encodeURIComponent(description)}";
+        </script>
+      </head>
+      <body>
+        <p>Redirecting to Facebook...</p>
+      </body>
+      </html>
+    `);
+  };
 
   return (
     <>
@@ -706,9 +723,16 @@ export default function Test() {
                                 <ClipboardTextBoldDuotone width={18} />
                                 Татах
                               </button>
-                              {/* <span>•</span>
+                              <span>•</span>
                               <button
-                                onClick={() => shareToFacebook(record.code)}
+                                onClick={() =>
+                                  shareToFacebookWithMeta(
+                                    item.exams[0].code,
+                                    assessmentData.data.name,
+                                    `${session.user.lastname} ${session.user.firstname}`,
+                                    item.exams[0].result
+                                  )
+                                }
                                 className="flex items-center justify-center transition-opacity hover:opacity-70"
                                 title="Share on Facebook"
                               >
@@ -719,7 +743,7 @@ export default function Test() {
                                   height={18}
                                   priority
                                 />
-                              </button> */}
+                              </button>
                             </div>
                           ),
                       }))}

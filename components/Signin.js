@@ -221,7 +221,7 @@ function SigninForm() {
         return (
           <div className="relative md:min-w-[450px]">
             <div className="md:mt-5">
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center justify-between mb-6 px-6">
                 <div
                   className="flex items-center gap-2 cursor-pointer text-gray-600 hover:text-primary transition-colors"
                   onClick={handleBackToLogin}
@@ -280,7 +280,7 @@ function SigninForm() {
                 </Form.Item>
                 <Form.Item className="mb-0 pb-4">
                   <Button
-                    className="login"
+                    className="grd-btn"
                     block
                     onClick={handleSendVerificationCode}
                     loading={resetLoading}
@@ -296,7 +296,7 @@ function SigninForm() {
         return (
           <div className="relative md:min-w-[450px]">
             <div className="md:mt-5">
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center justify-between mb-6 px-6">
                 <div
                   className="flex items-center gap-2 cursor-pointer text-gray-600 hover:text-primary transition-colors"
                   onClick={() => {
@@ -312,7 +312,7 @@ function SigninForm() {
                 </Text>
               </div>
 
-              <div className="text-center mb-6">
+              <div className="text-center mb-6 px-6">
                 <div className="inline-flex justify-center items-center w-16 h-16 rounded-full bg-main/20 mb-3">
                   <ShieldKeyholeBoldDuotone
                     width={24}
@@ -323,14 +323,12 @@ function SigninForm() {
                 <div className="m-0 font-bold text-base">
                   Баталгаажуулах код
                 </div>
-                <Text className="text-gray-500 block mb-1 mt-1 leading-4">
-                  <b>{resetEmail}</b> хаяг руу илгээсэн 6 оронтой кодыг оруулна
-                  уу.
-                </Text>
+                <div className="text-gray-500 mb-1 mt-2 leading-5">
+                  <b>{resetEmail}</b> хаяг руу илгээсэн
+                  <br />6 оронтой кодыг оруулна уу.
+                </div>
                 <Button
-                  className="mt-3 my-1 back"
-                  type="link"
-                  size="small"
+                  className="back-btn flex justify-center mx-auto mt-4"
                   onClick={() => handleSendVerificationCode()}
                   loading={resetLoading}
                 >
@@ -345,7 +343,7 @@ function SigninForm() {
                       id={`otp-${index}`}
                       key={index}
                       maxLength={1}
-                      className="w-10 h-12 text-center text-lg rounded-lg"
+                      className="w-12 h-12 text-center text-lg rounded-lg"
                       value={verificationCode[index] || ""}
                       onChange={(e) => {
                         const newValue = e.target.value;
@@ -380,7 +378,7 @@ function SigninForm() {
                   block
                   onClick={handleVerifyCode}
                   loading={resetLoading}
-                  className="mb-4 login"
+                  className="mb-4 grd-btn"
                 >
                   Баталгаажуулах
                 </Button>
@@ -392,7 +390,7 @@ function SigninForm() {
         return (
           <div className="relative md:min-w-[450px]">
             <div className="md:mt-5">
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center justify-between mb-6 px-6">
                 <div
                   className="flex items-center gap-2 cursor-pointer text-gray-600 hover:text-primary transition-colors"
                   onClick={() => {
@@ -487,7 +485,7 @@ function SigninForm() {
                 </Form.Item>
                 <Form.Item className="mb-0">
                   <Button
-                    className="mb-4 login"
+                    className="mb-4 grd-btn"
                     block
                     onClick={handleResetPassword}
                     loading={resetLoading}
@@ -670,7 +668,11 @@ function SigninForm() {
                     Бүртгүүлэх
                   </div>
 
-                  <Button htmlType="submit" loading={loading} className="login">
+                  <Button
+                    htmlType="submit"
+                    loading={loading}
+                    className="grd-btn"
+                  >
                     Нэвтрэх
                   </Button>
                 </div>

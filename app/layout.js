@@ -8,6 +8,7 @@ import Zoom from "@/components/Zoom";
 import { Provider } from "@/components/Provider";
 import Navbar from "@/components/Navbar";
 import Head from "next/head";
+import { AntdRegistry } from "@ant-design/nextjs-registry";
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -89,6 +90,7 @@ export default function RootLayout({ children }) {
         <link rel="icon" href="/favicon.ico" sizes="any" />
       </head>
       <body className={`${gilroy.variable} ${geistMono.variable} antialiased`}>
+        {/* <AntdRegistry hashPriority="high"> */}
         <Zoom />
         <Provider>
           {!hideNavbar && (
@@ -100,6 +102,7 @@ export default function RootLayout({ children }) {
             {children}
           </div>
         </Provider>
+        {/* </AntdRegistry> */}
       </body>
     </html>
   );

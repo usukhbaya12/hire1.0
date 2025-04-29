@@ -245,17 +245,24 @@ function NavbarContent() {
             </Dropdown>
 
             <div>
-              <button
-                onClick={() => {
-                  if (isExpanded) {
-                    setIsExpanded(false);
-                  }
-                  router.push("/contact");
-                }}
-                className="font-bold"
-              >
-                Бидэнтэй холбогдох
-              </button>
+              <div className="relative py-1">
+                <button
+                  className="font-bold"
+                  onClick={() => {
+                    if (isExpanded) {
+                      setIsExpanded(false);
+                    }
+                    router.push("/contact");
+                  }}
+                >
+                  Бидэнтэй холбогдох
+                </button>
+                <div
+                  className={`absolute bottom-0 left-0 w-full h-0.5 bg-main rounded-full transition-all duration-300 origin-left ${
+                    pathname === "/contact" ? "scale-x-100" : "scale-x-0"
+                  }`}
+                />
+              </div>
             </div>
           </div>
 

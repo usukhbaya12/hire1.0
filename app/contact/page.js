@@ -162,7 +162,7 @@ const ContactPage = () => {
                       </div>
                       <Button
                         onClick={() => setContactType(null)}
-                        className="back"
+                        className="back-btn"
                       >
                         Буцах
                       </Button>
@@ -259,8 +259,7 @@ const ContactPage = () => {
                     <Button
                       htmlType="submit"
                       loading={submitting}
-                      className="login"
-                      icon={<SendSquareBoldDuotone width={18} height={18} />}
+                      className="grd-btn"
                     >
                       Илгээх
                     </Button>

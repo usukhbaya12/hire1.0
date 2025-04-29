@@ -4,7 +4,11 @@ import React, { useState, useEffect, useCallback } from "react";
 import Footer from "@/components/Footer";
 import Image from "next/image";
 import Link from "next/link";
-import { CalendarBoldDuotone, UserCircleBoldDuotone } from "solar-icons";
+import {
+  CalendarBoldDuotone,
+  ClipboardTextBoldDuotone,
+  UserCircleBoldDuotone,
+} from "solar-icons";
 import { motion as m } from "framer-motion";
 
 import { message, Button, Tag, Segmented } from "antd";
@@ -234,14 +238,23 @@ export default function News() {
       </div>
       <div className="relative">
         <div className="relative 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6">
-          <div className="pt-20 pb-8">
+          <div className="pt-20 pb-6">
             <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7 }}
-              className="text-center font-black text-3xl md:text-4xl bg-gradient-to-r from-main to-secondary bg-clip-text text-transparent"
+              className="flex flex-col items-center gap-3"
             >
-              Блог, зөвлөмжүүд
+              <div className="w-16 h-16 bg-main/10 rounded-full flex items-center justify-center">
+                <ClipboardTextBoldDuotone
+                  className="text-main"
+                  width={32}
+                  height={32}
+                />
+              </div>
+              <h1 className="text-3xl font-black bg-gradient-to-r from-main to-secondary bg-clip-text text-transparent text-center">
+                Блог, зөвлөмжүүд
+              </h1>
             </m.div>
             <m.div
               initial={{ opacity: 0, y: 20 }}

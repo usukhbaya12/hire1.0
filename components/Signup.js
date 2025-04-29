@@ -128,7 +128,7 @@ const Signup = () => {
               <div className="w-full space-y-4 pt-3">
                 <Button
                   onClick={() => router.push("/auth/signin")}
-                  className="w-full login"
+                  className="w-full grd-btn"
                 >
                   Нэвтрэх
                 </Button>
@@ -147,7 +147,7 @@ const Signup = () => {
                   <Button
                     onClick={handleResendEmail}
                     loading={resendLoading}
-                    className="stroked-btn"
+                    className="grd-btn"
                   >
                     Мейл ирээгүй юу? Дахин илгээх
                   </Button>
@@ -673,7 +673,7 @@ const Signup = () => {
                   <Button
                     htmlType="submit"
                     loading={loading}
-                    className="bg-main border-none text-white rounded-xl py-[17px] px-9 login mb-0 font-bold"
+                    className="grd-btn"
                   >
                     Бүртгүүлэх
                   </Button>

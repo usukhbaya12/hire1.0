@@ -99,20 +99,27 @@ const GlossaryPage = () => {
 
       <div className="relative">
         <div className="relative 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6 pb-12">
-          <div className="pt-20">
+          <div className="pt-20 pb-6">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7 }}
-              className="text-center font-black text-3xl bg-gradient-to-r from-main to-secondary bg-clip-text text-transparent"
+              className="flex flex-col items-center gap-3"
             >
-              <h1 className="text-3xl font-black bg-gradient-to-r from-main to-secondary bg-clip-text text-transparent">
+              <div className="w-16 h-16 bg-main/10 rounded-full flex items-center justify-center">
+                <MagniferBoldDuotone
+                  className="text-main"
+                  width={32}
+                  height={32}
+                />
+              </div>
+              <h1 className="text-3xl font-black bg-gradient-to-r from-main to-secondary bg-clip-text text-transparent text-center">
                 Нэр томьёоны тайлбар
               </h1>
             </motion.div>
           </div>
 
-          <div className="mt-12 flex flex-col md:flex-row gap-8">
+          <div className="flex flex-col md:flex-row gap-8">
             {/* Left sidebar for term list */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}

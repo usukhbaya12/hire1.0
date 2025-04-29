@@ -10,11 +10,13 @@
   },
   "dependencies": {
     "@ant-design/icons": "^6.0.0",
+    "@ant-design/nextjs-registry": "^1.0.2",
     "@headlessui/react": "^2.2.0",
     "@react-oauth/google": "^0.12.1",
     "@shadcn/ui": "^0.0.4",
     "antd": "^5.23.4",
     "axios": "^1.7.9",
+    "canvas": "^3.1.0",
     "dayjs": "^1.11.13",
     "framer-motion": "^12.4.0",
     "jspdf": "^2.5.2",

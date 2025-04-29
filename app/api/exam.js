@@ -183,3 +183,30 @@ export const getExamResults = async (id) => {
     };
   }
 };
+
+export const getExamCalculation = async (id) => {
+  try {
+    const token = await getAuthToken();
+
+    const response = await axios.get(`${api}exam/calculation/${id}`, {
+      headers: {
+        Authorization: token ? `Bearer ${token}` : undefined,
+        "Content-Type": "application/json",
+      },
+    });
+
+    return {
+      data: response.data.payload,
+      message: response.data?.message,
+      status: response.data?.status,
+      success: response.data.succeed,
+    };
+  } catch (error) {
+    console.error("Error getting exam calculation:", error);
+    return {
+      success: false,
+      message:
+        error.response?.data?.message || "Сервертэй холбогдоход алдаа гарлаа.",
+    };
+  }
+};

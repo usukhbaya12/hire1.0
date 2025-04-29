@@ -520,7 +520,7 @@ const Account = () => {
                   <Button
                     htmlType="submit"
                     loading={updateLoading}
-                    className="stroked-btn"
+                    className="grd-btn"
                   >
                     Хадгалах
                   </Button>
@@ -601,7 +601,7 @@ const Account = () => {
                     <Button
                       htmlType="submit"
                       loading={updateLoading}
-                      className="stroked-btn"
+                      className="grd-btn"
                     >
                       Хадгалах
                     </Button>
@@ -710,7 +710,7 @@ const Account = () => {
                   <Button
                     htmlType="submit"
                     loading={updateLoading}
-                    className="stroked-btn"
+                    className="grd-btn"
                   >
                     Нууц үг солих
                   </Button>
