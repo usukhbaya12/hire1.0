@@ -319,7 +319,7 @@ export default function Test() {
   };
 
   const shareToFacebookWithMeta = (examCode, testName, userName, result) => {
-    const siteUrl = "https://www.hire.mn";
+    const siteUrl = "https://hire.mn";
 
     const shareUrl = `${siteUrl}/test/${testId}`;
 
@@ -349,7 +349,7 @@ export default function Test() {
         <meta property="og:description" content="${description}" />
         <meta property="og:image" content="${imageUrl}" />
         <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
+        <meta property="og:image:height" content="837.7" />
         <script>
           window.location.href = "https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
             shareUrl
