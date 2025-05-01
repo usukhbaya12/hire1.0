@@ -2,119 +2,162 @@ import { NextResponse } from "next/server";
 import { createCanvas, loadImage, registerFont } from "canvas";
 import path from "path";
 import fs from "fs";
-import { getAuthToken } from "@/app/utils/auth";
-import axios from "axios";
-import { api } from "@/app/utils/routes";
 import { getExamCalculation } from "../../exam";
 
-// Register fonts
-const fontPath = path.join(process.cwd(), "app/fonts/Gilroy-Bold.ttf");
-if (fs.existsSync(fontPath)) {
-  registerFont(fontPath, { family: "Gilroy", weight: "bold" });
+const CANVAS_WIDTH = 1600;
+const CANVAS_HEIGHT = 837.7;
+const FONT_DIR = path.join(process.cwd(), "app/fonts");
+const PLACEHOLDER_IMG_URL = "https://www.hire.mn/placeholder.png";
+const LOGO_URL = "https://www.hire.mn/hire-all-white.png";
+const HEADER_ICON_URL = "https://www.hire.mn/header-top-white.png";
+const CACHE_CONTROL_SUCCESS = "public, max-age=31536000, immutable";
+const CACHE_CONTROL_ERROR = "no-cache";
+
+function registerFontIfExists(filePath, family, weight) {
+  const fullPath = path.join(FONT_DIR, filePath);
+  if (fs.existsSync(fullPath)) {
+    registerFont(fullPath, { family, weight });
+  } else {
+    console.warn(`Font file not found, skipping registration: ${fullPath}`);
+  }
 }
 
-const blackFontPath = path.join(process.cwd(), "app/fonts/Gilroy-Black.ttf");
-if (fs.existsSync(blackFontPath)) {
-  registerFont(blackFontPath, { family: "Gilroy2", weight: "normal" });
-}
-
-const regularFontPath = path.join(
-  process.cwd(),
-  "app/fonts/Gilroy-Regular.ttf"
-);
-if (fs.existsSync(regularFontPath)) {
-  registerFont(regularFontPath, { family: "Gilroy", weight: "normal" });
-}
+registerFontIfExists("Gilroy-Bold.ttf", "Gilroy", "bold");
+registerFontIfExists("Gilroy-Black.ttf", "Gilroy2", "normal");
+registerFontIfExists("Gilroy-Regular.ttf", "Gilroy", "normal");
 
 async function getExamData(code) {
   try {
     const response = await getExamCalculation(code);
 
-    if (response.success) {
+    if (response.success && response.data) {
       return response.data;
     } else {
-      throw new Error(response.message || "Failed to get exam data");
+      throw new Error(
+        `Failed to get exam data: ${response.message || "Unknown API error"}`
+      );
     }
   } catch (error) {
-    console.error("Error fetching exam data:", error);
-    throw error;
+    console.error(`Error fetching exam data for code ${code}:`, error);
+    throw new Error(`Could not retrieve exam data. ${error.message}`);
   }
 }
 
+async function drawBackground(ctx) {
+  try {
+    const backgroundImage = await loadImage(PLACEHOLDER_IMG_URL);
+    const imgWidth = backgroundImage.width;
+    const imgHeight = backgroundImage.height;
+    const canvasRatio = CANVAS_WIDTH / CANVAS_HEIGHT;
+    const imageRatio = imgWidth / imgHeight;
+
+    let drawWidth,
+      drawHeight,
+      offsetX = 0,
+      offsetY = 0;
+
+    if (imageRatio > canvasRatio) {
+      drawHeight = CANVAS_HEIGHT;
+      drawWidth = imgWidth * (CANVAS_HEIGHT / imgHeight);
+      offsetX = (CANVAS_WIDTH - drawWidth) / 2;
+    } else {
+      drawWidth = CANVAS_WIDTH;
+      drawHeight = imgHeight * (CANVAS_WIDTH / imgWidth);
+      offsetY = (CANVAS_HEIGHT - drawHeight) / 2;
+    }
+    ctx.drawImage(backgroundImage, offsetX, offsetY, drawWidth, drawHeight);
+  } catch (e) {
+    console.error(
+      "Error loading background image, using fallback gradient:",
+      e
+    );
+    const gradient = ctx.createLinearGradient(
+      0,
+      0,
+      CANVAS_WIDTH,
+      CANVAS_HEIGHT
+    );
+    gradient.addColorStop(0, "#362c1e");
+    gradient.addColorStop(1, "#604c34");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+  }
+}
+
+function generateFallbackImageBuffer() {
+  const fallbackCanvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
+  const fallbackCtx = fallbackCanvas.getContext("2d");
+
+  fallbackCtx.fillStyle = "#000000";
+  fallbackCtx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+  fallbackCtx.font = "bold 48px Gilroy, Arial, sans-serif";
+  fallbackCtx.fillStyle = "#f36421";
+  fallbackCtx.textAlign = "center";
+  fallbackCtx.fillText(
+    "Тестийн үр дүн / Hire.mn",
+    CANVAS_WIDTH / 2,
+    CANVAS_HEIGHT / 2
+  );
+
+  fallbackCtx.font = "24px Gilroy, Arial, sans-serif";
+  fallbackCtx.fillStyle = "rgba(255, 255, 255, 0.6)";
+  fallbackCtx.textAlign = "left";
+  fallbackCtx.fillText("© Hire.mn", 1430, 770);
+
+  return fallbackCanvas.toBuffer("image/png");
+}
+
 export async function GET(request, { params }) {
-  const { code } = params;
+  const resolvedParams = await params;
+  const code = resolvedParams.code;
+
+  if (!code) {
+    console.error("Error: Missing 'code' parameter in request.");
+    const errorBuffer = generateFallbackImageBuffer();
+    return new NextResponse(errorBuffer, {
+      headers: {
+        "Content-Type": "image/png",
+        "Cache-Control": CACHE_CONTROL_ERROR,
+      },
+      status: 400,
+    });
+  }
 
   try {
     const examData = await getExamData(code);
+    if (
+      !examData ||
+      typeof examData.value !== "object" ||
+      examData.value === null
+    ) {
+      throw new Error(
+        "Fetched exam data is missing the expected 'value' object."
+      );
+    }
+    const examDetails = examData.value;
 
-    // Higher resolution canvas (1600x900)
-    const canvas = createCanvas(1600, 837.7);
+    const canvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
     const ctx = canvas.getContext("2d");
 
-    try {
-      const backgroundImage = await loadImage(
-        "https://www.hire.mn/placeholder.png"
-      );
-
-      // Get image dimensions
-      const imgWidth = backgroundImage.width;
-      const imgHeight = backgroundImage.height;
-
-      // Calculate canvas and image aspect ratios
-      const canvasRatio = 1600 / 837.7;
-      const imageRatio = imgWidth / imgHeight;
-
-      let drawWidth,
-        drawHeight,
-        offsetX = 0,
-        offsetY = 0;
-
-      // Determine which dimension to fill completely (cover approach)
-      if (imageRatio > canvasRatio) {
-        // Image is wider than canvas ratio - fill height and crop width
-        drawHeight = 837.7;
-        drawWidth = imgWidth * (837.7 / imgHeight);
-        offsetX = (1600 - drawWidth) / 2; // Center horizontally
-      } else {
-        // Image is taller than canvas ratio - fill width and crop height
-        drawWidth = 1600;
-        drawHeight = imgHeight * (1600 / imgWidth);
-        offsetY = (837.7 - drawHeight) / 2; // Center vertically
-      }
-
-      // Draw the image with calculated dimensions (some parts may be cropped)
-      ctx.drawImage(backgroundImage, offsetX, offsetY, drawWidth, drawHeight);
-    } catch (e) {
-      console.error("Error loading background image:", e);
-      // Fallback to a gradient background
-      const gradient = ctx.createLinearGradient(0, 0, 1600, 837.7);
-      gradient.addColorStop(0, "#362c1e");
-      gradient.addColorStop(1, "#604c34");
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, 1600, 837.7);
-    }
+    await drawBackground(ctx);
 
     try {
       ctx.fillStyle = "rgba(0, 0, 0, 0.65)";
       ctx.fillRect(0, 0, 1600, 837.7);
 
-      // Load and draw white logo
-      const logo = await loadImage("https://www.hire.mn/hire-all-white.png");
+      const logo = await loadImage(LOGO_URL);
       ctx.drawImage(logo, 72, 72, 200, 58.5);
 
-      // Load and draw brain icon (if available)
       try {
-        const brainIcon = await loadImage(
-          "https://www.hire.mn/header-top-white.png"
-        );
+        const brainIcon = await loadImage(HEADER_ICON_URL);
         ctx.drawImage(brainIcon, 930, 0, 675, 261);
       } catch (e) {
-        console.error("Error loading brain icon:", e);
+        console.error("Error loading brain icon (non-critical):", e);
       }
 
-      // Get user initials
-      const firstInitial = examData.value.firstname
-        ? examData.value.firstname.charAt(0).toUpperCase()
+      const firstInitial = examDetails.firstname
+        ? examDetails.firstname.charAt(0).toUpperCase()
         : "";
       const initials = `${firstInitial}`;
 
@@ -124,7 +167,7 @@ export async function GET(request, { params }) {
 
       ctx.beginPath();
       ctx.arc(circleX, circleY, circleRadius, 0, 2 * Math.PI);
-      ctx.fillStyle = "#f36421"; // Orange circle
+      ctx.fillStyle = "#f36421";
       ctx.fill();
 
       ctx.font = "48px Gilroy2, Arial, sans-serif";
@@ -135,12 +178,10 @@ export async function GET(request, { params }) {
       ctx.textAlign = "left";
       ctx.textBaseline = "alphabetic";
 
-      const assessmentName =
-        examData.value.assessmentName || "Assessment Results";
+      const assessmentName = examDetails.assessmentName || "Assessment Results";
       ctx.font = "86px Gilroy2, sans-serif";
       ctx.fillStyle = "#FFFFFF";
 
-      // Text wrapping function for max width of 300px
       const maxWidth = 800;
       const lineHeight = 80;
       const words = assessmentName.split(" ");
@@ -160,18 +201,15 @@ export async function GET(request, { params }) {
           line = testLine;
         }
       }
-
       ctx.fillText(line, 72, y);
 
-      // Draw user's full name
       ctx.font = "bold 36px Gilroy, Arial, sans-serif";
       ctx.fillStyle = "#FFFFFF";
-      ctx.fillText(`${examData.value.lastname}`, 190, 720);
+      ctx.fillText(`${examDetails.lastname || ""}`, 190, 720);
       ctx.font = "bold 36px Gilroy, Arial, sans-serif";
       ctx.fillStyle = "#FFFFFF";
-      ctx.fillText(`${examData.value.firstname}`, 190, 760);
+      ctx.fillText(`${examDetails.firstname || ""}`, 190, 760);
 
-      // Draw divider line
       ctx.strokeStyle = "rgba(255, 255, 255, 0.4)";
       ctx.lineWidth = 3;
       ctx.beginPath();
@@ -179,30 +217,25 @@ export async function GET(request, { params }) {
       ctx.lineTo(900, 650);
       ctx.stroke();
 
-      // Handle result display
-      if (examData.value.type === 11 || examData.value.type === 10) {
-        // Progress circle with score
-        const score = examData.value.point;
-        const total = examData.value.total;
-        const percent = Math.round((score / total) * 100);
+      const examType = examDetails.type;
+      if (examType === 11 || examType === 10) {
+        const score = examDetails.point ?? 0;
+        const total = examDetails.total ?? 0;
+        const percent = total > 0 ? Math.round((score / total) * 100) : 0;
 
-        // Draw score as fraction
         ctx.font = "60px Gilroy2, Arial, sans-serif";
-        ctx.fillStyle = "#fff"; // Orange color
+        ctx.fillStyle = "#fff";
         ctx.fillText(`${score}/${total}`, 222, 567);
 
-        // Draw percentage and progress
         const centerX = 130;
         const centerY = 550;
         const radius = 60;
 
-        // Draw progress circle background
         ctx.beginPath();
         ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
         ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
         ctx.fill();
 
-        // Draw progress arc
         ctx.beginPath();
         ctx.arc(
           centerX,
@@ -216,78 +249,57 @@ export async function GET(request, { params }) {
         ctx.lineWidth = 15;
         ctx.stroke();
 
-        // Draw percentage text
         ctx.font = "bold 32px Gilroy, Arial, sans-serif";
         ctx.fillStyle = "#FFFFFF";
         ctx.textAlign = "center";
         ctx.fillText(`${percent}%`, centerX + 2, centerY + 10);
-        ctx.textAlign = "left";
+        ctx.textAlign = "left"; // Reset alignment
       } else {
-        // Just display the result text
         ctx.font = "50px Gilroy2, Arial, sans-serif";
-        ctx.fillStyle = "#fff"; // Orange color
+        ctx.fillStyle = "#fff";
 
-        let resultText = "";
-        if (examData.value.result) {
-          resultText = examData.value.result;
-          if (examData.value.value) {
-            resultText += ` • ${examData.value.value}`;
-          }
+        let resultText = examDetails.result || "";
+        if (examDetails.value && resultText) {
+          resultText += ` • ${examDetails.value}`;
+        } else if (examDetails.value) {
+          resultText = examDetails.value; // Use value if result is empty
         }
 
         ctx.fillText(resultText, 72, 600);
       }
 
-      // Draw website URL at bottom
       ctx.font = "24px Gilroy, Arial, sans-serif";
       ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
       ctx.fillText("© Hire.mn", 1430, 770);
-    } catch (error) {
-      console.error("Error drawing on canvas:", error);
-      throw error;
+    } catch (drawingError) {
+      console.error(
+        `Error occurred during canvas drawing phase for code ${code}:`,
+        drawingError
+      );
+      throw new Error(`Failed to draw image content. ${drawingError.message}`);
     }
 
     const buffer = canvas.toBuffer("image/png");
-
     return new NextResponse(buffer, {
       headers: {
         "Content-Type": "image/png",
-        "Cache-Control": "public, max-age=31536000, immutable",
+        "Cache-Control": CACHE_CONTROL_SUCCESS, // Use constant
       },
     });
   } catch (error) {
-    console.error("Error generating share image:", error);
+    console.error(`Failed to generate share image for code ${code}:`, error);
     try {
-      // Create a fallback image on error
-      const canvas = createCanvas(1600, 837.7);
-      const ctx = canvas.getContext("2d");
-
-      // Black background
-      ctx.fillStyle = "#000000";
-      ctx.fillRect(0, 0, 1600, 837.7);
-
-      // Error message
-      ctx.font = "bold 48px Gilroy, Arial, sans-serif";
-      ctx.fillStyle = "#f36421";
-      ctx.textAlign = "center";
-      ctx.fillText("Тестийн үр дүн / Hire.mn", 800, 400);
-
-      ctx.font = "24px Gilroy, Arial, sans-serif";
-      ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
-      ctx.textAlign = "left";
-      ctx.fillText("© Hire.mn", 1430, 770);
-
-      const buffer = canvas.toBuffer("image/png");
-
-      return new NextResponse(buffer, {
+      const fallbackBuffer = generateFallbackImageBuffer();
+      return new NextResponse(fallbackBuffer, {
         headers: {
           "Content-Type": "image/png",
-          "Cache-Control": "no-cache",
+          "Cache-Control": CACHE_CONTROL_ERROR, // Use constant
         },
+        status: 500, // Internal Server Error
       });
     } catch (fallbackError) {
-      console.error("Error creating fallback image:", fallbackError);
-      return NextResponse.error();
+      console.error("CRITICAL: Error creating fallback image:", fallbackError);
+      return new NextResponse("Failed to generate image.", { status: 500 });
     }
   }
 }
