@@ -14,6 +14,7 @@ import {
   UserBlockBoldDuotone,
   UserCircleLineDuotone,
 } from "solar-icons";
+import Link from "next/link";
 
 // Fallback component to show while Navbar is loading
 function NavbarFallback() {
@@ -88,30 +89,30 @@ function NavbarContent() {
     {
       key: "profile",
       label: (
-        <div
+        <Link
+          href="/me"
           className="cursor-pointer font-semibold flex items-center gap-1.5"
           onClick={() => {
             if (isExpanded) {
               setIsExpanded(false);
             }
-            router.push("/me");
           }}
         >
           <NotesBoldDuotone width={18} height={18} className="text-main" />
           {session?.user?.role === 30 ? "Миний тестүүд" : "Өгсөн тестүүд"}
-        </div>
+        </Link>
       ),
     },
     {
       key: "info",
       label: (
-        <div
+        <Link
+          href="/me/account"
           className="cursor-pointer font-semibold flex items-center gap-1.5"
           onClick={() => {
             if (isExpanded) {
               setIsExpanded(false);
             }
-            router.push("/me/account");
           }}
         >
           <MentionCircleBoldDuotone
@@ -120,7 +121,7 @@ function NavbarContent() {
             className="text-blue-500"
           />
           Миний бүртгэл
-        </div>
+        </Link>
       ),
     },
     {
@@ -177,13 +178,13 @@ function NavbarContent() {
               {isExpanded ? <XIcon /> : <HamburgerIcon />}
             </button>
           </div>
-          <div
+          <Link
+            href="/"
             className="cursor-pointer"
             onClick={() => {
               if (isExpanded) {
                 setIsExpanded(false);
               }
-              router.push("/");
             }}
           >
             <Image
@@ -194,7 +195,7 @@ function NavbarContent() {
               priority
               draggable={false}
             />
-          </div>
+          </Link>
         </div>
 
         {/* DESKTOP MENU */}
@@ -246,17 +247,17 @@ function NavbarContent() {
 
             <div>
               <div className="relative py-1">
-                <button
+                <Link
+                  href="/contact"
                   className="font-bold"
                   onClick={() => {
                     if (isExpanded) {
                       setIsExpanded(false);
                     }
-                    router.push("/contact");
                   }}
                 >
                   Бидэнтэй холбогдох
-                </button>
+                </Link>
                 <div
                   className={`absolute bottom-0 left-0 w-full h-0.5 bg-main rounded-full transition-all duration-300 origin-left ${
                     pathname === "/contact" ? "scale-x-100" : "scale-x-0"
@@ -315,19 +316,18 @@ function NavbarContent() {
                 </Dropdown>
               </div>
             ) : (
-              <>
+              <Link href="/auth/signin">
                 <Button
                   onClick={() => {
                     if (isExpanded) {
                       setIsExpanded(false);
                     }
-                    router.push("/auth/signin");
                   }}
                   className="nav-btn shadow-lg shadow-orange-600/50"
                 >
                   Нэвтрэх
                 </Button>
-              </>
+              </Link>
             )}
           </div>
         </div>
@@ -386,15 +386,15 @@ function NavbarContent() {
             </div>
           </div>
           <Divider className="no-margin" />
-          <div
+          <Link
+            href="/contact"
             className="cursor-pointer font-bold"
             onClick={() => {
               setIsExpanded(false);
-              router.push("/contact");
             }}
           >
             Бидэнтэй холбогдох
-          </div>
+          </Link>
         </div>
       </div>
     </nav>

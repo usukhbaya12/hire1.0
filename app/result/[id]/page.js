@@ -20,6 +20,7 @@ import Error from "@/components/Error";
 import { getExamCalculation, getReport } from "@/app/api/exam";
 import PdfViewer from "@/components/PdfViewer";
 import Footer from "@/components/Footer";
+import LoadingSpinner from "@/components/Spin";
 
 export default function Results() {
   const params = useParams();
@@ -86,16 +87,7 @@ export default function Results() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Spin
-          fullscreen
-          tip="Уншиж байна..."
-          spinning={loading}
-          indicator={<LoadingOutlined style={{ color: "white" }} spin />}
-        />
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   if (error) {

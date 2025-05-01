@@ -26,6 +26,7 @@ import FlagModal from "@/components/modals/Flag";
 import FinishModal from "@/components/modals/Finish";
 import Error from "@/components/Error";
 import Completion from "@/components/Completion";
+import LoadingSpinner from "@/components/Spin";
 
 export default function Exam() {
   const params = useParams();
@@ -353,16 +354,7 @@ export default function Exam() {
 
   if (error) return <Error message={error} />;
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Spin
-          fullscreen
-          tip="Уншиж байна..."
-          spinning={loading}
-          indicator={<LoadingOutlined style={{ color: "white" }} spin />}
-        />
-      </div>
-    );
+    return <LoadingSpinner />;
   }
   if (!questionData) return null;
 

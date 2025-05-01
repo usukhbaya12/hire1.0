@@ -17,6 +17,7 @@ import Link from "next/link";
 import { LoadingOutlined } from "@ant-design/icons";
 import DynamicMetaTags from "./Meta";
 import NotFoundPage from "@/app/not-found";
+import LoadingSpinner from "./Spin";
 
 const createMarkup = (htmlContent) => {
   if (typeof window !== "undefined") {
@@ -101,6 +102,10 @@ export default function BlogDetailPage() {
     }
   };
 
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
   console.log(blog);
   return (
     <div>
@@ -110,17 +115,6 @@ export default function BlogDetailPage() {
       {contextHolder}
       <div className="relative flex flex-col">
         <main className="flex-grow py-3 sm:py-12">
-          {loading && (
-            <div className="min-h-screen flex items-center justify-center">
-              <Spin
-                fullscreen
-                tip="Уншиж байна..."
-                spinning={loading}
-                indicator={<LoadingOutlined style={{ color: "white" }} spin />}
-              />
-            </div>
-          )}
-
           {error && !loading && <NotFoundPage />}
           {!loading && !error && blog && (
             <>

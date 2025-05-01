@@ -3,6 +3,7 @@ import { api } from "@/app/utils/routes";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { AlarmBoldDuotone, TagBoldDuotone } from "solar-icons";
+import Link from "next/link";
 
 const BlurImage = ({ src, alt }) => {
   const [isLoading, setLoading] = useState(true);
@@ -50,43 +51,42 @@ const Assessment = ({ assessment }) => {
   }
 
   return (
-    <div
-      className="group bg-white backdrop-blur-md overflow-hidden transition-all duration-500 shadow shadow-slate-200 rounded-3xl cursor-pointer z-10"
-      onClick={() => router.push(`/test/${assessment.data.id}`)}
-    >
-      <div className="flex flex-col gap-3">
-        <BlurImage
-          src={
-            assessment.data.icons
-              ? `${api}file/${assessment.data.icons}`
-              : "/placeholder.png"
-          }
-          alt={assessment.data.name}
-        />
-        <div className="space-y-3 pb-5 pt-3 px-9">
-          <h3 className="font-extrabold text-lg transition-colors duration-500 group-hover:text-main leading-5">
-            {assessment.data.name}
-          </h3>
-          <p className="leading-6 text-justify text-gray-700 line-clamp-4">
-            {assessment.data.description}
-          </p>
-          <div className="font-semibold flex items-center text-gray-800">
-            {assessment.data.price > 0
-              ? assessment.data.price.toLocaleString() + "₮"
-              : "Үнэгүй"}
-            <div className="flex items-center gap-1.5">
-              <span className="pl-2 pr-1">•</span>
-              <AlarmBoldDuotone width={16} height={16} />
-              {assessment.data.duration} минут бөглөнө
+    <Link href={`/test/${assessment.data.id}`}>
+      <div className="group bg-white backdrop-blur-md overflow-hidden transition-all duration-500 shadow shadow-slate-200 rounded-3xl cursor-pointer z-10">
+        <div className="flex flex-col gap-3">
+          <BlurImage
+            src={
+              assessment.data.icons
+                ? `${api}file/${assessment.data.icons}`
+                : "/placeholder.png"
+            }
+            alt={assessment.data.name}
+          />
+          <div className="space-y-3 pb-5 pt-3 px-9">
+            <h3 className="font-extrabold text-lg transition-colors duration-500 group-hover:text-main leading-5">
+              {assessment.data.name}
+            </h3>
+            <p className="leading-6 text-justify text-gray-700 line-clamp-4">
+              {assessment.data.description}
+            </p>
+            <div className="font-semibold flex items-center text-gray-800">
+              {assessment.data.price > 0
+                ? assessment.data.price.toLocaleString() + "₮"
+                : "Үнэгүй"}
+              <div className="flex items-center gap-1.5">
+                <span className="pl-2 pr-1">•</span>
+                <AlarmBoldDuotone width={16} height={16} />
+                {assessment.data.duration} минут бөглөнө
+              </div>
             </div>
-          </div>
-          <div className="inline-flex gap-1.5 items-center bg-neutral/50 px-2 rounded-lg">
-            <TagBoldDuotone width={16} />
-            {assessment.category.name}
+            <div className="inline-flex gap-1.5 items-center bg-neutral/50 px-2 rounded-lg">
+              <TagBoldDuotone width={16} />
+              {assessment.category.name}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

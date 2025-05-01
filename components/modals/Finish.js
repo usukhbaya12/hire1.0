@@ -66,59 +66,17 @@ const FinishModal = ({ open, onClose, onSubmit, assessment }) => {
         title="Тесттэй холбоотой санал хүсэлт"
         width={450}
         footer={[
-          <div
-            className={`relative group w-full ${
+          <Button
+            loading={loading}
+            className={`grd-btn h-9 w-full ${
               !selected || loading
                 ? "cursor-not-allowed opacity-60"
                 : "cursor-pointer"
             }`}
             onClick={!selected || loading ? undefined : handleSubmit}
           >
-            <div
-              className={`absolute -inset-0.5 bg-gradient-to-br ${
-                !selected
-                  ? "from-gray-400/50 to-gray-500/70"
-                  : "from-main/50 to-main/70"
-              } rounded-full blur opacity-30 ${
-                !selected ? "" : "group-hover:opacity-40"
-              } transition duration-300`}
-            ></div>
-
-            <div
-              className={`relative bg-gradient-to-br ${
-                !selected
-                  ? "from-gray-300/30 to-gray-400/20"
-                  : "from-main/30 to-secondary/20"
-              } rounded-full flex items-center justify-center border ${
-                !selected ? "border-gray-300/10" : "border-main/10"
-              }`}
-            >
-              <div
-                className={`flex items-center gap-1.5 font-extrabold ${
-                  !selected
-                    ? "bg-gradient-to-br from-gray-400 to-gray-500 bg-clip-text text-transparent"
-                    : "bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent"
-                } py-2 px-7 w-full justify-center`}
-              >
-                {loading ? (
-                  <div className="flex items-center gap-2">
-                    <div className="w-5 h-5 flex items-center justify-center">
-                      <LoadingOutlined
-                        style={{
-                          fontSize: 16,
-                          color: !selected ? "#888" : "white",
-                        }}
-                        spin
-                      />
-                    </div>
-                    Илгээх
-                  </div>
-                ) : (
-                  "Илгээх"
-                )}
-              </div>
-            </div>
-          </div>,
+            Илгээх
+          </Button>,
         ]}
       >
         <div className="flex flex-col items-center pt-4 pb-2">

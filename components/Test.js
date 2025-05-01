@@ -35,12 +35,15 @@ import { motion } from "framer-motion";
 import { LoadingOutlined } from "@ant-design/icons";
 import { customLocale } from "@/app/utils/values";
 import NotFoundPage from "@/app/not-found";
+import Link from "next/link";
 
 export default function Test() {
   const params = useParams();
   const searchParams = useSearchParams();
   const testId = params.id;
   const [loading, setLoading] = useState(false);
+  const [loadingBtn, setLoadingBtn] = useState(false);
+  const [loadingTakeTest, setLoadingTakeTest] = useState(false);
   const [assessmentData, setAssessmentData] = useState([]);
   const { data: session } = useSession();
   const router = useRouter();
@@ -217,6 +220,8 @@ export default function Test() {
   ];
 
   const handleTakeTest = async () => {
+    setLoadingTakeTest(true);
+
     if (!session) {
       localStorage.setItem("intendedTestUrl", `/test/${testId}`);
       router.push("/auth/signin");
@@ -240,8 +245,6 @@ export default function Test() {
     }
 
     try {
-      setLoading(true);
-
       if (assessmentData.data.price === 0) {
         const response = await userService(testId);
 
@@ -261,7 +264,7 @@ export default function Test() {
       console.error("Худалдан авалтад алдаа гарлаа.", error);
       messageApi.error("Сервертэй холбогдоход алдаа гарлаа.");
     } finally {
-      setLoading(false);
+      setLoadingTakeTest(false);
     }
   };
 
@@ -293,7 +296,7 @@ export default function Test() {
 
   const downloadReport = async (code) => {
     try {
-      setLoading(true);
+      setLoadingBtn(code);
       const res = await getReport(code);
 
       if (res.success && res.data) {
@@ -315,7 +318,7 @@ export default function Test() {
       console.error("GET / Aлдаа гарлаа.", error);
       messageApi.error("Сервертэй холбогдоход алдаа гарлаа.");
     } finally {
-      setLoading(false);
+      setLoadingBtn(null);
     }
   };
 
@@ -390,16 +393,10 @@ export default function Test() {
                 <Breadcrumb
                   className="mb-3"
                   items={[
-                    {
-                      title: "Тестүүд",
-                      href: "/tests",
-                    },
-                    {
-                      title: assessmentData.category.name,
-                    },
+                    { title: <Link href="/#tests">Тестүүд</Link> },
+                    { title: assessmentData.category.name },
                   ]}
                 />
-
                 <h1 className="text-4xl font-black mb-4 w-3/4 w-3/4 xl:w-[80%] 2xl:w-[90%] bg-gradient-to-r from-main to-secondary bg-clip-text text-transparent">
                   {assessmentData.data.name}
                 </h1>
@@ -444,33 +441,23 @@ export default function Test() {
               ))}
             </div>
             <div className="flex flex-col justify-center gap-3 mt-8 sm:hidden text-center">
-              <div
-                className="relative group cursor-pointer"
+              <Button
+                className="grd-btn h-10 w-full"
                 onClick={handleTakeTest}
+                loading={loadingTakeTest}
               >
-                <div className="absolute -inset-0.5 bg-gradient-to-br from-main/50 to-main/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-                <div className="relative bg-gradient-to-br from-main/20 to-main/10 rounded-full flex items-center justify-center border border-main/10">
-                  <div className="font-extrabold bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent py-2 px-7">
-                    {(session?.user?.role === 20 &&
-                      testHistory?.data &&
-                      testHistory?.data.some(
-                        (item) => item.usedUserCount === 0 && item.status === 20
-                      )) ||
-                    (session?.user?.role === 20 &&
-                      assessmentData.data.price === 0)
-                      ? "Тест өгөх"
-                      : "Худалдаж авах"}
-                  </div>
-                </div>
-              </div>
-              <div className="relative group cursor-pointer">
-                <div className="absolute -inset-0.5 bg-gradient-to-br from-gray-600/50 to-gray-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-                <div className="relative bg-gradient-to-br from-gray-400/30 to-gray-200/20 rounded-full flex items-center justify-center border border-gray-900/10">
-                  <div className="font-extrabold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-2 px-7">
-                    Жишиг тайлан харах
-                  </div>
-                </div>
-              </div>
+                {(session?.user?.role === 20 &&
+                  testHistory?.data &&
+                  testHistory?.data.some(
+                    (item) => item.usedUserCount === 0 && item.status === 20
+                  )) ||
+                (session?.user?.role === 20 && assessmentData.data.price === 0)
+                  ? "Тест өгөх"
+                  : "Худалдаж авах"}
+              </Button>
+              <Button className="grd-btn-2 h-10 w-full">
+                Жишиг тайлан харах
+              </Button>
             </div>
             <div
               className={`w-full grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mt-8`}
@@ -511,33 +498,23 @@ export default function Test() {
               ))}
             </div>
             <div className="flex justify-center gap-4 mt-12 hidden sm:flex">
-              <div
-                className="relative group cursor-pointer"
+              <Button
+                className="grd-btn h-10 w-32"
                 onClick={handleTakeTest}
+                loading={loadingTakeTest}
               >
-                <div className="absolute -inset-0.5 bg-gradient-to-br from-main/50 to-main/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-                <div className="relative bg-gradient-to-br from-main/30 to-secondary/20 rounded-full flex items-center justify-center border border-main/10">
-                  <div className="font-extrabold bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent py-2 px-7">
-                    {(session?.user?.role === 20 &&
-                      testHistory?.data &&
-                      testHistory?.data.some(
-                        (item) => item.usedUserCount === 0 && item.status === 20
-                      )) ||
-                    (session?.user?.role === 20 &&
-                      assessmentData.data.price === 0)
-                      ? "Тест өгөх"
-                      : "Худалдаж авах"}
-                  </div>
-                </div>
-              </div>
-              <div className="relative group cursor-pointer">
-                <div className="absolute -inset-0.5 bg-gradient-to-br from-gray-600/50 to-gray-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-                <div className="relative bg-gradient-to-br from-gray-400/30 to-gray-200/20 rounded-full flex items-center justify-center border border-gray-900/10">
-                  <div className="font-extrabold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-2 px-7">
-                    Жишиг тайлан харах
-                  </div>
-                </div>
-              </div>
+                {(session?.user?.role === 20 &&
+                  testHistory?.data &&
+                  testHistory?.data.some(
+                    (item) => item.usedUserCount === 0 && item.status === 20
+                  )) ||
+                (session?.user?.role === 20 && assessmentData.data.price === 0)
+                  ? "Тест өгөх"
+                  : "Худалдаж авах"}
+              </Button>
+              <Button className="grd-btn-2 h-10 w-48">
+                Жишиг тайлан харах
+              </Button>
             </div>
             {session?.user?.role === 20 &&
               testHistory?.data &&
@@ -652,36 +629,32 @@ export default function Test() {
                         report:
                           item.exams[0]?.userStartDate == null &&
                           item.exams[0]?.userEndDate == null ? (
-                            <div
-                              className="flex justify-center"
-                              onClick={() =>
-                                router.push(`/test/details/${testId}`)
-                              }
-                            >
-                              <button className="text-main hover:text-secondary flex items-center gap-2 text-center font-semibold">
-                                <CursorLineDuotone width={18} />
-                                Тест өгөх
-                              </button>
+                            <div className="flex justify-center">
+                              <Link href={`/test/details/${testId}`}>
+                                <Button className="link-btn-2 border-none">
+                                  <CursorLineDuotone width={18} />
+                                  Тест өгөх
+                                </Button>
+                              </Link>
                             </div>
                           ) : item.exams[0]?.userStartDate != null &&
                             item.exams[0]?.userEndDate == null ? (
-                            <div
-                              className="flex justify-center"
-                              onClick={() =>
-                                item.exams &&
-                                item.exams.length > 0 &&
-                                router.push(`/exam/${item.exams[0].code}`)
-                              }
-                            >
-                              <button className="text-main hover:text-secondary flex items-center gap-2 font-semibold">
-                                <MouseBoldDuotone width={18} />
-                                Үргэлжлүүлэх
-                              </button>
+                            <div>
+                              {item.exams && item.exams.length > 0 && (
+                                <Link href={`/exam/${item.exams[0].code}`}>
+                                  <Button className="link-btn-2 border-none">
+                                    <MouseBoldDuotone width={18} />
+                                    Үргэлжлүүлэх
+                                  </Button>
+                                </Link>
+                              )}
                             </div>
                           ) : (
                             <div className="flex justify-center items-center gap-2">
-                              <button
-                                className="text-main hover:text-secondary flex items-center gap-2 font-semibold"
+                              <Button
+                                type="link"
+                                loading={loadingBtn === item.exams[0].code}
+                                className="link-btn-2 outline-none border-none"
                                 onClick={() =>
                                   item.exams &&
                                   item.exams.length > 0 &&
@@ -690,7 +663,7 @@ export default function Test() {
                               >
                                 <ClipboardTextBoldDuotone width={18} />
                                 Татах
-                              </button>
+                              </Button>
                               <span>•</span>
                               <button
                                 onClick={() =>
@@ -860,28 +833,22 @@ export default function Test() {
                                 </button>
                               </div>
                             ) : item.userStartDate && !item.userEndDate ? (
-                              <div
-                                className="flex justify-center"
-                                onClick={() =>
-                                  router.push(`/exam/${item.code}`)
-                                }
-                              >
-                                <button className="text-main hover:text-secondary flex items-center gap-2 font-semibold">
-                                  <MouseBoldDuotone width={18} />
-                                  Үргэлжлүүлэх
-                                </button>
+                              <div className="flex justify-center">
+                                <Link href={`/exam/${item.code}`}>
+                                  <Button className="link-btn-2 border-none">
+                                    <MouseBoldDuotone width={18} />
+                                    Үргэлжлүүлэх
+                                  </Button>
+                                </Link>
                               </div>
                             ) : item.userEndDate == null ? (
-                              <div
-                                className="flex justify-center"
-                                onClick={() =>
-                                  router.push(`/exam/${item.code}`)
-                                }
-                              >
-                                <button className="text-main hover:text-secondary flex items-center gap-2 text-center font-semibold">
-                                  <CursorLineDuotone width={18} />
-                                  Тест өгөх
-                                </button>
+                              <div className="flex justify-center">
+                                <Link href={`/exam/${item.code}`}>
+                                  <Button className="link-btn-2 border-none">
+                                    <CursorLineDuotone width={18} />
+                                    Тест өгөх
+                                  </Button>
+                                </Link>
                               </div>
                             ) : item.visible ? (
                               <div className="flex justify-center items-center gap-2">
@@ -974,13 +941,12 @@ export default function Test() {
                           эрх үлдсэн
                         </div>
                       </div>
-                      <Button
-                        className="stroked-btn"
-                        onClick={() => router.push(`/tests/${testId}`)}
-                      >
-                        <UserPlusBoldDuotone width={18} />
-                        Шалгуулагч урих
-                      </Button>
+                      <Link href={`/tests/${testId}`}>
+                        <Button className="stroked-btn">
+                          <UserPlusBoldDuotone width={18} />
+                          Шалгуулагч урих
+                        </Button>
+                      </Link>
                     </div>
                   </div>
                   <Table

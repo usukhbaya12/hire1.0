@@ -889,34 +889,15 @@ const SpreadsheetInviteTable = ({ testData, onSuccess }) => {
           </div>
 
           {/* Илгээх (Submit) Button */}
-          <div
-            className={`relative group ${
+          <Button
+            className={`grd-btn h-9 w-full ${
               isLoading ? "cursor-wait" : "cursor-pointer"
             }`}
+            loading={isLoading}
             onClick={isLoading ? undefined : handleSend}
           >
-            <div className="absolute -inset-0.5 bg-gradient-to-br from-main/50 to-main/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-            <div className="relative bg-gradient-to-br from-main/30 to-secondary/20 rounded-full flex items-center justify-center border border-main/10">
-              <div className="flex items-center gap-1.5 font-extrabold bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent py-1 px-8">
-                {isLoading ? (
-                  <div className="flex items-center gap-2">
-                    <div className="w-5 h-5 flex items-center justify-center">
-                      <LoadingOutlined
-                        style={{
-                          fontSize: 16,
-                          color: "white",
-                        }}
-                        spin
-                      />
-                    </div>
-                    Илгээх
-                  </div>
-                ) : (
-                  "Илгээх"
-                )}
-              </div>
-            </div>
-          </div>
+            Илгээх
+          </Button>
         </div>
       </Modal>
     </div>

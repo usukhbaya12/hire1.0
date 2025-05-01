@@ -20,6 +20,7 @@ import {
 } from "solar-icons";
 import { LoadingOutlined } from "@ant-design/icons";
 import Error from "@/components/Error";
+import LoadingSpinner from "@/components/Spin";
 
 export default function TestDetails() {
   const params = useParams();
@@ -103,16 +104,7 @@ export default function TestDetails() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Spin
-          fullscreen
-          tip="Уншиж байна..."
-          spinning={loading}
-          indicator={<LoadingOutlined style={{ color: "white" }} spin />}
-        />
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   if (!assessmentData || !assessmentData.questionCategories) {
@@ -219,29 +211,13 @@ export default function TestDetails() {
                     </div>
 
                     <div className="mt-6">
-                      <div
-                        className="relative group cursor-pointer w-full"
+                      <Button
+                        className="grd-btn h-12 w-full"
                         onClick={handleStartExam}
+                        loading={startingExam}
                       >
-                        <div className="absolute -inset-0.5 bg-gradient-to-br from-main/50 to-main/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-                        <div className="relative bg-gradient-to-br from-main/30 to-secondary/20 rounded-full flex items-center justify-center border border-main/10">
-                          <div className="flex items-center gap-1.5 font-extrabold bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent py-3 px-7 w-full justify-center">
-                            {startingExam ? (
-                              <div className="flex items-center gap-2">
-                                <div className="w-5 h-5 flex items-center justify-center">
-                                  <LoadingOutlined
-                                    style={{ fontSize: 16, color: "white" }}
-                                    spin
-                                  />
-                                </div>
-                                Тест эхлүүлэх
-                              </div>
-                            ) : (
-                              "Тест эхлүүлэх"
-                            )}
-                          </div>
-                        </div>
-                      </div>
+                        Тест эхлүүлэх
+                      </Button>
                     </div>
                   </div>
                 </div>

@@ -21,6 +21,7 @@ import PurchaseModal from "@/components/modals/Purchase";
 import { purchaseTest } from "@/app/api/main";
 import { useSession } from "next-auth/react";
 import { LoadingOutlined } from "@ant-design/icons";
+import LoadingSpinner from "@/components/Spin";
 
 const MyTests = () => {
   const { data: session } = useSession();
@@ -83,16 +84,14 @@ const MyTests = () => {
     }
   };
 
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
   return (
     <>
       <title>Hire.mn</title>
 
-      <Spin
-        fullscreen
-        tip="Уншиж байна..."
-        spinning={loading}
-        indicator={<LoadingOutlined style={{ color: "white" }} spin />}
-      />
       <PurchaseModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

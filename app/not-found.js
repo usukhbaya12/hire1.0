@@ -4,6 +4,8 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { Button } from "antd";
+import Link from "next/link";
 
 const NotFoundPage = () => {
   const router = useRouter();
@@ -111,22 +113,15 @@ const NotFoundPage = () => {
           </motion.div>
 
           <motion.div
-            className="flex justify-center"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.5 }}
           >
-            <div
-              onClick={() => router.push("/")}
-              className="relative group cursor-pointer"
-            >
-              <div className="absolute -inset-0.5 bg-gradient-to-br from-main/50 to-main/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-              <div className="relative bg-gradient-to-br from-main/30 to-secondary/20 rounded-full flex items-center justify-center border border-main/10">
-                <div className="text-base font-extrabold bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent py-2.5 px-10">
-                  Нүүр хуудас
-                </div>
-              </div>
-            </div>
+            <Link href="/" className="grid place-items-center">
+              <Button className="grd-btn h-11 w-1/2 sm:w-1/3" asChild>
+                Нүүр хуудас
+              </Button>
+            </Link>
           </motion.div>
 
           {/* Illustration */}

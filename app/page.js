@@ -592,7 +592,7 @@ export default function Home() {
                   value={selectedCategory}
                   onChange={handleCategoryChange}
                   allowClear
-                  className="w-full"
+                  className="w-full no-zoom"
                 />
                 <Select
                   className="w-full"

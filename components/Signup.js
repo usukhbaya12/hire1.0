@@ -17,6 +17,7 @@ import {
   RefreshCircleBoldDuotone,
 } from "solar-icons";
 import { signIn } from "next-auth/react";
+import Link from "next/link";
 
 const Signup = () => {
   const router = useRouter();
@@ -81,7 +82,7 @@ const Signup = () => {
     return (
       <div className="flex flex-col min-h-screen sm:items-center sm:justify-center">
         {contextHolder}
-        <div className="flex sm:hidden justify-center pt-16">
+        <Link href="/" className="flex sm:hidden justify-center pt-16">
           <Image
             src="/hire-logo.png"
             alt="Hire logo"
@@ -90,16 +91,15 @@ const Signup = () => {
             priority
             draggable={false}
             className="cursor-pointer"
-            onClick={() => router.push("/")}
           />
-        </div>
+        </Link>
         <div className="w-full max-w-md mx-auto px-6">
           <div className="font-extrabold text-xl sm:text-2xl text-center pt-1 pb-5 sm:hidden bg-gradient-to-r from-main to-secondary bg-clip-text text-transparent">
             Бүртгүүлэх
           </div>
 
           <div className="bg-white/70 backdrop-blur-md shadow-md shadow-slate-200 rounded-3xl px-8 py-12 sm:p-12">
-            <div className="hidden sm:flex justify-center mb-8">
+            <Link className="hidden sm:flex justify-center mb-8" href="/">
               <Image
                 src="/hire-logo.png"
                 alt="Hire logo"
@@ -108,9 +108,8 @@ const Signup = () => {
                 priority
                 draggable={false}
                 className="cursor-pointer"
-                onClick={() => router.push("/")}
               />
-            </div>
+            </Link>
 
             <div className="flex flex-col items-center space-y-6">
               <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center text-green-500">
@@ -125,13 +124,10 @@ const Signup = () => {
                 </div>
               </div>
 
-              <div className="w-full space-y-4 pt-3">
-                <Button
-                  onClick={() => router.push("/auth/signin")}
-                  className="w-full grd-btn"
-                >
-                  Нэвтрэх
-                </Button>
+              <div className="space-y-5 pt-3">
+                <Link href="/auth/signin">
+                  <Button className="w-full grd-btn">Нэвтрэх</Button>
+                </Link>
 
                 <div className="relative">
                   <div className="absolute inset-0 flex items-center">
@@ -147,7 +143,7 @@ const Signup = () => {
                   <Button
                     onClick={handleResendEmail}
                     loading={resendLoading}
-                    className="grd-btn"
+                    className="link-btn-2 border-none"
                   >
                     Мейл ирээгүй юу? Дахин илгээх
                   </Button>
@@ -167,9 +163,9 @@ const Signup = () => {
   return (
     <div className="flex flex-col">
       {contextHolder}
-      <div
+      <Link
         className="flex sm:hidden justify-center cursor-pointer pt-16"
-        onClick={() => router.push("/")}
+        href="/"
       >
         <Image
           src="/hire-logo.png"
@@ -179,7 +175,7 @@ const Signup = () => {
           priority
           draggable={false}
         />
-      </div>
+      </Link>
       <div className="font-extrabold text-xl sm:text-lg text-center sm:text-start sm:hidden pt-1 pb-5 bg-gradient-to-r from-main to-secondary bg-clip-text text-transparent">
         Бүртгүүлэх
       </div>
@@ -187,10 +183,7 @@ const Signup = () => {
         <Form layout="vertical" onFinish={onFinish} form={form}>
           <div className="flex sm:gap-20 flex-col sm:flex-row">
             <div className="flex-col flex gap-5">
-              <div
-                className="hidden sm:block cursor-pointer"
-                onClick={() => router.push("/")}
-              >
+              <Link className="hidden sm:block cursor-pointer" href="/">
                 <Image
                   src="/hire-logo.png"
                   alt="Hire logo"
@@ -199,7 +192,7 @@ const Signup = () => {
                   priority
                   draggable={false}
                 />
-              </div>
+              </Link>
               <div className="font-bold text-lg text-center sm:text-start hidden sm:block">
                 Бүртгүүлэх
               </div>
@@ -211,12 +204,11 @@ const Signup = () => {
               </div>
               <div className="gap-2 hidden sm:flex">
                 <div>Бүртгэлтэй юу?</div>
-                <div
-                  className="font-semibold underline cursor-pointer"
-                  onClick={() => router.push("/auth/signin")}
-                >
-                  Нэвтрэх
-                </div>
+                <Link href="/auth/signin">
+                  <div className="font-semibold underline cursor-pointer">
+                    Нэвтрэх
+                  </div>
+                </Link>
               </div>
               {!isOrganization ? (
                 <div className="min-w-64 pb-6 sm:pb-0">
@@ -685,12 +677,9 @@ const Signup = () => {
       </div>
       <div className="flex gap-2 justify-center sm:justify-start sm:hidden pt-5 pb-10">
         <div>Бүртгэлтэй юу?</div>
-        <div
-          className="font-semibold underline cursor-pointer"
-          onClick={() => router.push("/auth/signin")}
-        >
-          Нэвтрэх
-        </div>
+        <Link href="/auth/signin">
+          <div className="font-semibold underline cursor-pointer">Нэвтрэх</div>
+        </Link>
       </div>
     </div>
   );

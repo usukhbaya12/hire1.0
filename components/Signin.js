@@ -27,6 +27,7 @@ import {
   verifyPasswordResetCode,
   resetPassword as resetPasswordApi,
 } from "@/app/api/main";
+import Link from "next/link";
 
 const { Title, Text } = Typography;
 
@@ -505,9 +506,9 @@ function SigninForm() {
   return (
     <div className="flex flex-col">
       {contextHolder}
-      <div
+      <Link
+        href="/"
         className="flex sm:hidden justify-center cursor-pointer pt-20"
-        onClick={() => router.push("/")}
       >
         <Image
           src="/hire-logo.png"
@@ -517,7 +518,7 @@ function SigninForm() {
           priority
           draggable={false}
         />
-      </div>
+      </Link>
       <div className="font-extrabold text-xl sm:text-lg text-center sm:text-start sm:hidden pt-1 pb-5 bg-gradient-to-r from-main to-secondary bg-clip-text text-transparent">
         {isResetMode ? "Нууц үг сэргээх" : "Нэвтрэх"}
       </div>
@@ -529,9 +530,9 @@ function SigninForm() {
         ) : (
           <div className="flex gap-8 sm:gap-16 flex-col sm:flex-row">
             <div className="flex-col flex gap-5">
-              <div
+              <Link
+                href="/"
                 className="flex sm:block justify-center cursor-pointer hidden"
-                onClick={() => router.push("/")}
               >
                 <Image
                   src="/hire-logo.png"
@@ -541,7 +542,7 @@ function SigninForm() {
                   priority
                   draggable={false}
                 />
-              </div>
+              </Link>
               <div className="font-bold text-lg text-center sm:text-start hidden sm:block">
                 Нэвтрэх
               </div>
@@ -661,12 +662,12 @@ function SigninForm() {
                 )}
 
                 <div className="flex items-center justify-end gap-6 pt-7 pb-4">
-                  <div
-                    className="font-semibold cursor-pointer hover:text-primary transition-colors"
-                    onClick={() => router.push("/auth/signup")}
+                  <Link
+                    href="/auth/signup"
+                    className="font-semibold cursor-pointer hover:text-primary transition-colors underline hover:underline"
                   >
                     Бүртгүүлэх
-                  </div>
+                  </Link>
 
                   <Button
                     htmlType="submit"

@@ -1,11 +1,13 @@
 "use client";
 
 import React, { use, useState } from "react";
-import { Spin } from "antd";
+import { Button, Spin } from "antd";
 import { getReport } from "@/app/api/exam";
 import { message } from "antd";
 import { useRouter } from "next/navigation";
 import { LoadingOutlined } from "@ant-design/icons";
+import LoadingSpinner from "./Spin";
+import Link from "next/link";
 
 const Completion = ({ examId, onClose, questionData, showReport }) => {
   const [messageApi, contextHolder] = message.useMessage();
@@ -42,12 +44,6 @@ const Completion = ({ examId, onClose, questionData, showReport }) => {
 
   return (
     <>
-      <Spin
-        fullscreen
-        tip="Уншиж байна..."
-        spinning={loading}
-        indicator={<LoadingOutlined style={{ color: "white" }} spin />}
-      />
       {contextHolder}
       <div className="fixed inset-0 bg-gray-100 z-50 flex items-center justify-center">
         <div className="w-full max-w-lg text-center space-y-8 px-6">
@@ -209,29 +205,17 @@ const Completion = ({ examId, onClose, questionData, showReport }) => {
 
             <div className="flex flex-col gap-4 items-center pt-4">
               {showReport && (
-                <div
-                  className="relative group cursor-pointer mt-3"
+                <Button
+                  loading={loading}
+                  className="grd-btn-2 h-10 w-36"
                   onClick={downloadReport}
                 >
-                  <div className="absolute -inset-0.5 bg-gradient-to-br from-blue-500/50 to-green-700/50 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-                  <div className="relative bg-gradient-to-br from-blue-500/10 to-green-700/10 rounded-full flex items-center justify-center border border-blue-500/10">
-                    <div className="text-base font-extrabold bg-gradient-to-br from-green-700 to-blue-600 bg-clip-text text-transparent py-2.5 px-7">
-                      Тайлан татах
-                    </div>
-                  </div>
-                </div>
+                  Тайлан татах
+                </Button>
               )}
-              <div
-                className="relative group cursor-pointer"
-                onClick={() => router.push("/")}
-              >
-                <div className="absolute -inset-0.5 bg-gradient-to-br from-main/50 to-secondary/50 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-                <div className="relative bg-gradient-to-br from-main/10 to-secondary/10 rounded-full flex items-center justify-center border border-main/10">
-                  <div className="text-base font-extrabold bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent py-2.5 px-7">
-                    Нүүр хуудас
-                  </div>
-                </div>
-              </div>
+              <Link href="/">
+                <Button className="grd-btn h-10 w-36">Нүүр хуудас</Button>
+              </Link>
             </div>
           </div>
         </div>

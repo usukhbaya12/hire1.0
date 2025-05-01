@@ -1,6 +1,7 @@
 import { Button } from "antd";
 import Header from "./Header";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const ErrorIcon = () => (
   <svg
@@ -196,16 +197,12 @@ const Error = ({ message }) => {
           <h1 className="text-xl font-extrabold text-gray-900 mb-3 text-center">
             {message || "Сервертэй холбогдоход алдаа гарлаа."}
           </h1>
-          <div
-            onClick={() => router.push("/")}
-            className="relative group cursor-pointer mt-4"
-          >
-            <div className="absolute -inset-0.5 bg-gradient-to-br from-main/50 to-main/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-            <div className="relative bg-gradient-to-br from-main/30 to-secondary/20 rounded-full flex items-center justify-center border border-main/10">
-              <div className="text-base font-extrabold bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent py-2.5 px-10">
+          <div className="w-full mt-2">
+            <Link href="/" className="grid place-items-center">
+              <Button className="grd-btn h-11 w-1/2 sm:w-1/3" asChild>
                 Нүүр хуудас
-              </div>
-            </div>
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

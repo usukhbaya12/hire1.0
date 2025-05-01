@@ -19,6 +19,7 @@ import {
 } from "solar-icons";
 import { getReport } from "@/app/api/exam";
 import { DropdownIcon } from "./Icons";
+import Link from "next/link";
 
 const AssessmentCard = ({ assessment, isInvited = false }) => {
   const router = useRouter();
@@ -209,14 +210,11 @@ const AssessmentCard = ({ assessment, isInvited = false }) => {
         <div className="relative z-10">
           <div className="flex justify-between items-start mb-2">
             <div>
-              <h1
-                className="w-fit relative text-base font-extrabold leading-5 bg-gradient-to-r from-main to-secondary bg-clip-text text-transparent cursor-pointer after:absolute after:-bottom-[1px] after:left-0 after:w-full after:h-0.5 after:bg-gradient-to-r after:from-main after:to-secondary after:scale-x-0 hover:after:scale-x-100 after:transition-transform"
-                onClick={() =>
-                  router.push(`/test/${assessment.originalId || assessment.id}`)
-                }
-              >
-                {assessment.name}
-              </h1>
+              <Link href={`/test/${assessment.originalId || assessment.id}`}>
+                <h1 className="w-fit relative text-base font-extrabold leading-5 bg-gradient-to-r from-main to-secondary bg-clip-text text-transparent cursor-pointer after:absolute after:-bottom-[1px] after:left-0 after:w-full after:h-0.5 after:bg-gradient-to-r after:from-main after:to-secondary after:scale-x-0 hover:after:scale-x-100 after:transition-transform">
+                  {assessment.name}
+                </h1>
+              </Link>
               {isInvited && (
                 <div className="mt-2 mb-1">
                   <div className="flex items-center gap-2">
@@ -267,13 +265,12 @@ const AssessmentCard = ({ assessment, isInvited = false }) => {
                       </div>
                     </div>
                   </div>
-                  <Button
-                    className="stroked-btn my-4"
-                    onClick={() => router.push(`/tests/${assessment.id}`)}
-                  >
-                    <UserPlusBoldDuotone width={18} />
-                    Дэлгэрэнгүй
-                  </Button>
+                  <Link href={`/tests/${assessment.id}`}>
+                    <Button className="stroked-btn my-4">
+                      <UserPlusBoldDuotone width={18} />
+                      Дэлгэрэнгүй
+                    </Button>
+                  </Link>
                 </div>
               ) : (
                 <div className="flex items-center gap-4 mt-4">

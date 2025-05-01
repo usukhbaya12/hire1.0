@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { message, Table, Empty, Input, Divider } from "antd";
+import { message, Table, Empty, Input, Divider, Button } from "antd";
 import {
   Wallet2BoldDuotone,
   VerifiedCheckBoldDuotone,
@@ -34,6 +34,7 @@ import PaymentHistoryChart from "@/components/Payment";
 import Footer from "@/components/Footer";
 import ApplicantsTable from "@/components/All";
 import { customLocale } from "../utils/values";
+import Link from "next/link";
 
 const Profile = () => {
   const router = useRouter();
@@ -301,17 +302,12 @@ const Profile = () => {
                 <>
                   <Empty description="Та тест өгөөгүй байна." />
                   <div className="flex py-6 justify-center">
-                    <div
+                    <Link
+                      href="/#tests"
                       className="relative group cursor-pointer"
-                      onClick={() => router.push("/#tests")}
                     >
-                      <div className="absolute -inset-0.5 bg-gradient-to-br from-main/50 to-main/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-                      <div className="relative bg-gradient-to-br from-main/30 to-secondary/20 rounded-full flex items-center justify-center border border-main/10">
-                        <div className="flex items-center gap-1.5 font-extrabold bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent py-1.5 px-7">
-                          Тестийн сан
-                        </div>
-                      </div>
-                    </div>
+                      <Button className="grd-btn h-10">Тестийн сан</Button>
+                    </Link>
                   </div>
                 </>
               )}
@@ -437,17 +433,9 @@ const Profile = () => {
                 <>
                   <Empty description="Та тест өгөөгүй байна." />
                   <div className="flex py-6 justify-center">
-                    <div
-                      className="relative group cursor-pointer"
-                      onClick={() => router.push("/#tests")}
-                    >
-                      <div className="absolute -inset-0.5 bg-gradient-to-br from-main/50 to-main/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-                      <div className="relative bg-gradient-to-br from-main/30 to-secondary/20 rounded-full flex items-center justify-center border border-main/10">
-                        <div className="flex items-center gap-1.5 font-extrabold bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent py-1.5 px-7">
-                          Тестийн сан
-                        </div>
-                      </div>
-                    </div>
+                    <Link href="/#tests">
+                      <Button className="grd-btn h-10">Тестийн сан</Button>
+                    </Link>
                   </div>
                 </>
               )}
