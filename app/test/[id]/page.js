@@ -36,6 +36,65 @@ import { LoadingOutlined } from "@ant-design/icons";
 import { customLocale } from "@/app/utils/values";
 import NotFoundPage from "@/app/not-found";
 
+import { api } from "@/app/utils/routes";
+
+export async function generateMetadata({ params, searchParams }) {
+  const testId = params.id;
+  const shareCode = searchParams.share;
+
+  let metadata = {
+    title: "Hire.mn | Test Results",
+    description: "Онлайн тест, хөндлөнгийн үнэлгээ",
+    openGraph: {
+      title: "Hire.mn | Test Results",
+      description: "Онлайн тест, хөндлөнгийн үнэлгээ",
+      url: `https://www.hire.mn/test/${testId}`,
+      siteName: "Hire.mn",
+      type: "website",
+      images: [
+        {
+          url: "https://www.hire.mn/misc.png",
+          width: 1200,
+          height: 630,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+    },
+  };
+
+  if (shareCode) {
+    try {
+      const assessmentResponse = await getAssessmentById(testId);
+      const testName = assessmentResponse.data?.data?.name || "Test Results";
+
+      metadata = {
+        ...metadata,
+        title: `Hire.mn | ${testName}`,
+        description: `Миний '${testName}' тестийн үр дүн`,
+        openGraph: {
+          ...metadata.openGraph,
+          title: `Hire.mn | ${testName}`,
+          description: `Миний '${testName}' тестийн үр дүн`,
+          images: [
+            {
+              url: `https://www.hire.mn/api/share/${shareCode}`,
+              width: 1600,
+              height: 837.7,
+              alt: "Test Results",
+            },
+          ],
+        },
+      };
+    } catch (error) {
+      console.error("Error generating share metadata:", error);
+    }
+  }
+
+  return metadata;
+}
+
 export default function Test() {
   const params = useParams();
   const testId = params.id;
@@ -321,6 +380,7 @@ export default function Test() {
   const shareToFacebookWithMeta = (examCode, testName, userName, result) => {
     const siteUrl = "https://hire.mn";
 
+    // Include the share parameter in the URL
     const shareUrl = `${siteUrl}/test/${testId}?share=${examCode}`;
 
     let resultText = "";
@@ -335,32 +395,11 @@ export default function Test() {
 
     const description = `${userName} өгсөн "${testName}" тестийн үр дүн: ${resultText}`;
 
-    const imageUrl = `${siteUrl}/api/share/${examCode}`;
-
-    const tempWindow = window.open("", "_blank");
-    tempWindow.document.write(`
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>Hire.mn - ${testName} | ${userName}</title>
-        <meta property="og:url" content="${shareUrl}" />
-        <meta property="og:type" content="article" />
-        <meta property="og:title" content="Hire.mn - ${testName}" />
-        <meta property="og:description" content="${description}" />
-        <meta property="og:image" content="${imageUrl}" />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="837.7" />
-        <script>
-          window.location.href = "https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-            shareUrl
-          )}&quote=${encodeURIComponent(description)}";
-        </script>
-      </head>
-      <body>
-        <p>Redirecting to Facebook...</p>
-      </body>
-      </html>
-    `);
+    // Use Facebook share dialog with the correct URL
+    const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+      shareUrl
+    )}`;
+    window.open(facebookShareUrl, "_blank", "width=600,height=400");
   };
 
   return (
