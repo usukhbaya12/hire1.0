@@ -499,7 +499,7 @@ export default function Test() {
             </div>
             <div className="flex justify-center gap-4 mt-12 hidden sm:flex">
               <Button
-                className="grd-btn h-10 w-32"
+                className="grd-btn h-10 w-[172px]"
                 onClick={handleTakeTest}
                 loading={loadingTakeTest}
               >

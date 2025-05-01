@@ -7,7 +7,6 @@ const PdfViewer = ({ pdfUrl }) => {
   const [isSupported, setIsSupported] = useState(true);
 
   useEffect(() => {
-    // Check if browser supports embedded PDFs
     const checkSupport = () => {
       try {
         const isIOS =
@@ -16,13 +15,12 @@ const PdfViewer = ({ pdfUrl }) => {
           navigator.userAgent
         );
 
-        // Some mobile browsers have issues with PDF embedding
         if (isIOS || (isSafari && window.innerWidth < 768)) {
           setIsSupported(false);
         }
       } catch (error) {
         console.error("Error checking PDF support:", error);
-        setIsSupported(true); // Default to supported, worst case user sees browser's PDF error
+        setIsSupported(true);
       }
     };
 
@@ -45,7 +43,7 @@ const PdfViewer = ({ pdfUrl }) => {
       <div className="bg-white/70 backdrop-blur-md shadow shadow-slate-200 rounded-3xl p-8 text-center">
         <div className="text-6xl mb-4">📄</div>
         <h3 className="text-xl font-bold mb-2">PDF тайлан олдсонгүй.</h3>
-        <p className="text-gray-600 mb-6">Тестийн тайлан PDF файл олдсонгүй.</p>
+        <p className="text-gray-600 mb-6">Тестийн тайлангийн файл олдсонгүй.</p>
       </div>
     );
   }

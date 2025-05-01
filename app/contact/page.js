@@ -17,6 +17,7 @@ import {
   CheckCircleBoldDuotone,
 } from "solar-icons";
 import Footer from "@/components/Footer";
+import { sendContactMessage } from "../api/main";
 
 const { TextArea } = Input;
 
@@ -32,36 +33,49 @@ const ContactPage = () => {
       value: "provide-test",
       label: "Тест нийлүүлэх",
       icon: <NotesBoldDuotone className="text-main" />,
+      type: 10,
     },
     {
       value: "collaboration",
       label: "Хамтран ажиллах",
       icon: <BuildingsBoldDuotone className="text-main" />,
+      type: 20,
     },
     {
       value: "feedback",
       label: "Тестийн талаарх санал хүсэлт",
       icon: <DocumentTextBoldDuotone className="text-main" />,
+      type: 30,
     },
     {
       value: "other",
       label: "Бусад",
       icon: <Wallet2BoldDuotone className="text-main" />,
+      type: 40,
     },
   ];
 
   const onFinish = async (values) => {
     setSubmitting(true);
     try {
-      // Here you would typically call an API to submit the form
-      console.log("Form submitted:", { ...values, type: contactType });
+      const selectedOption = contactOptions.find(
+        (option) => option.value === contactType
+      );
+      const response = await sendContactMessage({
+        type: selectedOption?.type || 10, // Default to 10 if not found
+        message: values.message,
+        phone: values.phone,
+        name: values.name,
+        email: values.email,
+      });
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      messageApi.success("Таны хүсэлт амжилттай илгээгдлээ.");
-      form.resetFields();
-      setSubmitted(true);
+      if (response.success) {
+        messageApi.success("Таны хүсэлт амжилттай илгээгдлээ.");
+        form.resetFields();
+        setSubmitted(true);
+      } else {
+        messageApi.error(response.message || "Хүсэлт илгээхэд алдаа гарлаа.");
+      }
     } catch (error) {
       console.error("Error submitting form:", error);
       messageApi.error("Хүсэлт илгээхэд алдаа гарлаа.");
@@ -124,23 +138,18 @@ const ContactPage = () => {
                     <CheckCircleBoldDuotone width={40} height={40} />
                   </div>
                   <h2 className="text-xl font-extrabold text-gray-900">
-                    Илгээгдлээ!
+                    Илгээгдсэн!
                   </h2>
                   <p className="text-gray-600 text-center max-w-md">
                     Таны хүсэлтийг хүлээн авлаа. Бид тантай удахгүй холбогдох
                     болно.
                   </p>
-                  <div
-                    className="relative group cursor-pointer mt-4"
+                  <Button
+                    className="mt-2 grd-btn h-10 w-48"
                     onClick={handleNewMessage}
                   >
-                    <div className="absolute -inset-0.5 bg-gradient-to-br from-main/50 to-main/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-                    <div className="relative bg-gradient-to-br from-main/30 to-secondary/20 rounded-full flex items-center justify-center border border-main/10">
-                      <div className="text-base font-extrabold bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent py-2.5 px-10">
-                        Шинэ хүсэлт үүсгэх
-                      </div>
-                    </div>
-                  </div>
+                    Шинэ хүсэлт үүсгэх
+                  </Button>
                 </div>
               ) : contactType ? (
                 <Form form={form} layout="vertical" onFinish={onFinish}>
