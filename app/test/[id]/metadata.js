@@ -1,11 +1,7 @@
 import { getAssessmentById } from "@/app/api/assessment";
 import { api } from "@/app/utils/routes";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export async function generateTestMetadata({ params, searchParams }) {
-  const session = await getServerSession(authOptions);
-
   const resolvedParams = await params;
   const resolvedSearchParams = await searchParams;
 
@@ -22,11 +18,11 @@ export async function generateTestMetadata({ params, searchParams }) {
       metadata = {
         ...metadata,
         title: `${testName} / Hire.mn`,
-        description: `${session.user?.name}-н "${testName}" тестийн үр дүн`,
+        description: `Миний "${testName}" тестийн үр дүн`,
         openGraph: {
           ...metadata.openGraph,
           title: `${testName} / Hire.mn`,
-          description: `${session.user?.name}-н "${testName}" тестийн үр дүн`,
+          description: `Миний "${testName}" тестийн үр дүн`,
           url: `https://hire.mn/test/${testId}`,
           type: "website",
           images: [
