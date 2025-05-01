@@ -319,28 +319,15 @@ export default function Test() {
     }
   };
 
-  const shareToFacebookWithMeta = (examCode, testName, userName, result) => {
+  const shareToFacebookWithMeta = (examCode) => {
     const siteUrl = "https://hire.mn";
 
-    // Include the share parameter in the URL
-    const shareUrl = `${siteUrl}/test/${testId}?share=${examCode}`;
+    const shareUrl = `${siteUrl}/share/${testId}/${examCode}`;
 
-    let resultText = "";
-    if (result && typeof result === "object") {
-      if (result.result && result.value) {
-        resultText = `${result.result} • ${result.value}`;
-      } else if (result.point && result.total) {
-        const percent = Math.round((result.point / result.total) * 100);
-        resultText = `${percent}% (${result.point}/${result.total})`;
-      }
-    }
-
-    const description = `${userName} өгсөн "${testName}" тестийн үр дүн: ${resultText}`;
-
-    // Use Facebook share dialog with the correct URL
     const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
       shareUrl
     )}`;
+
     window.open(facebookShareUrl, "_blank", "width=600,height=400");
   };
 

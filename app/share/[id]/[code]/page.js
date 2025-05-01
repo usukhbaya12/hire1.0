@@ -1,12 +1,8 @@
 import { getAssessmentById } from "@/app/api/assessment";
-import { api } from "@/app/utils/routes";
+import { redirect } from "next/navigation";
 
-export async function generateTestMetadata({ params, searchParams }) {
-  const resolvedParams = await params;
-  const resolvedSearchParams = await searchParams;
-
-  const testId = resolvedParams.id;
-  const shareCode = resolvedSearchParams.share;
+export async function generateMetadata({ params }) {
+  const { testId, code } = params;
 
   let metadata = {};
 
@@ -15,7 +11,7 @@ export async function generateTestMetadata({ params, searchParams }) {
     const testName = assessmentResponse.data?.data?.name || "Тестийн үр дүн";
     const icon = assessmentResponse.data?.icons;
 
-    if (shareCode) {
+    if (code) {
       metadata = {
         ...metadata,
         title: `${testName} / Hire.mn`,
@@ -64,4 +60,27 @@ export async function generateTestMetadata({ params, searchParams }) {
   }
 
   return metadata;
+
+  //   return {
+  //     title: `${testName} / Hire.mn`,
+  //     openGraph: {
+  //       title: `${testName} / Hire.mn`,
+  //       description: `Миний "${testName}" тестийн үр дүн`,
+  //       type: "website",
+  //       images: [
+  //         {
+  //           url: `https://hire.mn/api/share/${code}`,
+  //           width: 1600,
+  //           height: 837.7,
+  //         },
+  //       ],
+  //       url: `https://hire.mn/share/${testId}/${code}`,
+  //     },
+  //   };
+}
+
+export default function SharePage({ params }) {
+  const { testId, code } = params;
+
+  redirect(`/test/${testId}?share=${code}`);
 }
