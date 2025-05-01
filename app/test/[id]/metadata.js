@@ -1,9 +1,11 @@
-// app/test/[id]/metadata.js
 import { getAssessmentById } from "@/app/api/assessment";
 import { api } from "@/app/utils/routes";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export async function generateTestMetadata({ params, searchParams }) {
-  // Await params and searchParams
+  const session = await getServerSession(authOptions);
+
   const resolvedParams = await params;
   const resolvedSearchParams = await searchParams;
 
@@ -19,12 +21,12 @@ export async function generateTestMetadata({ params, searchParams }) {
     if (shareCode) {
       metadata = {
         ...metadata,
-        title: `Hire.mn | ${testName}`,
-        description: `Миний '${testName}' тестийн үр дүн`,
+        title: `${testName} / Hire.mn`,
+        description: `${session.user?.name}-н "${testName}" тестийн үр дүн`,
         openGraph: {
           ...metadata.openGraph,
-          title: `Hire.mn | ${testName}`,
-          description: `Миний '${testName}' тестийн үр дүн`,
+          title: `${testName} / Hire.mn`,
+          description: `${session.user?.name}-н "${testName}" тестийн үр дүн`,
           images: [
             {
               url: `https://www.hire.mn/api/share/${shareCode}`,
@@ -40,7 +42,7 @@ export async function generateTestMetadata({ params, searchParams }) {
         title: `${testName} / Hire.mn`,
         description: "Онлайн тест, хөндлөнгийн үнэлгээ",
         openGraph: {
-          title: "Hire.mn | Test Results",
+          title: `${testName} / Hire.mn`,
           description: "Онлайн тест, хөндлөнгийн үнэлгээ",
           url: `https://www.hire.mn/test/${testId}`,
           siteName: "Hire.mn",

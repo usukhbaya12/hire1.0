@@ -61,7 +61,7 @@ export async function GET(request, { params }) {
 
     try {
       const backgroundImage = await loadImage(
-        "https://www.hire.mn/placholder.png"
+        "https://www.hire.mn/placeholder.png"
       );
 
       // Get image dimensions
@@ -188,7 +188,7 @@ export async function GET(request, { params }) {
       ctx.stroke();
 
       // Handle result display
-      if (examData.value.type === 11) {
+      if (examData.value.type === 11 || examData.value.type === 10) {
         // Progress circle with score
         const score = examData.value.point;
         const total = examData.value.total;
