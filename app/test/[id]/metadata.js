@@ -27,9 +27,11 @@ export async function generateTestMetadata({ params, searchParams }) {
           ...metadata.openGraph,
           title: `${testName} / Hire.mn`,
           description: `${session.user?.name}-н "${testName}" тестийн үр дүн`,
+          url: `https://hire.mn/test/${testId}`,
+          type: "website",
           images: [
             {
-              url: `https://www.hire.mn/api/share/${shareCode}`,
+              url: `https://hire.mn/api/share/${shareCode}`,
               width: 1600,
               height: 837.7,
               alt: "Test Results",
@@ -44,12 +46,12 @@ export async function generateTestMetadata({ params, searchParams }) {
         openGraph: {
           title: `${testName} / Hire.mn`,
           description: "Онлайн тест, хөндлөнгийн үнэлгээ",
-          url: `https://www.hire.mn/test/${testId}`,
+          url: `https://hire.mn/test/${testId}`,
           siteName: "Hire.mn",
           type: "website",
           images: [
             {
-              url: "https://www.hire.mn/misc.png",
+              url: "https://hire.mn/misc.png",
               width: 1200,
               height: 630,
             },
