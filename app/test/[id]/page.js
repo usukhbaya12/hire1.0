@@ -1,13 +1,10 @@
-import Test from "./Test";
+import Test from "@/components/Test";
 import { generateTestMetadata } from "./metadata";
 
-export async function generateMetadata({ params, searchParams }) {
-  return generateTestMetadata({ params, searchParams });
+export async function generateMetadata({ params }) {
+  return generateTestMetadata({ params });
 }
 
 export default async function Page({ params, searchParams }) {
-  const resolvedParams = await params;
-  const resolvedSearchParams = await searchParams;
-
-  return <Test params={resolvedParams} searchParams={resolvedSearchParams} />;
+  return <Test params={params} searchParams={searchParams} />;
 }

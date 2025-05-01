@@ -1,14 +1,7 @@
-"use client";
-
-import { usePathname } from "next/navigation";
 import { Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
-import Zoom from "@/components/Zoom";
-import { Provider } from "@/components/Provider";
-import Navbar from "@/components/Navbar";
-import Head from "next/head";
-import { AntdRegistry } from "@ant-design/nextjs-registry";
+import ClientLayout from "./layout-client";
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -53,56 +46,40 @@ const gilroy = localFont({
   variable: "--font-gilroy",
 });
 
+export const metadata = {
+  title: "Hire.mn",
+  description: "Онлайн тест, хөндлөнгийн үнэлгээ",
+  openGraph: {
+    title: "Hire.mn",
+    description: "Онлайн тест, хөндлөнгийн үнэлгээ",
+    url: "https://hire.mn",
+    siteName: "Hire.mn",
+    type: "website",
+    images: [
+      {
+        url: "https://hire.mn/misc.png",
+        width: 1200,
+        height: 630,
+        alt: "Hire.mn - Онлайн тест платформ",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Hire.mn",
+    description: "Онлайн тест, хөндлөнгийн үнэлгээ",
+    images: ["https://hire.mn/misc.png"],
+  },
+  icons: {
+    icon: "/favicon.ico",
+  },
+};
+
 export default function RootLayout({ children }) {
-  const pathname = usePathname();
-  const hideNavbar =
-    pathname.startsWith("/auth/") || pathname.includes("/exam/");
   return (
     <html lang="en">
-      <head>
-        {/* <meta
-          name="description"
-          content="Онлайн тест, хөндлөнгийн үнэлгээний платформ"
-        />
-
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://www.hire.mn" />
-        <meta property="og:title" content="Hire.mn" />
-        <meta
-          property="og:description"
-          content="Онлайн тест, хөндлөнгийн үнэлгээ"
-        />
-        <meta property="og:image" content="https://www.hire.mn/misc.png" />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta property="og:locale" content="mn_MN" />
-        <meta property="og:site_name" content="Hire.mn" />
-
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content="https://www.hire.mn" />
-        <meta property="twitter:title" content="Hire.mn" />
-        <meta
-          property="twitter:description"
-          content="Онлайн тест, хөндлөнгийн үнэлгээ"
-        />
-        <meta property="twitter:image" content="https://www.hire.mn/misc.png" /> */}
-
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-      </head>
       <body className={`${gilroy.variable} ${geistMono.variable} antialiased`}>
-        {/* <AntdRegistry hashPriority="high"> */}
-        <Zoom />
-        <Provider>
-          {!hideNavbar && (
-            <div className="fixed top-0 sm:top-4 w-full 2xl:px-72 xl:px-24 lg:px-16 md:px-12 z-[100]">
-              <Navbar />
-            </div>
-          )}
-          <div className={`relative ${!hideNavbar ? "top-16" : ""}`}>
-            {children}
-          </div>
-        </Provider>
-        {/* </AntdRegistry> */}
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
   );
