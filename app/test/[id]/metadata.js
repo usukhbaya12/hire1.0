@@ -13,6 +13,7 @@ export async function generateTestMetadata({ params, searchParams }) {
   try {
     const assessmentResponse = await getAssessmentById(testId);
     const testName = assessmentResponse.data?.data?.name || "Тестийн үр дүн";
+    const icon = assessmentResponse.data?.data?.icons;
 
     if (shareCode) {
       metadata = {
@@ -47,7 +48,7 @@ export async function generateTestMetadata({ params, searchParams }) {
           type: "website",
           images: [
             {
-              url: "https://hire.mn/misc.png",
+              url: icon ? `${api}file/${icon}` : "https://hire.mn/misc.png",
               width: 1200,
               height: 630,
             },
