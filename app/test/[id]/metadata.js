@@ -10,36 +10,13 @@ export async function generateTestMetadata({ params, searchParams }) {
   const testId = resolvedParams.id;
   const shareCode = resolvedSearchParams.share;
 
-  // Default metadata
-  let metadata = {
-    title: "Hire.mn | Test Results",
-    description: "Онлайн тест, хөндлөнгийн үнэлгээ",
-    openGraph: {
-      title: "Hire.mn | Test Results",
-      description: "Онлайн тест, хөндлөнгийн үнэлгээ",
-      url: `https://www.hire.mn/test/${testId}`,
-      siteName: "Hire.mn",
-      type: "website",
-      images: [
-        {
-          url: "https://www.hire.mn/misc.png",
-          width: 1200,
-          height: 630,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-    },
-  };
+  let metadata = {};
 
-  // If there's a share code, update metadata with share image
-  if (shareCode) {
-    try {
-      // Fetch test details to get the test name
-      const assessmentResponse = await getAssessmentById(testId);
-      const testName = assessmentResponse.data?.data?.name || "Test Results";
+  try {
+    const assessmentResponse = await getAssessmentById(testId);
+    const testName = assessmentResponse.data?.data?.name || "Тестийн үр дүн";
 
+    if (shareCode) {
       metadata = {
         ...metadata,
         title: `Hire.mn | ${testName}`,
@@ -58,9 +35,31 @@ export async function generateTestMetadata({ params, searchParams }) {
           ],
         },
       };
-    } catch (error) {
-      console.error("Error generating share metadata:", error);
+    } else {
+      metadata = {
+        title: `${testName} / Hire.mn`,
+        description: "Онлайн тест, хөндлөнгийн үнэлгээ",
+        openGraph: {
+          title: "Hire.mn | Test Results",
+          description: "Онлайн тест, хөндлөнгийн үнэлгээ",
+          url: `https://www.hire.mn/test/${testId}`,
+          siteName: "Hire.mn",
+          type: "website",
+          images: [
+            {
+              url: "https://www.hire.mn/misc.png",
+              width: 1200,
+              height: 630,
+            },
+          ],
+        },
+        twitter: {
+          card: "summary_large_image",
+        },
+      };
     }
+  } catch (error) {
+    console.error("Error generating share metadata:", error);
   }
 
   return metadata;

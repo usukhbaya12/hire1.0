@@ -61,7 +61,7 @@ export async function GET(request, { params }) {
 
     try {
       const backgroundImage = await loadImage(
-        `${process.cwd()}/public/placeholder.png`
+        "https://www.hire.mn/placholder.png"
       );
 
       // Get image dimensions
@@ -107,15 +107,13 @@ export async function GET(request, { params }) {
       ctx.fillRect(0, 0, 1600, 837.7);
 
       // Load and draw white logo
-      const logo = await loadImage(
-        `${process.cwd()}/public/hire-all-white.png`
-      );
+      const logo = await loadImage("https://www.hire.mn/hire-all-white.png");
       ctx.drawImage(logo, 72, 72, 200, 58.5);
 
       // Load and draw brain icon (if available)
       try {
         const brainIcon = await loadImage(
-          `${process.cwd()}/public/header-top-white.png`
+          "https://www.hire.mn/header-top-white.png"
         );
         ctx.drawImage(brainIcon, 930, 0, 675, 261);
       } catch (e) {
