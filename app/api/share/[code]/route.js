@@ -5,6 +5,7 @@ import fs from "fs";
 import { getAuthToken } from "@/app/utils/auth";
 import axios from "axios";
 import { api } from "@/app/utils/routes";
+import { getExamCalculation } from "../../exam";
 
 // Register fonts
 const fontPath = path.join(process.cwd(), "app/fonts/Gilroy-Bold.ttf");
@@ -27,20 +28,12 @@ if (fs.existsSync(regularFontPath)) {
 
 async function getExamData(code) {
   try {
-    const token = await getAuthToken();
-    if (!token) throw new Error("No auth token");
+    const response = await getExamCalculation(code);
 
-    const response = await axios.get(`${api}exam/calculation/${code}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (response.data.succeed) {
-      return response.data.payload;
+    if (response.success) {
+      return response.data;
     } else {
-      throw new Error(response.data.message || "Failed to get exam data");
+      throw new Error(response.message || "Failed to get exam data");
     }
   } catch (error) {
     console.error("Error fetching exam data:", error);
@@ -53,7 +46,6 @@ export async function GET(request, { params }) {
 
   try {
     const examData = await getExamData(code);
-    console.log(examData);
 
     // Higher resolution canvas (1600x900)
     const canvas = createCanvas(1600, 837.7);
