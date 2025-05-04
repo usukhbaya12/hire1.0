@@ -315,10 +315,14 @@ body {
 
 .ant-input-number {
   border-radius: 12px !important;
+}
+
+.ant-input-number .ant-input-number-input {
   font-size: 16px !important;
   transform-origin: top left;
   width: 114.285714%;
-  transform: scale(1);
+  transform: scale(0.875);
+  margin-top: 3px;
   margin-bottom: -4.5px;
 }
 

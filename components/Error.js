@@ -199,7 +199,7 @@ const Error = ({ message }) => {
           </h1>
           <div className="w-full mt-2">
             <Link href="/" className="grid place-items-center">
-              <Button className="grd-btn h-11 w-1/2 sm:w-1/3" asChild>
+              <Button className="grd-btn h-11 w-1/2 sm:w-1/3">
                 Нүүр хуудас
               </Button>
             </Link>

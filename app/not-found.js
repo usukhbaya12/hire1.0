@@ -118,7 +118,7 @@ const NotFoundPage = () => {
             transition={{ delay: 0.5, duration: 0.5 }}
           >
             <Link href="/" className="grid place-items-center">
-              <Button className="grd-btn h-11 w-1/2 sm:w-1/3" asChild>
+              <Button className="grd-btn h-11 w-1/2 sm:w-1/3">
                 Нүүр хуудас
               </Button>
             </Link>
