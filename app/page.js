@@ -14,7 +14,7 @@ import {
   Wallet2BoldDuotone,
 } from "solar-icons";
 import { getAssessmentCategory, getAssessments } from "./api/assessment";
-import { message, Input, Select, Button, Empty, InputNumber } from "antd";
+import { message, Input, Select, Button, Empty } from "antd";
 import Assessment from "@/components/Assessment";
 import { DropdownIcon } from "@/components/Icons";
 import Footer from "@/components/Footer";
@@ -594,7 +594,7 @@ export default function Home() {
                   allowClear
                   className="w-full no-zoom"
                 />
-                {/* <Select
+                <Select
                   className="w-full"
                   suffixIcon={
                     <DropdownIcon width={15} height={15} color={"#f36421"} />
@@ -611,10 +611,7 @@ export default function Home() {
                   value={selectedPrice}
                   onChange={handlePriceChange}
                   allowClear
-                /> */}
-
-                <InputNumber className="min-w-64" />
-
+                />
                 <div
                   className="relative group cursor-pointer"
                   onClick={handleResetFilters}
