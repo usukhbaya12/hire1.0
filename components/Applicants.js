@@ -37,8 +37,6 @@ const EmployeeTable = ({ testData, onRefresh }) => {
   const [selectedExam, setSelectedExam] = useState(null);
   const messageApi = message;
 
-  console.log(testData);
-
   useEffect(() => {
     if (!testData || !Array.isArray(testData)) {
       console.error("Invalid testData:", testData);

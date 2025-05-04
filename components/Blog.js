@@ -106,7 +106,6 @@ export default function BlogDetailPage() {
     return <LoadingSpinner />;
   }
 
-  console.log(blog);
   return (
     <div>
       {blog && <DynamicMetaTags metadata={metadata} />}

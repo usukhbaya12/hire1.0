@@ -151,8 +151,6 @@ const Profile = () => {
       )
     : [];
 
-  console.log(data);
-
   const renderSkeletonCard = () => (
     <div className="w-full h-full relative overflow-hidden rounded-3xl shadow shadow-slate-200 bg-white/70 backdrop-blur-md px-6 pt-6 pb-4 animate-pulse">
       <div className="flex justify-between items-start mb-4">

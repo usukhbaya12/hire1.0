@@ -81,7 +81,7 @@ const ExamFooter = ({
           </div>
         </Dropdown>
         <div
-          className="relative group cursor-pointer"
+          className="relative group cursor-pointer w-full"
           onClick={onSectionChange}
         >
           <div className="absolute -inset-0.5 bg-gradient-to-br from-main/50 to-main/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>

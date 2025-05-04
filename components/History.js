@@ -20,6 +20,7 @@ import {
 import { getReport } from "@/app/api/exam";
 import { DropdownIcon } from "./Icons";
 import Link from "next/link";
+import Image from "next/image";
 
 const AssessmentCard = ({ assessment, isInvited = false }) => {
   const router = useRouter();
@@ -87,6 +88,18 @@ const AssessmentCard = ({ assessment, isInvited = false }) => {
     } else {
       router.push(`/test/details/${history.assessment}`);
     }
+  };
+
+  const shareToFacebookWithMeta = (testId, examCode) => {
+    const siteUrl = "https://hire.mn";
+
+    const shareUrl = `${siteUrl}/share/${testId}/${examCode}`;
+
+    const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+      shareUrl
+    )}`;
+
+    window.open(facebookShareUrl, "_blank", "width=600,height=400");
   };
 
   const AssessmentTimeline = ({ histories }) => {
@@ -185,6 +198,27 @@ const AssessmentCard = ({ assessment, isInvited = false }) => {
                           ? "Үргэлжлүүлэх"
                           : "Тест өгөх"}
                       </Button>
+                    )}
+                    {userEndDate && !isCompletedButNotVisible && (
+                      <div className="flex items-center gap-2">
+                        <span>•</span>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            shareToFacebookWithMeta(assessment.id, code);
+                          }}
+                          className="flex items-center justify-center transition-opacity hover:opacity-70"
+                          title="Share on Facebook"
+                        >
+                          <Image
+                            src="/facebook.png"
+                            alt="Facebook icon"
+                            width={18}
+                            height={18}
+                            priority
+                          />
+                        </button>
+                      </div>
                     )}
                   </div>
                 </div>

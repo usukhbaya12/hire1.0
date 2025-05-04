@@ -225,7 +225,7 @@ export default function TestDetails() {
             </div>
 
             <div className="lg:col-span-2">
-              <div className="bg-white/40 background-blur-md rounded-3xl shadow-sm p-6 mb-6">
+              <div className="bg-white/40 background-blur-md rounded-3xl shadow-sm p-6 mb-6 mt-6 sm:mt-0">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 bg-red-50 rounded-full flex items-center justify-center text-red-500">
                     <ShieldBoldDuotone width={20} height={20} />

@@ -667,12 +667,7 @@ export default function Test() {
                               <span>•</span>
                               <button
                                 onClick={() =>
-                                  shareToFacebookWithMeta(
-                                    item.exams[0].code,
-                                    assessmentData.data.name,
-                                    `${session.user.lastname} ${session.user.firstname}`,
-                                    item.exams[0].result
-                                  )
+                                  shareToFacebookWithMeta(item.exams[0].code)
                                 }
                                 className="flex items-center justify-center transition-opacity hover:opacity-70"
                                 title="Share on Facebook"
@@ -859,9 +854,11 @@ export default function Test() {
                                   <ClipboardTextBoldDuotone width={18} />
                                   Татах
                                 </button>
-                                {/* <span>•</span>
+                                <span>•</span>
                                 <button
-                                  onClick={() => shareToFacebook(record.code)}
+                                  onClick={() =>
+                                    shareToFacebookWithMeta(item.code)
+                                  }
                                   className="flex items-center justify-center transition-opacity hover:opacity-70"
                                   title="Share on Facebook"
                                 >
@@ -872,7 +869,7 @@ export default function Test() {
                                     height={18}
                                     priority
                                   />
-                                </button> */}
+                                </button>
                               </div>
                             ) : (
                               <div className="flex justify-center">

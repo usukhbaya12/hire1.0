@@ -11,7 +11,6 @@ import dayjs from "dayjs";
 import { LoadingOutlined } from "@ant-design/icons";
 
 const RenewModal = ({ isVisible, onClose, examData, onSuccess }) => {
-  console.log(examData);
   const [selectedDate, setSelectedDate] = useState(null);
   const [loading, setLoading] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();

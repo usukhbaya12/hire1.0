@@ -106,8 +106,6 @@ export default function Results() {
     });
   };
 
-  console.log(data);
-
   return (
     <div>
       <title>{data?.assessmentName || "Тестийн үр дүн"} | Hire.mn</title>

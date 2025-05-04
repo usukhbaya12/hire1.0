@@ -496,6 +496,24 @@ export default function Exam() {
             </div>
           </div>
 
+          {questionData.category.value && (
+            <div className="bg-white rounded-3xl shadow shadow-slate-200 mt-4">
+              <div className="prose max-w-none py-1 px-8 question-content">
+                <style jsx global>{`
+                  .question-content img {
+                    max-width: 200px !important;
+                    height: auto !important;
+                  }
+                `}</style>
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: questionData.category.value,
+                  }}
+                />
+              </div>
+            </div>
+          )}
+
           <div className="space-y-4 mt-4 pb-24">
             {questionData.questions.map((question, index) => (
               <QuestionCard

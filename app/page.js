@@ -229,10 +229,10 @@ export default function Home() {
     scrollToTestsTop();
   };
 
-  console.log(assessments);
-
   const featuredTests = assessments.filter((test) => test.data.status === 30);
-  const popularTests = assessments.slice(3, 6);
+  const popularTests = [...assessments]
+    .sort((a, b) => (b.data.count || 0) - (a.data.count || 0))
+    .slice(0, 3);
 
   return (
     <>

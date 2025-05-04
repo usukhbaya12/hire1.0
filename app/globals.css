@@ -306,7 +306,20 @@ body {
 
 .ant-select-dropdown .ant-select-item {
   font-weight: 500;
-  border-radius: 12px;
+  border-radius: 15px;
+}
+
+.ant-select-dropdown {
+  border-radius: 16px !important;
+}
+
+.ant-input-number {
+  border-radius: 12px !important;
+  font-size: 16px !important;
+  transform-origin: top left;
+  width: 114.285714%;
+  transform: scale(1);
+  margin-bottom: -4.5px;
 }
 
 .ant-input {
@@ -328,10 +341,11 @@ body {
 
 .ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-item {
   font-weight: 600;
+  border-radius: 15px !important;
 }
 
 .ant-dropdown .ant-dropdown-menu {
-  border-radius: 12px;
+  border-radius: 16px;
 }
 
 .ant-divider-horizontal.no-margin {
@@ -379,10 +393,6 @@ body {
 
 .ant-modal .ant-modal-content {
   border-radius: 18px;
-}
-
-.ant-input-number {
-  border-radius: 12px !important;
 }
 
 .ant-input-number .ant-input-number-handler-wrap {
@@ -864,4 +874,41 @@ textarea.ant-input {
 
 .grd-btn-2.ant-btn .btn-icon {
   margin-right: 6px;
+}
+
+.ant-tooltip {
+  --antd-arrow-background-color: white !important;
+}
+
+.ant-tooltip .ant-tooltip-inner {
+  font-size: 12.25px !important;
+  padding: 6px 12px !important;
+  color: #000 !important;
+  background-color: rgba(255, 255, 255) !important;
+  border-radius: 16px !important;
+}
+
+.ant-picker {
+  border-radius: 99px;
+}
+
+.ant-select-selector {
+  padding: 16px !important;
+  border-radius: 99px !important;
+}
+
+.ant-dropdown .ant-table-filter-dropdown .ant-table-filter-dropdown-btns {
+  padding: 10px !important;
+}
+
+.ant-dropdown .ant-table-filter-dropdown {
+  border-radius: 16px !important;
+}
+
+.ant-dropdown .ant-table-filter-dropdown .ant-table-filter-dropdown-search {
+  padding: 10px !important;
+}
+
+.ant-dropdown .ant-table-filter-dropdown .ant-table-filter-dropdown-tree {
+  padding: 10px !important;
 }
