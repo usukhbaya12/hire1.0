@@ -211,7 +211,7 @@ export default function Results() {
                     ) : (
                       <div className="font-extrabold">
                         {data?.result}
-                        {data?.value ? ` • ${data.value}` : ""}
+                        {data?.value ? ` / ${data.value}` : ""}
                       </div>
                     )}
                   </div>

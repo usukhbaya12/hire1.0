@@ -399,6 +399,7 @@ const QuestionCard = ({
                   </div>
                   <div className="md:flex md:pr-5">
                     <Slider
+                      tooltip={{ formatter: null }}
                       min={internalMin}
                       max={max}
                       value={

@@ -352,7 +352,7 @@ const ApplicantsTable = ({ data, loading }) => {
 
       return (
         <div className="flex items-center">
-          <div className="">{result || ""}</div> <span className="px-1">•</span>
+          <div className="">{result || ""}</div> <span className="px-1">/</span>
           <div>{value || ""}</div>
         </div>
       );

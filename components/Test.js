@@ -597,7 +597,7 @@ export default function Test() {
                                         : "") +
                                       (item.exams[0].result.result &&
                                       item.exams[0].result.value
-                                        ? " • "
+                                        ? " / "
                                         : "") +
                                       (item.exams[0].result.value
                                         ? `${item.exams[0].result.value}`
@@ -793,7 +793,7 @@ export default function Test() {
                                 <div>
                                   {item.result
                                     ? item.result.result +
-                                      " • " +
+                                      " / " +
                                       item.result.value
                                     : ""}
                                 </div>

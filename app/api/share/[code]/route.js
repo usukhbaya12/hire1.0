@@ -260,7 +260,7 @@ export async function GET(request, { params }) {
 
         let resultText = examDetails.result || "";
         if (examDetails.value && resultText) {
-          resultText += ` • ${examDetails.value}`;
+          resultText += ` / ${examDetails.value}`;
         } else if (examDetails.value) {
           resultText = examDetails.value; // Use value if result is empty
         }

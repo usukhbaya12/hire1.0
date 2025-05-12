@@ -263,7 +263,7 @@ const EmployeeTable = ({ testData, onRefresh }) => {
         item.userEndDate !== "-"
           ? item.result && typeof item.result === "object"
             ? item.result.result
-              ? `${item.result.result} • ${item.result.value}`
+              ? `${item.result.result} / ${item.result.value}`
               : `${Math.round(
                   (item.result.point / item.result.total) * 100
                 )}% (${item.result.point}/${item.result.total})`
@@ -439,7 +439,7 @@ const EmployeeTable = ({ testData, onRefresh }) => {
 
         const reportType = record.assessment?.report || 10;
 
-        if (reportType === 10) {
+        if (reportType === 10 || reportType === 11) {
           const percent = result.total
             ? Math.round((result.point / result.total) * 100)
             : 0;
@@ -463,7 +463,7 @@ const EmployeeTable = ({ testData, onRefresh }) => {
           return (
             <div>
               {result.result && result.value
-                ? `${result.result} • ${result.value}`
+                ? `${result.result} / ${result.value}`
                 : result.value || result.result || "-"}
             </div>
           );
