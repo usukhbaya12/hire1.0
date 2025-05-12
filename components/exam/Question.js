@@ -368,7 +368,7 @@ const QuestionCard = ({
         );
 
       case QUESTION_TYPES.SLIDER:
-        const min = parseInt(question.question?.minValue) || 1;
+        const min = parseInt(question.question?.minValue) || 0;
         const max = parseInt(question.question?.maxValue) || 5;
 
         const internalMin = min - 1;
