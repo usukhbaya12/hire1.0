@@ -28,7 +28,7 @@ import {
 import Image from "next/image";
 import { api } from "@/app/utils/routes";
 import PurchaseModal from "@/components/modals/Purchase";
-import { purchaseTest, userService } from "@/app/api/main";
+import { checkPayment, purchaseTest, userService } from "@/app/api/main";
 import QPay from "@/components/modals/QPay";
 import { getReport } from "@/app/api/exam";
 import { motion } from "framer-motion";
@@ -154,6 +154,12 @@ export default function Test() {
       dataIndex: "report",
       align: "center",
     },
+    {
+      title: "Баримт",
+      key: "barimt",
+      dataIndex: "barimt",
+      align: "center",
+    },
   ];
 
   const columns2 = [
@@ -218,6 +224,11 @@ export default function Test() {
       align: "center",
     },
   ];
+
+  const getBarimt = async (serviceId) => {
+    const res = await checkPayment(serviceId, "NONE")
+    console.log(res)
+  };
 
   const handleTakeTest = async () => {
     setLoadingTakeTest(true);
@@ -626,6 +637,21 @@ export default function Test() {
                           ) : (
                             "Үнэгүй"
                           ),
+                        barimt:
+                          item.exams[0]?.userStartDate == null &&
+                          item.exams[0]?.userEndDate == null ? (
+                            <div className="flex justify-center">
+                              <Button
+                                className="link-btn-2 border-none"
+                                onClick={() => {
+                                   getBarimt(item.id)
+                                }}
+                              >
+                                <CursorLineDuotone width={18} />
+                                Баримт авах
+                              </Button>
+                            </div>
+                          ) : null,
                         report:
                           item.exams[0]?.userStartDate == null &&
                           item.exams[0]?.userEndDate == null ? (
