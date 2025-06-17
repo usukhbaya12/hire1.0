@@ -24,10 +24,11 @@ import {
   ChartBoldDuotone,
   Buildings2BoldDuotone,
   Buildings3BoldDuotone,
+  QrCodeBoldDuotone,
 } from "solar-icons";
 
 import { getUserTestHistory } from "../api/assessment";
-import { getCurrentUser, getPaymentHistory } from "../api/main";
+import { ebarimt, getCurrentUser, getPaymentHistory } from "../api/main";
 import HistoryCard from "@/components/History";
 import ChargeModal from "@/components/modals/Charge";
 import PaymentHistoryChart from "@/components/Payment";
@@ -35,6 +36,7 @@ import Footer from "@/components/Footer";
 import ApplicantsTable from "@/components/All";
 import { customLocale } from "../utils/values";
 import Link from "next/link";
+import EBarimtModal from "@/components/modals/EBarimt";
 
 const Profile = () => {
   const router = useRouter();
@@ -48,6 +50,9 @@ const Profile = () => {
   const [activeTab, setActiveTab] = useState("tests");
   const [messageApi, contextHolder] = message.useMessage();
   const [searchTerm, setSearchTerm] = useState("");
+  const [barimtModalOpen, setBarimtModalOpen] = useState(false);
+  const [barimtData, setBarimtData] = useState([]);
+  const [assessmentName, setAssessmentName] = useState(null);
 
   const refreshBalance = async () => {
     setIsRefreshing(true);
@@ -97,6 +102,18 @@ const Profile = () => {
   }, [session?.user?.id]);
 
   if (!session) return null;
+
+  const getBarimt = async (serviceId, assessmentName) => {
+    try {
+      const res = await ebarimt(serviceId);
+      setBarimtData(res.data);
+      setAssessmentName(assessmentName);
+      setBarimtModalOpen(true);
+    } catch (err) {
+      console.error("GET / Aлдаа гарлаа.", err);
+      messageApi.error("Сервертэй холбогдоход алдаа гарлаа.");
+    }
+  };
 
   const menuItems = [
     {
@@ -464,12 +481,12 @@ const Profile = () => {
       case "history":
         return (
           <>
-            <div className="md:shadow md:shadow-slate-200 md:rounded-3xl md:p-6 md:bg-white/40 md:backdrop-blur-md space-y-6">
-              <h2 className="hidden md:flex text-base font-extrabold px-1  items-center gap-2">
+            <div className="shadow shadow-slate-200 rounded-3xl p-6 bg-white/40 backdrop-blur-md space-y-6">
+              <h2 className="flex text-base font-extrabold px-1 items-center gap-2">
                 <GraphUpBoldDuotone width={20} height={20} />
                 Гүйлгээний түүх
               </h2>
-              <div className="bg-white/40 shadow shadow-slate-200 backdrop-blur-md rounded-3xl shadow-sm">
+              <div className="hidden sm:block">
                 <Table
                   className="test-history-table overflow-x-auto"
                   dataSource={paymentData?.payments.data || []}
@@ -573,9 +590,89 @@ const Profile = () => {
                         </div>
                       ),
                     },
+                    {
+                      title: "Төлбөрийн баримт",
+                      key: "price",
+                      align: "center",
+                      render: (_, record) => (
+                        <div className="inline-flex items-center gap-2">
+                          <div className="flex justify-center">
+                            <Button
+                              className="link-btn-2 border-none"
+                              onClick={() => {
+                                getBarimt(
+                                  record.serviceId,
+                                  record.assessment?.name
+                                );
+                              }}
+                            >
+                              <>
+                                <img
+                                  src="/ebarimt.png"
+                                  width={20}
+                                  alt="E-Barimt"
+                                ></img>
+                              </>
+                              ebarimt
+                            </Button>
+                          </div>
+                        </div>
+                      ),
+                    },
                   ]}
                 />
               </div>
+              {paymentData?.payments.data?.map((record, index) => {
+                return (
+                  <div
+                    key={index}
+                    className="rounded-3xl p-4 bg-white px-6 mb-4 shadow shadow-slate-200"
+                  >
+                    <div className="text-sm text-gray-500 flex items-center gap-2">
+                      <CalendarBoldDuotone width={18} className="-mt-1" />
+                      {new Date(record.paymentDate).toLocaleDateString()}
+                    </div>
+                    <div className="flex items-start gap-2 mb-3">
+                      <div
+                        className="pt-2 font-bold text-lg text-main cursor-pointer hover:underline underline-offset-4"
+                        onClick={() =>
+                          router.push(`/test/${record.assessment.id}`)
+                        }
+                      >
+                        {record.assessment?.name}
+                      </div>
+                    </div>
+                    <Divider />
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <img src="/qpay.png" alt="QPay" width={40} />
+                        <span className="px-2">•</span>
+
+                        <div
+                          className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium bg-red-50 text-red-700`}
+                        >
+                          <MoneyBagBoldDuotone className="w-4 h-4" />
+                          <span>{record.price.toLocaleString()}₮</span>
+                        </div>
+                      </div>
+                      <div className="flex justify-end">
+                        <Button
+                          className="link-btn-2 border-none"
+                          onClick={() => {
+                            getBarimt(
+                              record.serviceId,
+                              record.assessment?.name
+                            );
+                          }}
+                        >
+                          <img src="/ebarimt.png" width={20} alt="E-Barimt" />
+                          ebarimt
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </>
         );
@@ -793,7 +890,7 @@ const Profile = () => {
                       ),
                     },
                     {
-                      title: "Төлбөрийн хэлбэр",
+                      title: "Үнийн дүн",
                       dataIndex: "price",
                       key: "price",
                       align: "right",
@@ -835,6 +932,12 @@ const Profile = () => {
     <>
       <title>Hire.mn</title>
       {contextHolder}
+      <EBarimtModal
+        open={barimtModalOpen}
+        onClose={() => setBarimtModalOpen(false)}
+        barimtData={barimtData}
+        assessment={assessmentName}
+      />
       <ChargeModal
         isOpen={isRechargeModalOpen}
         onClose={() => setIsRechargeModalOpen(false)}

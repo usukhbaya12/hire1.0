@@ -1,14 +1,23 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { getAssessmentById, getUserTestHistory } from "@/app/api/assessment";
-import { Breadcrumb, Button, message, Progress, Spin, Table } from "antd";
+import {
+  Breadcrumb,
+  Button,
+  Divider,
+  message,
+  Progress,
+  Spin,
+  Table,
+} from "antd";
 import {
   AlarmBoldDuotone,
   BookBookmarkBoldDuotone,
   Buildings2BoldDuotone,
+  CalendarBoldDuotone,
   CaseRoundMinimalisticBoldDuotone,
   ClipboardTextBoldDuotone,
   CursorLineDuotone,
@@ -19,6 +28,7 @@ import {
   HistoryBoldDuotone,
   MouseBoldDuotone,
   NotificationLinesRemoveBoldDuotone,
+  QrCodeBoldDuotone,
   QuestionCircleBoldDuotone,
   SquareArrowRightDownBoldDuotone,
   TicketSaleBoldDuotone,
@@ -28,7 +38,12 @@ import {
 import Image from "next/image";
 import { api } from "@/app/utils/routes";
 import PurchaseModal from "@/components/modals/Purchase";
-import { checkPayment, purchaseTest, userService } from "@/app/api/main";
+import {
+  checkPayment,
+  ebarimt,
+  purchaseTest,
+  userService,
+} from "@/app/api/main";
 import QPay from "@/components/modals/QPay";
 import { getReport } from "@/app/api/exam";
 import { motion } from "framer-motion";
@@ -36,10 +51,10 @@ import { LoadingOutlined } from "@ant-design/icons";
 import { customLocale } from "@/app/utils/values";
 import NotFoundPage from "@/app/not-found";
 import Link from "next/link";
+import EBarimtModal from "./modals/EBarimt";
 
 export default function Test() {
   const params = useParams();
-  const searchParams = useSearchParams();
   const testId = params.id;
   const [loading, setLoading] = useState(false);
   const [loadingBtn, setLoadingBtn] = useState(false);
@@ -52,6 +67,8 @@ export default function Test() {
   const [paymentData, setPaymentData] = useState(null);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [barimtModalOpen, setBarimtModalOpen] = useState(false);
+  const [barimtData, setBarimtData] = useState([]);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const historyTableRef = useRef(null);
   const [error, setError] = useState(null);
@@ -226,8 +243,14 @@ export default function Test() {
   ];
 
   const getBarimt = async (serviceId) => {
-    const res = await checkPayment(serviceId, "NONE")
-    console.log(res)
+    try {
+      const res = await ebarimt(serviceId);
+      setBarimtData(res.data);
+      setBarimtModalOpen(true);
+    } catch (err) {
+      console.error("GET / Aлдаа гарлаа.", err);
+      messageApi.error("Сервертэй холбогдоход алдаа гарлаа.");
+    }
   };
 
   const handleTakeTest = async () => {
@@ -355,6 +378,12 @@ export default function Test() {
       />
       <title>{assessmentData?.data?.name}</title>
       {contextHolder}
+      <EBarimtModal
+        open={barimtModalOpen}
+        onClose={() => setBarimtModalOpen(false)}
+        barimtData={barimtData}
+        assessment={assessmentData.data?.name}
+      />
       {error && !loading && <NotFoundPage />}
 
       {assessmentData.category && (
@@ -535,235 +564,209 @@ export default function Test() {
                     <HistoryBoldDuotone width={20} />
                     Тест өгсөн түүх
                   </h2>
-                  <Table
-                    locale={customLocale}
-                    columns={columns}
-                    dataSource={testHistory?.data
-                      ?.filter((item) => item.status === 20)
-                      .map((item) => ({
-                        key: item.id,
-                        date: new Date(item.createdAt).toLocaleDateString(),
-                        status:
-                          item.exams[0]?.userStartDate == null &&
-                          item.exams[0]?.userEndDate == null ? (
-                            <div className="relative group w-fit">
-                              <div className="absolute -inset-0.5 bg-gradient-to-br from-yellow-600/50 to-orange-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-                              <div className="relative bg-gradient-to-br from-yellow-400/30 to-yellow-300/20 rounded-full flex items-center justify-center border border-yellow-900/10">
-                                <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-1 px-3.5">
-                                  <div className="w-2 h-2 bg-yellow-500 rounded-full -mt-0.5"></div>
-                                  Өгөөгүй
-                                </div>
-                              </div>
-                            </div>
-                          ) : item.exams[0]?.userStartDate != null &&
+                  <div className="hidden sm:block">
+                    <Table
+                      locale={customLocale}
+                      columns={columns}
+                      dataSource={testHistory?.data
+                        ?.filter((item) => item.status === 20)
+                        .map((item) => ({
+                          key: item.id,
+                          date: new Date(item.createdAt).toLocaleDateString(),
+                          status:
+                            item.exams[0]?.userStartDate == null &&
                             item.exams[0]?.userEndDate == null ? (
-                            <div className="relative group w-fit">
-                              <div className="absolute -inset-0.5 bg-gradient-to-br from-blue-600/50 to-blue-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-                              <div className="relative bg-gradient-to-br from-blue-400/30 to-blue-300/20 rounded-full flex items-center justify-center border border-blue-900/10">
-                                <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-1 px-3.5">
-                                  <div className="w-2 h-2 bg-blue-500 rounded-full -mt-0.5"></div>
-                                  Дуусгаагүй
+                              <div className="relative group w-fit">
+                                <div className="absolute -inset-0.5 bg-gradient-to-br from-yellow-600/50 to-orange-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+                                <div className="relative bg-gradient-to-br from-yellow-400/30 to-yellow-300/20 rounded-full flex items-center justify-center border border-yellow-900/10">
+                                  <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-1 px-3.5">
+                                    <div className="w-2 h-2 bg-yellow-500 rounded-full -mt-0.5"></div>
+                                    Өгөөгүй
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          ) : (
-                            <div className="relative group w-fit">
-                              <div className="absolute -inset-0.5 bg-gradient-to-br from-lime-800/50 to-green-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-                              <div className="relative bg-gradient-to-br from-lime-600/20 to-green-600/30 rounded-full flex items-center justify-center border border-yellow-900/10">
-                                <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-black/60 to-black/70 bg-clip-text text-transparent py-1 px-3.5">
-                                  <div className="w-2 h-2 bg-lime-600 rounded-full -mt-0.5"></div>
-                                  Дуусгасан
+                            ) : item.exams[0]?.userStartDate != null &&
+                              item.exams[0]?.userEndDate == null ? (
+                              <div className="relative group w-fit">
+                                <div className="absolute -inset-0.5 bg-gradient-to-br from-blue-600/50 to-blue-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+                                <div className="relative bg-gradient-to-br from-blue-400/30 to-blue-300/20 rounded-full flex items-center justify-center border border-blue-900/10">
+                                  <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-1 px-3.5">
+                                    <div className="w-2 h-2 bg-blue-500 rounded-full -mt-0.5"></div>
+                                    Дуусгаагүй
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          ),
-                        result:
-                          item.exams && item.exams.length > 0 ? (
-                            item.exams[0].visible ? (
-                              item.assessment.report === 10 &&
-                              item.exams[0].result ? (
-                                <div className="flex items-center gap-2">
-                                  <Progress
-                                    size="small"
-                                    percent={Math.round(
-                                      (item.exams[0].result.point /
-                                        item.exams[0].result.total) *
-                                        100
-                                    )}
-                                    strokeColor={{
-                                      "0%": "#FF8400",
-                                      "100%": "#FF5C00",
-                                    }}
-                                  />
-                                  <span>
-                                    ({item.exams[0].result.point}/
-                                    {item.exams[0].result.total})
-                                  </span>
+                            ) : (
+                              <div className="relative group w-fit">
+                                <div className="absolute -inset-0.5 bg-gradient-to-br from-lime-800/50 to-green-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+                                <div className="relative bg-gradient-to-br from-lime-600/20 to-green-600/30 rounded-full flex items-center justify-center border border-yellow-900/10">
+                                  <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-black/60 to-black/70 bg-clip-text text-transparent py-1 px-3.5">
+                                    <div className="w-2 h-2 bg-lime-600 rounded-full -mt-0.5"></div>
+                                    Дуусгасан
+                                  </div>
                                 </div>
+                              </div>
+                            ),
+                          result:
+                            item.exams && item.exams.length > 0 ? (
+                              item.exams[0].visible ? (
+                                item.assessment.report === 10 &&
+                                item.exams[0].result ? (
+                                  <div className="flex items-center gap-2">
+                                    <Progress
+                                      size="small"
+                                      percent={Math.round(
+                                        (item.exams[0].result.point /
+                                          item.exams[0].result.total) *
+                                          100
+                                      )}
+                                      strokeColor={{
+                                        "0%": "#FF8400",
+                                        "100%": "#FF5C00",
+                                      }}
+                                    />
+                                    <span>
+                                      ({item.exams[0].result.point}/
+                                      {item.exams[0].result.total})
+                                    </span>
+                                  </div>
+                                ) : (
+                                  <div>
+                                    {item.exams[0]?.result
+                                      ? (item.exams[0].result.result
+                                          ? `${item.exams[0].result.result}`
+                                          : "") +
+                                        (item.exams[0].result.result &&
+                                        item.exams[0].result.value
+                                          ? " / "
+                                          : "") +
+                                        (item.exams[0].result.value
+                                          ? `${item.exams[0].result.value}`
+                                          : "")
+                                      : ""}
+                                  </div>
+                                )
                               ) : (
-                                <div>
-                                  {item.exams[0]?.result
-                                    ? (item.exams[0].result.result
-                                        ? `${item.exams[0].result.result}`
-                                        : "") +
-                                      (item.exams[0].result.result &&
-                                      item.exams[0].result.value
-                                        ? " / "
-                                        : "") +
-                                      (item.exams[0].result.value
-                                        ? `${item.exams[0].result.value}`
-                                        : "")
-                                    : ""}
+                                <div className="items-center gap-2 flex">
+                                  <EyeClosedLineDuotone
+                                    width={18}
+                                    className="text-main"
+                                  />
+                                  Байгууллагад илгээсэн
                                 </div>
                               )
                             ) : (
-                              <div className="items-center gap-2 flex">
-                                <EyeClosedLineDuotone
-                                  width={18}
-                                  className="text-main"
-                                />
-                                Байгууллагад илгээсэн
-                              </div>
-                            )
-                          ) : (
-                            <div></div>
-                          ),
-                        payment:
-                          item.price > 0 ? (
-                            <div className="flex items-center gap-2 justify-center">
-                              <img src="/qpay.png" width={40}></img>•
-                              <div>{item.price.toLocaleString()}₮</div>
-                            </div>
-                          ) : (
-                            "Үнэгүй"
-                          ),
-                        barimt:
-                          item.exams[0]?.userStartDate == null &&
-                          item.exams[0]?.userEndDate == null ? (
-                            <div className="flex justify-center">
-                              <Button
-                                className="link-btn-2 border-none"
-                                onClick={() => {
-                                   getBarimt(item.id)
-                                }}
-                              >
-                                <CursorLineDuotone width={18} />
-                                Баримт авах
-                              </Button>
-                            </div>
-                          ) : null,
-                        report:
-                          item.exams[0]?.userStartDate == null &&
-                          item.exams[0]?.userEndDate == null ? (
-                            <div className="flex justify-center">
-                              <Link href={`/test/details/${testId}`}>
-                                <Button className="link-btn-2 border-none">
-                                  <CursorLineDuotone width={18} />
-                                  Тест өгөх
-                                </Button>
-                              </Link>
-                            </div>
-                          ) : item.exams[0]?.userStartDate != null &&
-                            item.exams[0]?.userEndDate == null ? (
-                            <div>
-                              {item.exams && item.exams.length > 0 && (
-                                <Link href={`/exam/${item.exams[0].code}`}>
-                                  <Button className="link-btn-2 border-none">
-                                    <MouseBoldDuotone width={18} />
-                                    Үргэлжлүүлэх
-                                  </Button>
-                                </Link>
-                              )}
-                            </div>
-                          ) : (
-                            <div className="flex justify-center items-center gap-2">
-                              <Button
-                                type="link"
-                                loading={loadingBtn === item.exams[0].code}
-                                className="link-btn-2 outline-none border-none"
-                                onClick={() =>
-                                  item.exams &&
-                                  item.exams.length > 0 &&
-                                  downloadReport(item.exams[0].code)
-                                }
-                              >
-                                <ClipboardTextBoldDuotone width={18} />
-                                Татах
-                              </Button>
-                              <span>•</span>
-                              <button
-                                onClick={() =>
-                                  shareToFacebookWithMeta(item.exams[0].code)
-                                }
-                                className="flex items-center justify-center transition-opacity hover:opacity-70"
-                                title="Share on Facebook"
-                              >
-                                <Image
-                                  src="/facebook.png"
-                                  alt="Facebook icon"
-                                  width={18}
-                                  height={18}
-                                  priority
-                                />
-                              </button>
-                            </div>
-                          ),
-                      }))}
-                    className="test-history-table overflow-x-auto"
-                    pagination={false}
-                  />
-                  {testHistory?.invited && testHistory?.invited.length > 0 && (
-                    <div className="mt-6">
-                      <h2 className="text-base font-extrabold mb-4 px-1 flex items-center gap-2">
-                        <Buildings2BoldDuotone width={20} />
-                        Байгууллагаас уригдсан
-                      </h2>
-                      <Table
-                        locale={customLocale}
-                        columns={columns2}
-                        rowClassName={(record) =>
-                          record.isExpired
-                            ? "opacity-60 pointer-events-none"
-                            : ""
-                        }
-                        dataSource={testHistory?.invited.map((item) => {
-                          const date = new Date(item.endDate);
-                          const isExpired =
-                            date < new Date() && !item.userEndDate;
-
-                          return {
-                            key: item.id,
-                            date: new Date(item.createdAt).toLocaleDateString(),
-                            endDate: isExpired ? (
-                              <div>
-                                {date.toLocaleString("en-US", {
-                                  month: "numeric",
-                                  day: "numeric",
-                                  year: "numeric",
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                  hour12: false,
-                                })}
-                                <div className="flex items-center gap-1 text-red-500 text-xs font-bold mt-1">
-                                  <AlarmBoldDuotone width={16} />
-                                  Дууссан
-                                </div>
+                              <div></div>
+                            ),
+                          payment:
+                            item.price > 0 ? (
+                              <div className="flex items-center gap-2 justify-center">
+                                <img src="/qpay.png" width={40}></img>•
+                                <div>{item.price.toLocaleString()}₮</div>
                               </div>
                             ) : (
-                              date.toLocaleString("en-US", {
-                                month: "numeric",
-                                day: "numeric",
-                                year: "numeric",
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                hour12: false,
-                              })
+                              "Үнэгүй"
                             ),
-                            isExpired,
-
-                            status:
-                              item.userStartDate == null &&
-                              item.userEndDate == null ? (
+                          barimt:
+                            item.status == 20 && item.price > 0 ? (
+                              <div className="flex justify-center">
+                                <Button
+                                  className="link-btn-2 border-none"
+                                  onClick={() => {
+                                    getBarimt(item.id);
+                                  }}
+                                >
+                                  <>
+                                    <img
+                                      src="/ebarimt.png"
+                                      width={20}
+                                      alt="E-Barimt"
+                                    ></img>
+                                  </>
+                                  ebarimt
+                                </Button>
+                              </div>
+                            ) : null,
+                          report:
+                            item.exams[0]?.userStartDate == null &&
+                            item.exams[0]?.userEndDate == null ? (
+                              <div className="flex justify-center">
+                                <Link href={`/test/details/${testId}`}>
+                                  <Button className="link-btn-2 border-none">
+                                    <CursorLineDuotone width={18} />
+                                    Тест өгөх
+                                  </Button>
+                                </Link>
+                              </div>
+                            ) : item.exams[0]?.userStartDate != null &&
+                              item.exams[0]?.userEndDate == null ? (
+                              <div>
+                                {item.exams && item.exams.length > 0 && (
+                                  <Link href={`/exam/${item.exams[0].code}`}>
+                                    <Button className="link-btn-2 border-none">
+                                      <MouseBoldDuotone width={18} />
+                                      Үргэлжлүүлэх
+                                    </Button>
+                                  </Link>
+                                )}
+                              </div>
+                            ) : (
+                              <div className="flex justify-center items-center gap-2">
+                                <Button
+                                  type="link"
+                                  loading={loadingBtn === item.exams[0].code}
+                                  className="link-btn-2 outline-none border-none"
+                                  onClick={() =>
+                                    item.exams &&
+                                    item.exams.length > 0 &&
+                                    downloadReport(item.exams[0].code)
+                                  }
+                                >
+                                  <ClipboardTextBoldDuotone width={18} />
+                                  Татах
+                                </Button>
+                                <span>•</span>
+                                <button
+                                  onClick={() =>
+                                    shareToFacebookWithMeta(item.exams[0].code)
+                                  }
+                                  className="flex items-center justify-center transition-opacity hover:opacity-70"
+                                  title="Share on Facebook"
+                                >
+                                  <Image
+                                    src="/facebook.png"
+                                    alt="Facebook icon"
+                                    width={18}
+                                    height={18}
+                                    priority
+                                  />
+                                </button>
+                              </div>
+                            ),
+                        }))}
+                      className="test-history-table overflow-x-auto"
+                      pagination={false}
+                    />
+                  </div>
+                  <div className="block sm:hidden space-y-4">
+                    {testHistory?.data
+                      ?.filter((item) => item.status === 20)
+                      .map((item) => (
+                        <div
+                          key={item.id}
+                          className="rounded-3xl shadow shadow-slate-200 bg-white p-4 px-6 space-y-2"
+                        >
+                          <div className="flex pt-1 justify-between">
+                            <div className="text-sm text-gray-500 flex items-center gap-2">
+                              <CalendarBoldDuotone
+                                width={18}
+                                className="-mt-1"
+                              />
+                              {new Date(item.createdAt).toLocaleDateString()}
+                            </div>
+                            <div>
+                              {item.exams[0]?.userStartDate == null &&
+                              item.exams[0]?.userEndDate == null ? (
                                 <div className="relative group w-fit">
                                   <div className="absolute -inset-0.5 bg-gradient-to-br from-yellow-600/50 to-orange-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
                                   <div className="relative bg-gradient-to-br from-yellow-400/30 to-yellow-300/20 rounded-full flex items-center justify-center border border-yellow-900/10">
@@ -773,8 +776,8 @@ export default function Test() {
                                     </div>
                                   </div>
                                 </div>
-                              ) : item.userStartDate != null &&
-                                item.userEndDate == null ? (
+                              ) : item.exams[0]?.userStartDate != null &&
+                                item.exams[0]?.userEndDate == null ? (
                                 <div className="relative group w-fit">
                                   <div className="absolute -inset-0.5 bg-gradient-to-br from-blue-600/50 to-blue-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
                                   <div className="relative bg-gradient-to-br from-blue-400/30 to-blue-300/20 rounded-full flex items-center justify-center border border-blue-900/10">
@@ -794,123 +797,561 @@ export default function Test() {
                                     </div>
                                   </div>
                                 </div>
-                              ),
-
-                            result: item.visible ? (
-                              item.assessment.report === 10 && item.result ? (
-                                <div className="flex items-center gap-2">
-                                  <Progress
-                                    size="small"
-                                    percent={Math.round(
-                                      (item.result.point / item.result.total) *
-                                        100
-                                    )}
-                                    format={(percent) => `${percent}%`}
-                                    strokeColor={{
-                                      "0%": "#FF8400",
-                                      "100%": "#FF5C00",
-                                    }}
-                                  />
-                                  <span>
-                                    ({item.result.point}/{item.result.total})
-                                  </span>
-                                </div>
+                              )}
+                            </div>
+                          </div>
+                          <div className="font-bold text-lg">
+                            {item.exams && item.exams.length > 0 ? (
+                              item.exams[0].visible ? (
+                                item.assessment.report === 10 &&
+                                item.exams[0].result ? (
+                                  <>
+                                    <div className="-mb-1">Үр дүн:</div>
+                                    <div className="flex items-center gap-2">
+                                      <Progress
+                                        size="small"
+                                        percent={Math.round(
+                                          (item.exams[0].result.point /
+                                            item.exams[0].result.total) *
+                                            100
+                                        )}
+                                        strokeColor={{
+                                          "0%": "#FF8400",
+                                          "100%": "#FF5C00",
+                                        }}
+                                      />
+                                      <span>
+                                        ({item.exams[0].result.point}/
+                                        {item.exams[0].result.total})
+                                      </span>
+                                    </div>
+                                  </>
+                                ) : (
+                                  <div className="font-bold text-lg">
+                                    {item.exams[0]?.result
+                                      ? (item.exams[0].result.result
+                                          ? `${item.exams[0].result.result}`
+                                          : "") +
+                                        (item.exams[0].result.result &&
+                                        item.exams[0].result.value
+                                          ? " / "
+                                          : "") +
+                                        (item.exams[0].result.value
+                                          ? `${item.exams[0].result.value}`
+                                          : "")
+                                      : ""}
+                                  </div>
+                                )
                               ) : (
-                                <div>
-                                  {item.result
-                                    ? item.result.result +
-                                      " / " +
-                                      item.result.value
-                                    : ""}
+                                <div className="items-center gap-2 flex">
+                                  <EyeClosedLineDuotone
+                                    width={18}
+                                    className="text-main"
+                                  />
+                                  Байгууллагад илгээсэн
                                 </div>
                               )
-                            ) : item.userEndDate ? (
-                              <div className="items-center gap-2 flex">
-                                <EyeClosedLineDuotone
-                                  width={18}
-                                  className="text-main"
-                                />
-                                Байгууллагад илгээсэн
-                              </div>
                             ) : (
-                              <></>
-                            ),
-
-                            payment: item.service.user ? (
-                              <div className="flex items-center gap-2 justify-center text-blue-700 font-bold">
-                                <Buildings2BoldDuotone width={18} />
-                                <div>{item.service.user.organizationName}</div>
+                              <div></div>
+                            )}
+                          </div>
+                          {item.price > 0 && (
+                            <>
+                              <Divider />
+                              <div className="text-sm flex justify-between">
+                                <div className="flex items-center gap-2 justify-center">
+                                  <img src="/qpay.png" width={40}></img>•
+                                  <div>{item.price.toLocaleString()}₮</div>
+                                </div>
+                                <Button
+                                  className="link-btn-2 border-none"
+                                  onClick={() => getBarimt(item.id)}
+                                >
+                                  <>
+                                    <img
+                                      src="/ebarimt.png"
+                                      width={20}
+                                      alt="E-Barimt"
+                                    ></img>
+                                  </>
+                                  ebarimt
+                                </Button>
                               </div>
+                            </>
+                          )}
+                          <Divider />
+                          <div className="flex gap-2 justify-between">
+                            {item.exams[0]?.userStartDate == null &&
+                            item.exams[0]?.userEndDate == null ? (
+                              <Link
+                                href={`/test/details/${assessmentData.data?.id}`}
+                              >
+                                <Button className="link-btn-2 border-none">
+                                  <CursorLineDuotone width={18} />
+                                  Тест өгөх
+                                </Button>
+                              </Link>
+                            ) : item.exams[0]?.userStartDate != null &&
+                              item.exams[0]?.userEndDate == null ? (
+                              <Link href={`/exam/${item.exams[0].code}`}>
+                                <Button className="link-btn-2 border-none">
+                                  <MouseBoldDuotone width={18} />
+                                  Үргэлжлүүлэх
+                                </Button>
+                              </Link>
                             ) : (
-                              <></>
-                            ),
-
-                            report: isExpired ? (
-                              <div className="flex justify-center">
-                                <button className="text-main flex text-center">
-                                  <NotificationLinesRemoveBoldDuotone
-                                    width={18}
-                                  />
-                                </button>
-                              </div>
-                            ) : item.userStartDate && !item.userEndDate ? (
-                              <div className="flex justify-center">
-                                <Link href={`/exam/${item.code}`}>
-                                  <Button className="link-btn-2 border-none">
-                                    <MouseBoldDuotone width={18} />
-                                    Үргэлжлүүлэх
-                                  </Button>
-                                </Link>
-                              </div>
-                            ) : item.userEndDate == null ? (
-                              <div className="flex justify-center">
-                                <Link href={`/exam/${item.code}`}>
-                                  <Button className="link-btn-2 border-none">
-                                    <CursorLineDuotone width={18} />
-                                    Тест өгөх
-                                  </Button>
-                                </Link>
-                              </div>
-                            ) : item.visible ? (
-                              <div className="flex justify-center items-center gap-2">
-                                <button
-                                  className="text-main hover:text-secondary flex items-center gap-2 font-semibold"
-                                  onClick={() => downloadReport(item.code)}
+                              <>
+                                <Button
+                                  className="link-btn-2 border-none"
+                                  onClick={() =>
+                                    downloadReport(item.exams[0].code)
+                                  }
                                 >
                                   <ClipboardTextBoldDuotone width={18} />
-                                  Татах
-                                </button>
-                                <span>•</span>
+                                  Тайлан татах
+                                </Button>
+
                                 <button
+                                  className="flex items-center gap-2"
                                   onClick={() =>
-                                    shareToFacebookWithMeta(item.code)
+                                    shareToFacebookWithMeta(item.exams[0].code)
                                   }
-                                  className="flex items-center justify-center transition-opacity hover:opacity-70"
-                                  title="Share on Facebook"
+                                  title="Facebook share"
                                 >
                                   <Image
                                     src="/facebook.png"
-                                    alt="Facebook icon"
                                     width={18}
                                     height={18}
-                                    priority
+                                    alt="facebook"
                                   />
+                                  <div className="font-bold text-blue-700">
+                                    Хуваалцах
+                                  </div>
                                 </button>
-                              </div>
-                            ) : (
-                              <div className="flex justify-center">
-                                <button className="text-main flex text-center">
-                                  <NotificationLinesRemoveBoldDuotone
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+
+                  {testHistory?.invited && testHistory?.invited.length > 0 && (
+                    <div className="mt-6">
+                      <h2 className="text-base font-extrabold mb-4 px-1 flex items-center gap-2">
+                        <Buildings2BoldDuotone width={20} />
+                        Байгууллагаас уригдсан
+                      </h2>
+                      <div className="hidden sm:block">
+                        <Table
+                          locale={customLocale}
+                          columns={columns2}
+                          rowClassName={(record) =>
+                            record.isExpired
+                              ? "opacity-60 pointer-events-none"
+                              : ""
+                          }
+                          dataSource={testHistory?.invited.map((item) => {
+                            const date = new Date(item.endDate);
+                            const isExpired =
+                              date < new Date() && !item.userEndDate;
+
+                            return {
+                              key: item.id,
+                              date: new Date(
+                                item.createdAt
+                              ).toLocaleDateString(),
+                              endDate: isExpired ? (
+                                <div>
+                                  {date.toLocaleString("en-US", {
+                                    month: "numeric",
+                                    day: "numeric",
+                                    year: "numeric",
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    hour12: false,
+                                  })}
+                                  <div className="flex items-center gap-1 text-red-500 text-xs font-bold mt-1">
+                                    <AlarmBoldDuotone width={16} />
+                                    Дууссан
+                                  </div>
+                                </div>
+                              ) : (
+                                date.toLocaleString("en-US", {
+                                  month: "numeric",
+                                  day: "numeric",
+                                  year: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                  hour12: false,
+                                })
+                              ),
+                              isExpired,
+
+                              status:
+                                item.userStartDate == null &&
+                                item.userEndDate == null ? (
+                                  <div className="relative group w-fit">
+                                    <div className="absolute -inset-0.5 bg-gradient-to-br from-yellow-600/50 to-orange-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+                                    <div className="relative bg-gradient-to-br from-yellow-400/30 to-yellow-300/20 rounded-full flex items-center justify-center border border-yellow-900/10">
+                                      <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-1 px-3.5">
+                                        <div className="w-2 h-2 bg-yellow-500 rounded-full -mt-0.5"></div>
+                                        Өгөөгүй
+                                      </div>
+                                    </div>
+                                  </div>
+                                ) : item.userStartDate != null &&
+                                  item.userEndDate == null ? (
+                                  <div className="relative group w-fit">
+                                    <div className="absolute -inset-0.5 bg-gradient-to-br from-blue-600/50 to-blue-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+                                    <div className="relative bg-gradient-to-br from-blue-400/30 to-blue-300/20 rounded-full flex items-center justify-center border border-blue-900/10">
+                                      <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-1 px-3.5">
+                                        <div className="w-2 h-2 bg-blue-500 rounded-full -mt-0.5"></div>
+                                        Дуусгаагүй
+                                      </div>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div className="relative group w-fit">
+                                    <div className="absolute -inset-0.5 bg-gradient-to-br from-lime-800/50 to-green-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+                                    <div className="relative bg-gradient-to-br from-lime-600/20 to-green-600/30 rounded-full flex items-center justify-center border border-yellow-900/10">
+                                      <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-black/60 to-black/70 bg-clip-text text-transparent py-1 px-3.5">
+                                        <div className="w-2 h-2 bg-lime-600 rounded-full -mt-0.5"></div>
+                                        Дуусгасан
+                                      </div>
+                                    </div>
+                                  </div>
+                                ),
+
+                              result: item.visible ? (
+                                item.assessment.report === 10 && item.result ? (
+                                  <div className="flex items-center gap-2">
+                                    <Progress
+                                      size="small"
+                                      percent={Math.round(
+                                        (item.result.point /
+                                          item.result.total) *
+                                          100
+                                      )}
+                                      format={(percent) => `${percent}%`}
+                                      strokeColor={{
+                                        "0%": "#FF8400",
+                                        "100%": "#FF5C00",
+                                      }}
+                                    />
+                                    <span>
+                                      ({item.result.point}/{item.result.total})
+                                    </span>
+                                  </div>
+                                ) : (
+                                  <div>
+                                    {item.result
+                                      ? item.result.result +
+                                        " / " +
+                                        item.result.value
+                                      : ""}
+                                  </div>
+                                )
+                              ) : item.userEndDate ? (
+                                <div className="items-center gap-2 flex">
+                                  <EyeClosedLineDuotone
                                     width={18}
+                                    className="text-main"
                                   />
-                                </button>
+                                  Байгууллагад илгээсэн
+                                </div>
+                              ) : (
+                                <></>
+                              ),
+
+                              payment: item.service.user ? (
+                                <div className="flex items-center gap-2 justify-center text-blue-700 font-bold">
+                                  <Buildings2BoldDuotone width={18} />
+                                  <div>
+                                    {item.service.user.organizationName}
+                                  </div>
+                                </div>
+                              ) : (
+                                <></>
+                              ),
+
+                              report: isExpired ? (
+                                <div className="flex justify-center">
+                                  <button className="text-main flex text-center">
+                                    <NotificationLinesRemoveBoldDuotone
+                                      width={18}
+                                    />
+                                  </button>
+                                </div>
+                              ) : item.userStartDate && !item.userEndDate ? (
+                                <div className="flex justify-center">
+                                  <Link href={`/exam/${item.code}`}>
+                                    <Button className="link-btn-2 border-none">
+                                      <MouseBoldDuotone width={18} />
+                                      Үргэлжлүүлэх
+                                    </Button>
+                                  </Link>
+                                </div>
+                              ) : item.userEndDate == null ? (
+                                <div className="flex justify-center">
+                                  <Link href={`/exam/${item.code}`}>
+                                    <Button className="link-btn-2 border-none">
+                                      <CursorLineDuotone width={18} />
+                                      Тест өгөх
+                                    </Button>
+                                  </Link>
+                                </div>
+                              ) : item.visible ? (
+                                <div className="flex justify-center items-center gap-2">
+                                  <button
+                                    className="text-main hover:text-secondary flex items-center gap-2 font-semibold"
+                                    onClick={() => downloadReport(item.code)}
+                                  >
+                                    <ClipboardTextBoldDuotone width={18} />
+                                    Татах
+                                  </button>
+                                  <span>•</span>
+                                  <button
+                                    onClick={() =>
+                                      shareToFacebookWithMeta(item.code)
+                                    }
+                                    className="flex items-center justify-center transition-opacity hover:opacity-70"
+                                    title="Share on Facebook"
+                                  >
+                                    <Image
+                                      src="/facebook.png"
+                                      alt="Facebook icon"
+                                      width={18}
+                                      height={18}
+                                      priority
+                                    />
+                                  </button>
+                                </div>
+                              ) : (
+                                <div className="flex justify-center">
+                                  <button className="text-main flex text-center">
+                                    <NotificationLinesRemoveBoldDuotone
+                                      width={18}
+                                    />
+                                  </button>
+                                </div>
+                              ),
+                            };
+                          })}
+                          className="test-history-table overflow-x-auto"
+                          pagination={false}
+                        />
+                      </div>
+                      <div className="block sm:hidden space-y-4">
+                        {testHistory?.invited.map((item) => {
+                          const now = new Date();
+                          const endDateObj = new Date(item.endDate);
+                          const isExpired =
+                            endDateObj < now && !item.userEndDate;
+                          const disabledClass = isExpired
+                            ? "opacity-60 pointer-events-none"
+                            : "";
+
+                          return (
+                            <div
+                              key={item.id}
+                              className={`rounded-3xl shadow shadow-slate-200 bg-white p-4 px-6 space-y-2 ${disabledClass}`}
+                            >
+                              <div className="flex pt-1 gap-2 justify-between">
+                                {item.service?.user?.organizationName && (
+                                  <div className="pt-1 flex items-center gap-2 text-blue-700 font-bold text-sm leading-4">
+                                    <Buildings2BoldDuotone
+                                      width={18}
+                                      className="min-w-[18px]"
+                                    />
+                                    {item.service.user.organizationName}
+                                  </div>
+                                )}
+                                <div>
+                                  {item.userStartDate == null &&
+                                  item.userEndDate == null ? (
+                                    <div className="relative group w-fit">
+                                      <div className="absolute -inset-0.5 bg-gradient-to-br from-yellow-600/50 to-orange-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+                                      <div className="relative bg-gradient-to-br from-yellow-400/30 to-yellow-300/20 rounded-full flex items-center justify-center border border-yellow-900/10">
+                                        <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-1 px-3.5">
+                                          <div className="w-2 h-2 bg-yellow-500 rounded-full -mt-0.5"></div>
+                                          Өгөөгүй
+                                        </div>
+                                      </div>
+                                    </div>
+                                  ) : item.userStartDate != null &&
+                                    item.userEndDate == null ? (
+                                    <div className="relative group w-fit">
+                                      <div className="absolute -inset-0.5 bg-gradient-to-br from-blue-600/50 to-blue-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+                                      <div className="relative bg-gradient-to-br from-blue-400/30 to-blue-300/20 rounded-full flex items-center justify-center border border-blue-900/10">
+                                        <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-1 px-3.5">
+                                          <div className="w-2 h-2 bg-blue-500 rounded-full -mt-0.5"></div>
+                                          Дуусгаагүй
+                                        </div>
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <div className="relative group w-fit">
+                                      <div className="absolute -inset-0.5 bg-gradient-to-br from-lime-800/50 to-green-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+                                      <div className="relative bg-gradient-to-br from-lime-600/20 to-green-600/30 rounded-full flex items-center justify-center border border-yellow-900/10">
+                                        <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-black/60 to-black/70 bg-clip-text text-transparent py-1 px-3.5">
+                                          <div className="w-2 h-2 bg-lime-600 rounded-full -mt-0.5"></div>
+                                          Дуусгасан
+                                        </div>
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
                               </div>
-                            ),
-                          };
+                              <Divider />
+                              <div className="text-sm flex items-center justify-between">
+                                <div className="text-sm text-gray-500 flex items-center gap-2">
+                                  <CalendarBoldDuotone
+                                    width={18}
+                                    className="-mt-1"
+                                  />
+                                  {new Date(
+                                    item.createdAt
+                                  ).toLocaleDateString()}
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <strong>Дуусах: </strong>{" "}
+                                  {endDateObj.toLocaleString("en-US", {
+                                    month: "numeric",
+                                    day: "numeric",
+                                    year: "numeric",
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    hour12: false,
+                                  })}
+                                </div>
+                              </div>
+
+                              <Divider />
+                              {isExpired ? (
+                                <div className="rounded-full bg-red-400 text-white text-xs font-bold flex items-center gap-1 px-2 w-fit">
+                                  <AlarmBoldDuotone width={16} />
+                                  Хугацаа хэтэрсэн
+                                </div>
+                              ) : (
+                                <div>
+                                  <div>Үр дүн:</div>
+
+                                  {item.visible ? (
+                                    item.assessment.report === 10 &&
+                                    item.result ? (
+                                      <>
+                                        <div className="flex items-center gap-2">
+                                          <Progress
+                                            size="small"
+                                            percent={Math.round(
+                                              (item.result.point /
+                                                item.result.total) *
+                                                100
+                                            )}
+                                            format={(percent) => `${percent}%`}
+                                            strokeColor={{
+                                              "0%": "#FF8400",
+                                              "100%": "#FF5C00",
+                                            }}
+                                          />
+                                          <span>
+                                            ({item.result.point}/
+                                            {item.result.total})
+                                          </span>
+                                        </div>
+                                      </>
+                                    ) : (
+                                      <div className="font-bold text-lg">
+                                        {item.result.result
+                                          ? (item.result.result
+                                              ? `${item.result.result}`
+                                              : "") +
+                                            (item.result.result &&
+                                            item.result.value
+                                              ? " / "
+                                              : "") +
+                                            (item.result.value
+                                              ? `${item.result.value}`
+                                              : "")
+                                          : ""}
+                                      </div>
+                                    )
+                                  ) : item.userEndDate ? (
+                                    <div className="flex items-center gap-2 text-main text-lg font-bold">
+                                      <EyeClosedLineDuotone width={18} />
+                                      Байгууллагад илгээсэн
+                                    </div>
+                                  ) : null}
+                                </div>
+                              )}
+                              {!isExpired && <Divider />}
+
+                              {!isExpired && (
+                                <div className="flex gap-2 justify-between">
+                                  {isExpired ? (
+                                    <button className="text-main flex text-center">
+                                      <NotificationLinesRemoveBoldDuotone
+                                        width={18}
+                                      />
+                                    </button>
+                                  ) : item.userStartDate &&
+                                    !item.userEndDate ? (
+                                    <Link href={`/exam/${item.code}`}>
+                                      <Button className="link-btn-2 border-none">
+                                        <MouseBoldDuotone width={18} />
+                                        Үргэлжлүүлэх
+                                      </Button>
+                                    </Link>
+                                  ) : item.userEndDate == null ? (
+                                    <Link href={`/exam/${item.code}`}>
+                                      <Button className="link-btn-2 border-none">
+                                        <CursorLineDuotone width={18} />
+                                        Тест өгөх
+                                      </Button>
+                                    </Link>
+                                  ) : item.visible ? (
+                                    <>
+                                      <Button
+                                        className="link-btn-2 border-none"
+                                        onClick={() =>
+                                          downloadReport(item.exams[0].code)
+                                        }
+                                      >
+                                        <ClipboardTextBoldDuotone width={18} />
+                                        Тайлан татах
+                                      </Button>
+
+                                      <button
+                                        className="flex items-center gap-2"
+                                        onClick={() =>
+                                          shareToFacebookWithMeta(item.code)
+                                        }
+                                        title="Facebook share"
+                                      >
+                                        <Image
+                                          src="/facebook.png"
+                                          width={18}
+                                          height={18}
+                                          alt="facebook"
+                                        />
+                                        <div className="font-bold text-blue-700">
+                                          Хуваалцах
+                                        </div>
+                                      </button>
+                                    </>
+                                  ) : (
+                                    <button className="text-main flex text-center">
+                                      <NotificationLinesRemoveBoldDuotone
+                                        width={18}
+                                      />
+                                    </button>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          );
                         })}
-                        className="test-history-table overflow-x-auto"
-                        pagination={false}
-                      />
+                      </div>
                     </div>
                   )}
                 </div>

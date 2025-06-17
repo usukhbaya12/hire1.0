@@ -105,6 +105,7 @@ const QPay = ({ isOpen, onClose, paymentData, serviceId, onSuccess }) => {
       footer={null}
       width={400}
       centered
+      closable={false}
     >
       <div className="flex flex-col items-center pb-1">
         {contextHolder}

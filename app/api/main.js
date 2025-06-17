@@ -126,6 +126,36 @@ export const checkPayment = async (serviceId, invoiceId) => {
   }
 };
 
+export const ebarimt = async (serviceId) => {
+  try {
+    const token = await getAuthToken();
+    if (!token) return { token: false };
+
+    const response = await axios.get(`${api}userService/ebarimt/${serviceId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    return {
+      data: response.data.payload,
+      token: true,
+      message: response.data?.message,
+      status: response.data?.status,
+      success: response.data.succeed,
+    };
+  } catch (error) {
+    console.error(error);
+
+    return {
+      success: false,
+      message:
+        error.response?.data?.message || "Сервертэй холбогдоход алдаа гарлаа.",
+    };
+  }
+};
+
 export const getCode = async ({ service, count, startDate, endDate }) => {
   try {
     const token = await getAuthToken();

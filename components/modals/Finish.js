@@ -65,6 +65,7 @@ const FinishModal = ({ open, onClose, onSubmit, assessment }) => {
         open={open}
         title="Тесттэй холбоотой санал хүсэлт"
         width={450}
+        closable={false}
         footer={[
           <Button
             loading={loading}

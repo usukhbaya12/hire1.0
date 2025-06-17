@@ -5,6 +5,11 @@ export async function generateMetadata({ params }) {
   return generateTestMetadata({ params });
 }
 
-export default async function Page({ params, searchParams }) {
+export default async function Page({
+  params,
+  searchParams: searchParamsPromise,
+}) {
+  const searchParams = await searchParamsPromise;
+
   return <Test params={params} searchParams={searchParams} />;
 }
