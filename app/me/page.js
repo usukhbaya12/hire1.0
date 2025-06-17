@@ -626,7 +626,7 @@ const Profile = () => {
                 return (
                   <div
                     key={index}
-                    className="rounded-3xl p-4 bg-white px-6 mb-4 shadow shadow-slate-200"
+                    className="rounded-3xl p-4 bg-white px-6 mb-4 shadow shadow-slate-200 block sm:hidden"
                   >
                     <div className="text-sm text-gray-500 flex items-center gap-2">
                       <CalendarBoldDuotone width={18} className="-mt-1" />
