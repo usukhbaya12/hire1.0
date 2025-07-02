@@ -43,6 +43,7 @@ const BlogCard = ({ blog, featured = false }) => {
               </div>
             )}
             <Image
+              draggable={false}
               src={imageUrl}
               alt={blog?.title || "Featured Blog"}
               fill
@@ -95,6 +96,7 @@ const BlogCard = ({ blog, featured = false }) => {
     >
       <div className="relative aspect-[16/10] overflow-hidden rounded-t-3xl bg-gray-100">
         <Image
+          draggable={false}
           src={imageUrl}
           alt={blog?.title || "Blog photo"}
           fill

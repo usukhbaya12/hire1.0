@@ -120,6 +120,7 @@ export default function BlogDetailPage() {
               {imageUrl && (
                 <div className="relative w-full max-h-[180px] h-[180px] md:max-h-[350px] md:h-[350px]">
                   <Image
+                    draggable={false}
                     src={imageUrl}
                     alt={blog.title}
                     fill

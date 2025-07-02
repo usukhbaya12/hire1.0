@@ -19,6 +19,7 @@ import Assessment from "@/components/Assessment";
 import { DropdownIcon } from "@/components/Icons";
 import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
+import AssessmentSkeleton from "@/components/Skeleton";
 
 const AnimatedCounter = ({ value, duration = 2 }) => {
   const [count, setCount] = useState(0);
@@ -44,6 +45,81 @@ const AnimatedCounter = ({ value, duration = 2 }) => {
   return <div className="text-4xl font-black text-main">{count}+</div>;
 };
 
+const Marquee = () => {
+  const logos = Array(12).fill("/hire-logo.png");
+
+  return (
+    <div className="bg-white/95 backdrop-blur-md border-y border-gray-200 py-6 overflow-hidden">
+      <div className="relative space-y-4">
+        <div className="flex animate-marquee">
+          {logos.map((logo, index) => (
+            <div
+              key={`row1-${index}`}
+              className="flex-shrink-0 mx-8 w-32 h-16 relative opacity-60 hover:opacity-100 transition-opacity duration-300"
+            >
+              <Image
+                draggable={false}
+                src={logo}
+                alt="Company logo"
+                fill
+                className="object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+              />
+            </div>
+          ))}
+          {logos.map((logo, index) => (
+            <div
+              key={`row1-duplicate-${index}`}
+              className="flex-shrink-0 mx-8 w-32 h-16 relative opacity-60 hover:opacity-100 transition-opacity duration-300"
+            >
+              <Image
+                draggable={false}
+                src={logo}
+                alt="Company logo"
+                fill
+                className="object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+              />
+            </div>
+          ))}
+        </div>
+
+        <div className="flex animate-marquee-reverse">
+          {logos.map((logo, index) => (
+            <div
+              key={`row2-${index}`}
+              className="flex-shrink-0 mx-8 w-32 h-16 relative opacity-60 hover:opacity-100 transition-opacity duration-300"
+            >
+              <Image
+                draggable={false}
+                src={logo}
+                alt="Company logo"
+                fill
+                className="object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+              />
+            </div>
+          ))}
+          {logos.map((logo, index) => (
+            <div
+              key={`row2-duplicate-${index}`}
+              className="flex-shrink-0 mx-8 w-32 h-16 relative opacity-60 hover:opacity-100 transition-opacity duration-300"
+            >
+              <Image
+                src={logo}
+                draggable={false}
+                alt="Company logo"
+                fill
+                className="object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+              />
+            </div>
+          ))}
+        </div>
+
+        <div className="absolute top-0 left-0 w-32 h-full bg-gradient-to-r from-white to-transparent pointer-events-none" />
+        <div className="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-white to-transparent pointer-events-none" />
+      </div>
+    </div>
+  );
+};
+
 export default function Home() {
   const [assessments, setAssessments] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -60,7 +136,10 @@ export default function Home() {
   const [isStarredSectionVisible, setIsStarredSectionVisible] = useState(false);
   const [isPopularSectionVisible, setIsPopularSectionVisible] = useState(false);
 
+  const [loading, setLoading] = useState(true);
+
   const getData = async () => {
+    setLoading(true);
     try {
       const [categoriesResponse, assessmentsResponse] = await Promise.all([
         getAssessmentCategory(),
@@ -82,6 +161,8 @@ export default function Home() {
     } catch (error) {
       console.error("GET / Алдаа гарлаа.", error);
       messageApi.error("Сервертэй холбогдоход алдаа гарлаа.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -233,6 +314,12 @@ export default function Home() {
   const popularTests = [...assessments]
     .sort((a, b) => (b.data.count || 0) - (a.data.count || 0))
     .slice(0, 3);
+
+  const renderSkeletonCards = (count = 6) => {
+    return Array(count)
+      .fill(null)
+      .map((_, index) => <AssessmentSkeleton key={`skeleton-${index}`} />);
+  };
 
   return (
     <>
@@ -417,10 +504,11 @@ export default function Home() {
                 className="font-black text-xl inline-flex gap-1 text-main"
               >
                 <StarFall2BoldDuotone />
-                Онцлох тестүүд
+                Шинээр нэмэгдсэн
               </motion.div>
+
               <motion.div
-                className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4"
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4"
                 initial="hidden"
                 animate="visible"
                 variants={{
@@ -431,16 +519,18 @@ export default function Home() {
                   },
                 }}
               >
-                {featuredTests.map((assessment, index) => (
-                  <motion.div
-                    key={assessment.data.id}
-                    transition={{ duration: 0.5, delay: 0.3 * index }}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                  >
-                    <Assessment assessment={assessment} />
-                  </motion.div>
-                ))}
+                {loading
+                  ? renderSkeletonCards(3)
+                  : featuredTests.map((assessment, index) => (
+                      <motion.div
+                        key={assessment.data.id}
+                        transition={{ duration: 0.5, delay: 0.3 * index }}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                      >
+                        <Assessment assessment={assessment} />
+                      </motion.div>
+                    ))}
               </motion.div>
             </motion.div>
           </div>
@@ -505,7 +595,7 @@ export default function Home() {
               </motion.div>
 
               <motion.div
-                className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4"
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4"
                 initial="hidden"
                 animate="visible"
                 variants={{
@@ -516,26 +606,45 @@ export default function Home() {
                   },
                 }}
               >
-                {popularTests.map((assessment, index) => (
-                  <motion.div
-                    key={assessment.data.id}
-                    variants={{
-                      hidden: { opacity: 0, y: 50 },
-                      visible: {
-                        opacity: 1,
-                        y: 0,
-                        transition: {
-                          type: "spring",
-                          bounce: 0.4,
-                        },
-                      },
-                    }}
-                  >
-                    <Assessment assessment={assessment} />
-                  </motion.div>
-                ))}
+                {loading
+                  ? renderSkeletonCards(3)
+                  : popularTests.map((assessment, index) => (
+                      <motion.div
+                        key={assessment.data.id}
+                        variants={{
+                          hidden: { opacity: 0, y: 50 },
+                          visible: {
+                            opacity: 1,
+                            y: 0,
+                            transition: {
+                              type: "spring",
+                              bounce: 0.4,
+                            },
+                          },
+                        }}
+                      >
+                        <Assessment assessment={assessment} />
+                      </motion.div>
+                    ))}
               </motion.div>
             </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1.1 }}
+          >
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
+              className="font-black text-xl inline-flex gap-1 text-main relative 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6 pb-4 pt-8 bg-white/95 backdrop-blur-md w-full"
+            >
+              <Buildings2BoldDuotone />
+              Тест хамтран хөгжүүлэгч байгууллагууд
+            </motion.div>
+            <Marquee />
           </motion.div>
 
           <div
@@ -630,7 +739,22 @@ export default function Home() {
                 </div>
               </motion.div>
             </div>
-            {filteredAssessments.length > 0 ? (
+            {loading ? (
+              <motion.div
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4"
+                initial="hidden"
+                animate="visible"
+                variants={{
+                  visible: {
+                    transition: {
+                      staggerChildren: 0.05,
+                    },
+                  },
+                }}
+              >
+                {renderSkeletonCards(9)}
+              </motion.div>
+            ) : filteredAssessments.length > 0 ? (
               <motion.div
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4"
                 initial="hidden"

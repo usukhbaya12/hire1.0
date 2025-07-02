@@ -113,6 +113,7 @@ const MyTests = () => {
           <div className="absolute inset-0 bg-gradient-to-br from-white to-main/5"></div>
           <div className="absolute top-0 right-0 w-60 h-60">
             <Image
+              draggable={false}
               src="/brain-home.png"
               width={128}
               height={128}

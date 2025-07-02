@@ -12,6 +12,7 @@ export default function SignupPage() {
       </div>
       <div className="absolute z-[1] left-0 bottom-0 hidden sm:block">
         <Image
+          draggable={false}
           src="/quartercircle.png"
           width={600}
           height={10}

@@ -738,6 +738,7 @@ const Account = () => {
             <div className="relative p-6 bg-white/40 backdrop-blur-md rounded-3xl shadow shadow-slate-200 overflow-hidden">
               <div className="absolute top-32 -right-14 w-60 h-60">
                 <Image
+                  draggable={false}
                   src="/brain-home.png"
                   width={128}
                   height={128}

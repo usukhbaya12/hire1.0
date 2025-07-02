@@ -12,7 +12,7 @@ export default function Footer() {
   const router = useRouter();
   const items = [
     { key: "1", label: "Тестийн сан", link: "/#tests" },
-    { key: "2", label: "Онцлох", link: "/#starred" },
+    { key: "2", label: "Шинээр нэмэгдсэн", link: "/#starred" },
     { key: "3", label: "Эрэлттэй", link: "/#popular" },
   ];
   const knowledge = [

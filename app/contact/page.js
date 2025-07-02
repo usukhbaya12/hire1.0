@@ -277,7 +277,7 @@ const ContactPage = () => {
               ) : (
                 <div>
                   <h2 className="text-lg font-extrabold mb-6 text-center sm:text-left leading-5">
-                    Бидэнтэй ямар зорилгоор холбогдож байна вэ?
+                    Та ямар зорилгоор холбогдож байна вэ?
                   </h2>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
