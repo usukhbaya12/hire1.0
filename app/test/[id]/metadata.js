@@ -35,7 +35,6 @@ export async function generateTestMetadata({ params }) {
       const testName = assessmentResponse.data.data.name || "Тестийн үр дүн";
       const icon = assessmentResponse.data.data.icons;
 
-      // Update metadata with actual data
       metadata.title = `${testName} / Hire.mn`;
       metadata.description =
         assessmentResponse.data.data.description ||
@@ -45,15 +44,13 @@ export async function generateTestMetadata({ params }) {
         assessmentResponse.data.data.description ||
         "Онлайн тест, хөндлөнгийн үнэлгээ";
 
-      // Fix: Use full URL for the icon
       if (icon) {
-        // If your API is on a different domain, make sure to use the full API URL
-        const fullApiUrl = api.replace(/\/$/, ""); // Remove trailing slash if present
+        const fullApiUrl = api.replace(/\/$/, "");
         metadata.openGraph.images = [
           {
             url: `${fullApiUrl}/file/${icon}`,
-            width: 1200,
-            height: 630,
+            width: 1536,
+            height: 724,
             alt: testName,
           },
         ];
