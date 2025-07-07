@@ -498,9 +498,16 @@ export default function Test() {
                   ? "Тест өгөх"
                   : "Худалдаж авах"}
               </Button>
-              <Button className="grd-btn-2 h-10 w-full">
-                Жишиг тайлан харах
-              </Button>
+              {assessmentData?.data?.exampleReport && (
+                <Button
+                  className="grd-btn-2 h-10 w-full"
+                  onClick={() => {
+                    window.location.href = `${api}file/${assessmentData.data.exampleReport}`;
+                  }}
+                >
+                  Жишиг тайлан харах
+                </Button>
+              )}
             </div>
             <div
               className={`w-full grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mt-8`}
@@ -555,9 +562,16 @@ export default function Test() {
                   ? "Тест өгөх"
                   : "Худалдаж авах"}
               </Button>
-              <Button className="grd-btn-2 h-10 w-48">
-                Жишиг тайлан харах
-              </Button>
+              {assessmentData?.data?.exampleReport && (
+                <Button
+                  className="grd-btn-2 h-10 w-full"
+                  onClick={() => {
+                    window.location.href = `${api}file/${assessmentData.data.exampleReport}`;
+                  }}
+                >
+                  Жишиг тайлан харах
+                </Button>
+              )}
             </div>
             {session?.user?.role === 20 &&
               testHistory?.data &&
