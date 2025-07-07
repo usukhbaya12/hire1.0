@@ -23,6 +23,13 @@ export default function Footer() {
     { key: "1", label: "Түгээмэл асуултууд", link: "/faq" },
     { key: "2", label: "Үйлчилгээний нөхцөл", link: "/" },
     { key: "3", label: "Нууцлалын бодлого", link: "/" },
+    { key: "3", label: "Гарах", link: "/" },
+  ];
+  const link = [
+    { key: "1", label: "Бидний тухай", link: "/faq" },
+    { key: "2", label: "Бидэнтэй холбогдох", link: "/" },
+    { key: "3", label: "Өгсөн тестүүд", link: "/" },
+    { key: "3", label: "Миний бүртгэл", link: "/" },
   ];
 
   const handleLinkClick = (link) => {
@@ -47,7 +54,7 @@ export default function Footer() {
 
   return (
     <div className="bg-white/70 backdrop-blur-md border-t border-slate-200 pt-12 pb-8 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6">
-      <div className="sm:grid grid-cols-5">
+      <div className="grid grid-cols-2 sm:grid-cols-6">
         <div className="flex flex-col gap-4 col-span-2">
           <div>
             <Image
@@ -81,7 +88,7 @@ export default function Footer() {
             support@hire.mn
           </div>
         </div>
-        <div className="pt-8 sm:pt-0 sm:pl-8">
+        <div className="pt-8 sm:pt-0 sm:pl-4">
           <div className="font-extrabold text-base">Тестүүд</div>
           <div className="pt-2 sm:pt-4 text-gray-700">
             {items.map((item) => (
@@ -106,10 +113,25 @@ export default function Footer() {
             ))}
           </div>
         </div>
-        <div className="pt-8 sm:pt-0 sm:pl-24">
+        <div className="pt-8 sm:pt-0 sm:pl-4">
           <div className="font-extrabold text-base">Мэдлэгийн сан</div>
           <div className="pt-2 sm:pt-4 text-gray-700">
             {knowledge.map((item) => (
+              <div className="pt-1" key={item.key}>
+                <span
+                  className="text-gray-700 hover:text-black hover:underline transition duration-300 cursor-pointer"
+                  onClick={() => handleLinkClick(item.link)}
+                >
+                  {item.label}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="pt-8 sm:pt-0 sm:pl-16">
+          <div className="font-extrabold text-base">Холбоос</div>
+          <div className="pt-2 sm:pt-4 text-gray-700">
+            {link.map((item) => (
               <div className="pt-1" key={item.key}>
                 <span
                   className="text-gray-700 hover:text-black hover:underline transition duration-300 cursor-pointer"
@@ -137,7 +159,7 @@ export default function Footer() {
           </div>
         </div>
       </div>
-      <div className="py-2">
+      <div className="py-2 pt-6 sm:pt-2">
         <Divider />
       </div>
       <div className="flex justify-between">

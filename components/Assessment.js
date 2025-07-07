@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { api } from "@/app/utils/routes";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -23,11 +23,11 @@ const BlurImage = ({ src, alt }) => {
         fill
         loading="lazy"
         className={`
-         object-cover
-         duration-700 ease-in-out
-         ${isLoading ? "scale-110 blur-lg" : "scale-100 blur-0"}
-         transform transition-transform duration-500 group-hover:scale-110
-       `}
+          object-cover
+          duration-700 ease-in-out
+          ${isLoading ? "scale-110 blur-lg" : "scale-100 blur-0"}
+          transform transition-transform duration-500 group-hover:scale-110
+        `}
         onLoadingComplete={() => setLoading(false)}
       />
     </div>
@@ -39,7 +39,7 @@ const Assessment = ({ assessment }) => {
   const [titleRef, setTitleRef] = useState(null);
   const [isTitleTwoLines, setIsTitleTwoLines] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (titleRef) {
       const lineHeight = parseInt(window.getComputedStyle(titleRef).lineHeight);
       const titleHeight = titleRef.scrollHeight;
@@ -72,53 +72,64 @@ const Assessment = ({ assessment }) => {
               </div>
             </div>
           </div>
-          <div className="space-y-3 pb-7 px-7">
-            <h3
-              ref={setTitleRef}
-              className="font-extrabold text-lg transition-colors duration-500 group-hover:text-main leading-5 line-clamp-2"
-            >
-              {assessment.data.name}
-            </h3>
 
-            <p
-              className={`leading-5 text-justify text-gray-700 ${
-                isTitleTwoLines ? "line-clamp-3" : "line-clamp-4"
-              }`}
-            >
-              {assessment.data.description}
-            </p>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 bg-gradient-to-r from-yellow-50 to-orange-50 text-orange-500 px-3 py-1.5 rounded-3xl border border-orange-200">
-                <Document1LineDuotone width={18} height={18} />
-                <span className="font-semibold text-sm truncate max-w-[260px]">
-                  {assessment.data.author}
-                </span>
-              </div>
+          {/* Fixed height container for text content */}
+          <div className="h-[240px] px-7 pb-6 flex flex-col justify-between space-y-3">
+            <div>
+              <h3
+                ref={setTitleRef}
+                className="font-extrabold text-lg transition-colors duration-500 group-hover:text-main leading-5 line-clamp-2 pb-3"
+              >
+                {assessment.data.name}
+              </h3>
+
+              <p
+                className={`leading-5 text-justify text-gray-700 ${
+                  isTitleTwoLines
+                    ? "line-clamp-3 min-h-[3.75rem]"
+                    : "line-clamp-4 min-h-[5rem]"
+                }`}
+              >
+                {assessment.data.description}
+              </p>
             </div>
-            <div className="flex items-center justify-between pt-1">
-              <div className="flex items-center gap-4">
-                <div
-                  className={`px-3.5 py-1.5 rounded-full font-bold ${
-                    assessment.data.price > 0
-                      ? "bg-gradient-to-r from-main to-main/95 text-white shadow-lg shadow-secondary/30"
-                      : "bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 border border-gray-300"
-                  }`}
-                >
-                  {assessment.data.price > 0
-                    ? assessment.data.price.toLocaleString() + "₮"
-                    : "Үнэгүй"}
-                </div>
 
-                <div className="flex items-center gap-2 bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 px-3 py-1.5 rounded-3xl border border-blue-200">
-                  <AlarmBoldDuotone width={18} height={18} />
-                  <span className="font-semibold text-sm">
-                    {assessment.data.duration} минут
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 bg-gradient-to-r from-yellow-50 to-orange-50 text-orange-500 px-3 py-1.5 rounded-3xl border border-orange-200">
+                  <Document1LineDuotone width={18} height={18} />
+                  <span className="font-semibold text-sm truncate max-w-[260px]">
+                    {assessment.data.author}
                   </span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between pt-1">
+                <div className="flex items-center gap-4">
+                  <div
+                    className={`px-3.5 py-1.5 rounded-full font-bold ${
+                      assessment.data.price > 0
+                        ? "bg-gradient-to-r from-main to-main/95 text-white shadow-lg shadow-secondary/30"
+                        : "bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 border border-gray-300"
+                    }`}
+                  >
+                    {assessment.data.price > 0
+                      ? assessment.data.price.toLocaleString() + "₮"
+                      : "Үнэгүй"}
+                  </div>
+
+                  <div className="flex items-center gap-2 bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 px-3 py-1.5 rounded-3xl border border-blue-200">
+                    <AlarmBoldDuotone width={18} height={18} />
+                    <span className="font-semibold text-sm">
+                      {assessment.data.duration} минут
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
+
         <div className="absolute inset-0 rounded-3xl bg-gradient-to-b from-secondary/5 to-main/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-3xl -z-10" />
       </div>
     </Link>
