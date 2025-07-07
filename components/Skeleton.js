@@ -16,6 +16,11 @@ export default function AssessmentSkeleton() {
           </div>
           <div className="flex items-center justify-between pt-1">
             <div className="flex items-center gap-4">
+              <div className="h-8 bg-gray-200 rounded-full w-36" />
+            </div>
+          </div>
+          <div className="flex items-center justify-between pt-1">
+            <div className="flex items-center gap-4">
               <div className="h-8 bg-gray-200 rounded-full w-20" />
               <div className="h-8 bg-gray-200 rounded-full w-24" />
             </div>

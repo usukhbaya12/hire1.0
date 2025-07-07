@@ -1,3 +1,5 @@
+// app/page.js
+
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
@@ -13,13 +15,13 @@ import {
   VerifiedCheckBoldDuotone,
   Wallet2BoldDuotone,
 } from "solar-icons";
-import { getAssessmentCategory, getAssessments } from "./api/assessment";
-import { message, Input, Select, Button, Empty } from "antd";
+import { Input, Select, Empty } from "antd";
 import Assessment from "@/components/Assessment";
 import { DropdownIcon } from "@/components/Icons";
 import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
 import AssessmentSkeleton from "@/components/Skeleton";
+import { useAssessments } from "./utils/providers";
 
 const AnimatedCounter = ({ value, duration = 2 }) => {
   const [count, setCount] = useState(0);
@@ -121,133 +123,16 @@ const Marquee = () => {
 };
 
 export default function Home() {
-  const [assessments, setAssessments] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const { assessments, categories, loading } = useAssessments();
   const [filteredAssessments, setFilteredAssessments] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedPrice, setSelectedPrice] = useState(null);
-  const [messageApi, contextHolder] = message.useMessage();
 
   const testsSectionRef = useRef(null);
-  const starredSectionRef = useRef(null);
-  const popularSectionRef = useRef(null);
-  const [isTestsSectionVisible, setIsTestsSectionVisible] = useState(false);
-  const [isStarredSectionVisible, setIsStarredSectionVisible] = useState(false);
-  const [isPopularSectionVisible, setIsPopularSectionVisible] = useState(false);
-
-  const [loading, setLoading] = useState(true);
-
-  const getData = async () => {
-    setLoading(true);
-    try {
-      const [categoriesResponse, assessmentsResponse] = await Promise.all([
-        getAssessmentCategory(),
-        getAssessments(),
-      ]);
-
-      if (categoriesResponse.success) {
-        setCategories(categoriesResponse.data);
-      }
-
-      if (assessmentsResponse.success) {
-        const filteredData = assessmentsResponse.data.res.filter((item) =>
-          [10, 30].includes(item.data.status)
-        );
-
-        setAssessments(filteredData);
-        setFilteredAssessments(filteredData);
-      }
-    } catch (error) {
-      console.error("GET / Алдаа гарлаа.", error);
-      messageApi.error("Сервертэй холбогдоход алдаа гарлаа.");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
-    getData();
-
-    const testsObserver = new IntersectionObserver(
-      ([entry]) => {
-        setIsTestsSectionVisible(entry.isIntersecting);
-
-        window.dispatchEvent(
-          new CustomEvent("testsVisibility", {
-            detail: { isVisible: entry.isIntersecting },
-          })
-        );
-      },
-      { threshold: 0.1 }
-    );
-
-    const starredObserver = new IntersectionObserver(
-      ([entry]) => {
-        setIsStarredSectionVisible(entry.isIntersecting);
-
-        window.dispatchEvent(
-          new CustomEvent("starredVisibility", {
-            detail: { isVisible: entry.isIntersecting },
-          })
-        );
-      },
-      { threshold: 0.1 }
-    );
-
-    const popularObserver = new IntersectionObserver(
-      ([entry]) => {
-        setIsPopularSectionVisible(entry.isIntersecting);
-
-        window.dispatchEvent(
-          new CustomEvent("popularVisibility", {
-            detail: { isVisible: entry.isIntersecting },
-          })
-        );
-      },
-      { threshold: 0.1 }
-    );
-
-    if (testsSectionRef.current) {
-      testsObserver.observe(testsSectionRef.current);
-    }
-
-    if (starredSectionRef.current) {
-      starredObserver.observe(starredSectionRef.current);
-    }
-
-    if (popularSectionRef.current) {
-      popularObserver.observe(popularSectionRef.current);
-    }
-
-    return () => {
-      if (testsSectionRef.current) {
-        testsObserver.unobserve(testsSectionRef.current);
-      }
-
-      if (starredSectionRef.current) {
-        starredObserver.unobserve(starredSectionRef.current);
-      }
-
-      if (popularSectionRef.current) {
-        popularObserver.unobserve(popularSectionRef.current);
-      }
-    };
-  }, []);
-
-  const getPriceOptions = (assessmentsData) => {
-    if (!Array.isArray(assessmentsData)) return [];
-
-    const uniquePrices = [
-      ...new Set(assessmentsData.map((a) => a.data.price)),
-    ].sort((a, b) => a - b);
-    return uniquePrices.map((price) => ({
-      value: price,
-      label: price === 0 ? "Үнэгүй" : `${price.toLocaleString()}₮`,
-    }));
-  };
-
-  useEffect(() => {
+    // This effect now correctly handles filtering whenever the source data or filters change
     let result = [...assessments];
 
     if (searchTerm) {
@@ -276,6 +161,17 @@ export default function Home() {
 
     setFilteredAssessments(result);
   }, [searchTerm, selectedCategory, selectedPrice, assessments]);
+
+  const getPriceOptions = (assessmentsData) => {
+    if (!Array.isArray(assessmentsData)) return [];
+    const uniquePrices = [
+      ...new Set(assessmentsData.map((a) => a.data.price)),
+    ].sort((a, b) => a - b);
+    return uniquePrices.map((price) => ({
+      value: price,
+      label: price === 0 ? "Үнэгүй" : `${price.toLocaleString()}₮`,
+    }));
+  };
 
   const scrollToTestsTop = () => {
     if (testsSectionRef.current) {
@@ -306,7 +202,6 @@ export default function Home() {
     setSearchTerm("");
     setSelectedCategory(null);
     setSelectedPrice(null);
-    setFilteredAssessments(assessments);
     scrollToTestsTop();
   };
 
@@ -323,14 +218,11 @@ export default function Home() {
 
   return (
     <>
-      <title>Hire.mn</title>
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
-        {contextHolder}
-
         <div className="inset-0 fixed">
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
@@ -495,7 +387,6 @@ export default function Home() {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="pt-12"
               id="starred"
-              ref={starredSectionRef}
             >
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
@@ -507,31 +398,16 @@ export default function Home() {
                 Шинээр нэмэгдсэн
               </motion.div>
 
-              <motion.div
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4"
-                initial="hidden"
-                animate="visible"
-                variants={{
-                  visible: {
-                    transition: {
-                      staggerChildren: 0.1,
-                    },
-                  },
-                }}
-              >
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
                 {loading
                   ? renderSkeletonCards(3)
-                  : featuredTests.map((assessment, index) => (
-                      <motion.div
+                  : featuredTests.map((assessment) => (
+                      <Assessment
                         key={assessment.data.id}
-                        transition={{ duration: 0.5, delay: 0.3 * index }}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                      >
-                        <Assessment assessment={assessment} />
-                      </motion.div>
+                        assessment={assessment}
+                      />
                     ))}
-              </motion.div>
+              </div>
             </motion.div>
           </div>
 
@@ -581,7 +457,6 @@ export default function Home() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 1 }}
             id="popular"
-            ref={popularSectionRef}
           >
             <div className="pt-8 sm:pt-6 pb-14">
               <motion.div
@@ -594,39 +469,16 @@ export default function Home() {
                 Эрэлттэй
               </motion.div>
 
-              <motion.div
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4"
-                initial="hidden"
-                animate="visible"
-                variants={{
-                  visible: {
-                    transition: {
-                      staggerChildren: 0.1,
-                    },
-                  },
-                }}
-              >
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
                 {loading
                   ? renderSkeletonCards(3)
-                  : popularTests.map((assessment, index) => (
-                      <motion.div
+                  : popularTests.map((assessment) => (
+                      <Assessment
                         key={assessment.data.id}
-                        variants={{
-                          hidden: { opacity: 0, y: 50 },
-                          visible: {
-                            opacity: 1,
-                            y: 0,
-                            transition: {
-                              type: "spring",
-                              bounce: 0.4,
-                            },
-                          },
-                        }}
-                      >
-                        <Assessment assessment={assessment} />
-                      </motion.div>
+                        assessment={assessment}
+                      />
                     ))}
-              </motion.div>
+              </div>
             </div>
           </motion.div>
 
@@ -683,13 +535,6 @@ export default function Home() {
                   onChange={handleInputChange}
                 />
                 <Select
-                  prefix={
-                    <MagniferBoldDuotone
-                      width={18}
-                      height={18}
-                      color={"#f36421"}
-                    />
-                  }
                   placeholder="Төрлөөр хайх"
                   suffixIcon={
                     <DropdownIcon width={15} height={15} color={"#f36421"} />
@@ -707,13 +552,6 @@ export default function Home() {
                   className="w-full"
                   suffixIcon={
                     <DropdownIcon width={15} height={15} color={"#f36421"} />
-                  }
-                  prefix={
-                    <Wallet2BoldDuotone
-                      width={18}
-                      height={18}
-                      color={"#f36421"}
-                    />
                   }
                   placeholder="Төлбөрөөр шүүх"
                   options={getPriceOptions(assessments)}
@@ -740,52 +578,18 @@ export default function Home() {
               </motion.div>
             </div>
             {loading ? (
-              <motion.div
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4"
-                initial="hidden"
-                animate="visible"
-                variants={{
-                  visible: {
-                    transition: {
-                      staggerChildren: 0.05,
-                    },
-                  },
-                }}
-              >
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
                 {renderSkeletonCards(9)}
-              </motion.div>
+              </div>
             ) : filteredAssessments.length > 0 ? (
-              <motion.div
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4"
-                initial="hidden"
-                animate="visible"
-                variants={{
-                  visible: {
-                    transition: {
-                      staggerChildren: 0.05,
-                    },
-                  },
-                }}
-              >
-                {filteredAssessments.map((assessment, index) => (
-                  <motion.div
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
+                {filteredAssessments.map((assessment) => (
+                  <Assessment
                     key={assessment.data.id}
-                    variants={{
-                      hidden: { opacity: 0, y: 50 },
-                      visible: {
-                        opacity: 1,
-                        y: 0,
-                        transition: {
-                          type: "spring",
-                          bounce: 0.4,
-                        },
-                      },
-                    }}
-                  >
-                    <Assessment assessment={assessment} />
-                  </motion.div>
+                    assessment={assessment}
+                  />
                 ))}
-              </motion.div>
+              </div>
             ) : (
               <div className="flex flex-col items-center justify-center py-16">
                 <div className="text-gray-300 mb-4">

@@ -52,6 +52,7 @@ import { customLocale } from "@/app/utils/values";
 import NotFoundPage from "@/app/not-found";
 import Link from "next/link";
 import EBarimtModal from "./modals/EBarimt";
+import LoadingSpinner from "./Spin";
 
 export default function Test() {
   const params = useParams();
@@ -74,6 +75,7 @@ export default function Test() {
   const [error, setError] = useState(null);
 
   const fetchData = async () => {
+    setLoading(true);
     try {
       const assessmentResponse = await getAssessmentById(testId);
       if (assessmentResponse.success && assessmentResponse.data) {
@@ -93,6 +95,8 @@ export default function Test() {
     } catch (error) {
       setError("Тест олдсонгүй.");
       messageApi.error("Тест олдсонгүй.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -368,14 +372,18 @@ export default function Test() {
     window.open(facebookShareUrl, "_blank", "width=600,height=400");
   };
 
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
   return (
     <>
-      <Spin
+      {/* <Spin
         fullscreen
         tip="Уншиж байна..."
         spinning={loading}
         indicator={<LoadingOutlined style={{ color: "white" }} spin />}
-      />
+      /> */}
       <title>{assessmentData?.data?.name}</title>
       {contextHolder}
       <EBarimtModal
@@ -387,12 +395,7 @@ export default function Test() {
       {error && !loading && <NotFoundPage />}
 
       {assessmentData.category && (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="relative overflow-hidden"
-        >
+        <div className="relative overflow-hidden">
           <div className="inset-0 fixed">
             <div className="absolute left-[-5%] w-[200px] h-[200px] md:w-[400px] md:h-[400px] rounded-full bg-orange-600/5 blur-[80px]" />
             <div className="absolute bottom-[-20%] right-[-10%] w-[200px] h-[200px] md:w-[500px] md:h-[500px] rounded-full bg-orange-600/5 blur-[100px]" />
@@ -1436,7 +1439,7 @@ export default function Test() {
                 </div>
               )}
           </div>
-        </motion.div>
+        </div>
       )}
     </>
   );

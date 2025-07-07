@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import Zoom from "@/components/Zoom";
 import { Provider } from "@/components/Provider";
 import Navbar from "@/components/Navbar";
+import { AssessmentProvider } from "./utils/providers";
 
 export default function ClientLayout({ children }) {
   const pathname = usePathname();
@@ -20,7 +21,7 @@ export default function ClientLayout({ children }) {
           </div>
         )}
         <div className={`relative ${!hideNavbar ? "top-16" : ""}`}>
-          {children}
+          <AssessmentProvider>{children}</AssessmentProvider>
         </div>
       </Provider>
     </>
