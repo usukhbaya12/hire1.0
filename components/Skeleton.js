@@ -9,10 +9,15 @@ export default function AssessmentSkeleton() {
         </div>
         <div className="space-y-3 pb-7 px-7">
           <div className="h-5 bg-gray-200 rounded w-3/4" />
-          <div className="space-y-2">
+          <div className="space-y-3">
             <div className="h-4 bg-gray-200 rounded w-full" />
             <div className="h-4 bg-gray-200 rounded w-2/3" />
             <div className="h-4 bg-gray-200 rounded w-4/5" />
+          </div>
+          <div className="flex items-center justify-between pt-1">
+            <div className="flex items-center gap-4">
+              <div className="h-8 bg-gray-200 rounded-full w-36" />
+            </div>
           </div>
           <div className="flex items-center justify-between pt-1">
             <div className="flex items-center gap-4">

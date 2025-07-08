@@ -199,8 +199,28 @@ function NavbarContent() {
         </div>
 
         {/* DESKTOP MENU */}
-        <div className="flex items-center gap-8">
-          <div className="hidden md:flex space-x-8 items-center">
+        <div className="flex items-center gap-7">
+          <div className="hidden md:flex space-x-6 items-center">
+            <div>
+              <div className="relative py-1">
+                <Link
+                  href="/about"
+                  className="font-bold"
+                  onClick={() => {
+                    if (isExpanded) {
+                      setIsExpanded(false);
+                    }
+                  }}
+                >
+                  Бидний тухай
+                </Link>
+                <div
+                  className={`absolute bottom-0 left-0 w-full h-0.5 bg-main rounded-full transition-all duration-300 origin-left ${
+                    pathname === "/about" ? "scale-x-100" : "scale-x-0"
+                  }`}
+                />
+              </div>
+            </div>
             <div>
               <div className="relative py-1">
                 <button className="font-bold" onClick={handleTestsClick}>
