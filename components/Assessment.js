@@ -2,8 +2,14 @@ import React, { useState } from "react";
 import { api } from "@/app/utils/routes";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { AlarmBoldDuotone, TagBoldDuotone } from "solar-icons";
+import {
+  AlarmBoldDuotone,
+  Document1LineDuotone,
+  Pen2BoldDuotone,
+  TagBoldDuotone,
+} from "solar-icons";
 import Link from "next/link";
+import { UserAddOutlined } from "@ant-design/icons";
 
 const BlurImage = ({ src, alt }) => {
   const [isLoading, setLoading] = useState(true);
@@ -73,13 +79,28 @@ const Assessment = ({ assessment }) => {
             >
               {assessment.data.name}
             </h3>
+
             <p
               className={`leading-5 text-justify text-gray-700 ${
-                isTitleTwoLines ? "line-clamp-3" : "line-clamp-4"
+                assessment.data.description
+                  ? isTitleTwoLines
+                    ? "line-clamp-3"
+                    : "line-clamp-4"
+                  : isTitleTwoLines
+                  ? "h-[3.75rem]" // 3 lines * 1.25rem
+                  : "h-20" // 4 lines * 1.25rem
               }`}
             >
               {assessment.data.description}
             </p>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 bg-gradient-to-r from-yellow-50 to-orange-50 text-orange-500 px-3 py-1.5 rounded-3xl border border-orange-200">
+                <Document1LineDuotone width={18} height={18} />
+                <span className="font-semibold text-sm truncate max-w-[260px]">
+                  {assessment.data.author}
+                </span>
+              </div>
+            </div>
             <div className="flex items-center justify-between pt-1">
               <div className="flex items-center gap-4">
                 <div
@@ -102,7 +123,6 @@ const Assessment = ({ assessment }) => {
                 </div>
               </div>
             </div>
-            <div>{assessment.data.author}</div>
           </div>
         </div>
         <div className="absolute inset-0 rounded-3xl bg-gradient-to-b from-secondary/5 to-main/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-3xl -z-10" />
