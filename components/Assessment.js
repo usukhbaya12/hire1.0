@@ -88,8 +88,8 @@ const Assessment = ({ assessment }) => {
                     ? "line-clamp-3"
                     : "line-clamp-4"
                   : isTitleTwoLines
-                  ? "h-[3.75rem]" // 3 lines * 1.25rem
-                  : "h-20" // 4 lines * 1.25rem
+                  ? "sm:h-[3.75rem]"
+                  : "sm:h-20"
               }`}
             >
               {assessment.data.description}
