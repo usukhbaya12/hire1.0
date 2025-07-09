@@ -31,7 +31,14 @@ const AboutPage = () => {
           role: "Үүсгэн байгуулагч",
           description:
             "СЭЗИС болон Австралийн Үндэсний Их сургуульд Бизнесийн удирдлагын магистр, Маркетингийн удирдлагын магистрын зэрэг хамгаалсан. Маркетинг, хүний нөөцийн салбарт багш, зөвлөх, судлаачаар 2003 оноос хойш ажиллаж байгаа.",
-          image: "/facebook.png",
+          image: "/nandinerdene.png",
+        },
+        {
+          name: "Б.Нандин-Эрдэнэ",
+          role: "Үүсгэн байгуулагч",
+          description:
+            "СЭЗИС болон Австралийн Үндэсний Их сургуульд Бизнесийн удирдлагын магистр, Маркетингийн удирдлагын магистрын зэрэг хамгаалсан. Маркетинг, хүний нөөцийн салбарт багш, зөвлөх, судлаачаар 2003 оноос хойш ажиллаж байгаа.",
+          image: "/image.png",
         },
       ],
     },
@@ -176,7 +183,7 @@ const AboutPage = () => {
                 </div>
               </motion.div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {section.data.map((person, index) => (
                   <motion.div
                     key={`${section.id}-${index}`}

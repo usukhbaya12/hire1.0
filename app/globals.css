@@ -947,3 +947,17 @@ textarea.ant-input {
 .animate-marquee-reverse:hover {
   animation-play-state: paused;
 }
+
+@keyframes pulse-slow {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 2s ease-in-out infinite;
+}
