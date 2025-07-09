@@ -105,7 +105,7 @@ export default function Exam() {
       if (status === "authenticated" || session) {
         try {
           requested.current = true;
-          const response = await getExamQuestions(params.id);
+          const response = await getExamQuestions(params.id, undefined, true);
 
           if (response.success) {
             setQuestionData(response.data);
