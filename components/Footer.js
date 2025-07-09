@@ -7,13 +7,10 @@ import {
   PhoneCallingRoundedBoldDuotone,
 } from "solar-icons";
 import { useRouter } from "next/navigation";
-import { signOut } from "next-auth/react";
 
 export default function Footer() {
   const router = useRouter();
-  const handleSignOut = async () => {
-    await signOut({ redirect: true, callbackUrl: "/" });
-  };
+
   const items = [
     { key: "1", label: "Тестийн сан", link: "/#tests" },
     { key: "2", label: "Шинээр нэмэгдсэн", link: "/#starred" },
@@ -27,13 +24,13 @@ export default function Footer() {
     { key: "1", label: "Түгээмэл асуултууд", link: "/faq" },
     { key: "2", label: "Үйлчилгээний нөхцөл", link: "/" },
     { key: "3", label: "Нууцлалын бодлого", link: "/" },
-    { key: "3", label: "Гарах", link: handleSignOut() },
+    // { key: "4", label: "Гарах", link: "signout" },
   ];
   const link = [
     { key: "1", label: "Бидний тухай", link: "/about" },
-    { key: "2", label: "Бидэнтэй холбогдох", link: "/" },
-    { key: "3", label: "Өгсөн тестүүд", link: "/" },
-    { key: "3", label: "Миний бүртгэл", link: "/" },
+    { key: "2", label: "Бидэнтэй холбогдох", link: "/contact" },
+    { key: "3", label: "Өгсөн тестүүд", link: "/me" },
+    { key: "4", label: "Миний бүртгэл", link: "/me/account" },
   ];
 
   const handleLinkClick = (link) => {
