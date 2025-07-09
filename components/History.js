@@ -21,6 +21,7 @@ import { getReport } from "@/app/api/exam";
 import { DropdownIcon } from "./Icons";
 import Link from "next/link";
 import Image from "next/image";
+import { api } from "@/app/utils/routes";
 
 const AssessmentCard = ({ assessment, isInvited = false }) => {
   const router = useRouter();
@@ -234,6 +235,7 @@ const AssessmentCard = ({ assessment, isInvited = false }) => {
     <div className="w-full">
       <div className="w-full h-full relative overflow-hidden rounded-3xl shadow shadow-slate-200 bg-white/70 backdrop-blur-md px-6 pt-6">
         <div className="absolute inset-0 bg-gradient-to-br from-white to-main/10 blur opacity-30"></div>
+
         <div className="absolute top-0 right-0">
           <NotesBoldDuotone
             width={150}
@@ -241,12 +243,15 @@ const AssessmentCard = ({ assessment, isInvited = false }) => {
             className="opacity-10 text-main"
           />
         </div>
+
         <div className="relative z-10">
           <div className="flex justify-between items-start mb-2">
             <div>
               <Link href={`/test/${assessment.originalId || assessment.id}`}>
-                <h1 className="w-fit relative text-base font-extrabold leading-5 bg-gradient-to-r from-main to-secondary bg-clip-text text-transparent cursor-pointer after:absolute after:-bottom-[1px] after:left-0 after:w-full after:h-0.5 after:bg-gradient-to-r after:from-main after:to-secondary after:scale-x-0 hover:after:scale-x-100 after:transition-transform">
-                  {assessment.name}
+                <h1 className="w-fit text-base font-extrabold leading-5 sm:min-h-[2.5rem] flex items-start">
+                  <span className="pr-4 text-base leading-5 relative bg-gradient-to-r from-main to-secondary bg-clip-text text-transparent cursor-pointer line-clamp-2 after:absolute after:-bottom-[1px] after:left-0 after:w-full after:h-[2.5px] after:bg-gradient-to-r after:from-main after:to-secondary after:scale-x-0 hover:after:scale-x-100 after:transition-transform">
+                    {assessment.name}
+                  </span>
                 </h1>
               </Link>
               {isInvited && (
