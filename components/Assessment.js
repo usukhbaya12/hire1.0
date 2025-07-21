@@ -97,7 +97,7 @@ const Assessment = ({ assessment }) => {
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2 bg-gradient-to-r from-yellow-50 to-orange-50 text-orange-500 px-3 py-1.5 rounded-3xl border border-orange-200">
                 <Document1LineDuotone width={18} height={18} />
-                <span className="font-semibold text-sm truncate max-w-[260px]">
+                <span className="font-semibold text-sm truncate max-w-[220px]">
                   {assessment.data.author}
                 </span>
               </div>

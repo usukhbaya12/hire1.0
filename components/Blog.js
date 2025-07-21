@@ -3,21 +3,23 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Footer from "@/components/Footer";
-import Image from "next/image";
 import {
   CalendarBoldDuotone,
+  Home1BoldDuotone,
   LinkMinimalistic2Bold,
   UserCircleBoldDuotone,
+  UserLineDuotone,
 } from "solar-icons";
-import { Spin, message, Button, Breadcrumb } from "antd";
+import { Spin, message, Image, Breadcrumb, Divider } from "antd";
 import { api } from "@/app/utils/routes";
 import { getBlogById } from "@/app/api/main";
 import DOMPurify from "dompurify";
 import Link from "next/link";
-import { LoadingOutlined } from "@ant-design/icons";
+import { HomeOutlined, LoadingOutlined } from "@ant-design/icons";
 import DynamicMetaTags from "./Meta";
 import NotFoundPage from "@/app/not-found";
 import LoadingSpinner from "./Spin";
+import News from "@/app/news/page";
 
 const createMarkup = (htmlContent) => {
   if (typeof window !== "undefined") {
@@ -112,27 +114,38 @@ export default function BlogDetailPage() {
 
       <title>{blog?.title}</title>
       {contextHolder}
-      <div className="relative flex flex-col">
+      <div className="relative flex flex-col bg-gradient-to-b from-gray-100 to-white">
         <main className="flex-grow py-3 sm:py-12">
           {error && !loading && <NotFoundPage />}
           {!loading && !error && blog && (
             <>
               {imageUrl && (
-                <div className="relative w-full max-h-[180px] h-[180px] md:max-h-[350px] md:h-[350px]">
-                  <Image
-                    draggable={false}
-                    src={imageUrl}
-                    alt={blog.title}
-                    fill
-                    className="object-cover shadow shadow-slate-200"
-                    priority
+                <div className="relative w-full h-[180px] md:h-[350px] overflow-hidden">
+                  <div
+                    className="absolute inset-0 bg-repeat-x bg-top"
+                    style={{
+                      backgroundImage: imageUrl
+                        ? `url(${imageUrl})`
+                        : `url(/misc.png)`,
+                      backgroundSize: "auto 100%",
+                      backgroundColor: "#f3f4f6",
+                    }}
                   />
+
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/80 via-white/40 to-white/80" />
                 </div>
               )}
-              <article className="max-w-2xl mx-auto overflow-hidden p-6">
+
+              <article className="max-w-2xl mx-auto overflow-hidden pt-6 px-6 pb-2">
                 <Breadcrumb
                   items={[
-                    { title: <Link href="/">Нүүр</Link> },
+                    {
+                      title: (
+                        <Link href="/">
+                          <HomeOutlined />
+                        </Link>
+                      ),
+                    },
                     { title: <Link href="/news">Блог, зөвлөмжүүд</Link> },
                   ]}
                   className="mb-4 mt-0 md:mt-2"
@@ -140,20 +153,21 @@ export default function BlogDetailPage() {
                 <h1 className="text-3xl lg:text-4xl font-black mb-4 text-gray-900 leading-tight">
                   {blog.title}
                 </h1>
-                <div className="flex items-center justify-between mb-6">
+                <Divider />
+                <div className="flex items-center justify-between my-4">
                   <div className="flex items-center gap-2 text-sm text-gray-500 flex-wrap">
-                    <div className="flex items-center gap-1 text-gray-800 font-semibold">
-                      <UserCircleBoldDuotone
-                        width={22}
-                        className="text-blue-600"
-                      />
-                      <span>{blog?.author?.name || "Hire.mn"}</span>
+                    <div className="flex items-center gap-2 bg-gradient-to-r from-yellow-50 to-orange-50 text-orange-500 px-3 py-1.5 rounded-3xl border border-orange-200">
+                      <UserLineDuotone width={16} height={16} />
+                      <span className="font-semibold text-sm truncate max-w-[220px]">
+                        {blog?.user?.firstname || "Hire.mn"}
+                      </span>
                     </div>
-                    <span>•</span>
 
-                    <div className="flex items-center gap-1">
-                      <CalendarBoldDuotone width={18} height={18} />
-                      <span>{formattedDate}</span>
+                    <div className="w-fit flex items-center gap-2 bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 px-3 py-1.5 rounded-full border border-blue-200 text-sm">
+                      {formattedDate && <CalendarBoldDuotone width={16} />}
+                      {formattedDate && (
+                        <span className="font-semibold">{formattedDate}</span>
+                      )}
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
@@ -162,12 +176,11 @@ export default function BlogDetailPage() {
                       className="flex items-center justify-center transition-transform hover:scale-110 cursor-pointer"
                       title="Share on Facebook"
                     >
-                      <Image
+                      <img
                         src="/facebook.png"
                         alt="Facebook icon"
-                        width={18}
-                        height={18}
-                        priority
+                        width={20}
+                        height={20}
                         className="hover:opacity-70 transition-opacity"
                       />
                     </button>
@@ -176,12 +189,18 @@ export default function BlogDetailPage() {
                       className="text-main hover:text-secondary transition-colors cursor-pointer"
                       title="Copy link"
                     >
-                      <LinkMinimalistic2Bold width={20} />
+                      <LinkMinimalistic2Bold width={22} />
                     </button>
                   </div>
                 </div>
+                {imageUrl && (
+                  <div className="pt-1">
+                    <Image draggable={false} src={imageUrl} preview={true} />
+                  </div>
+                )}
+                <Divider />
                 <div
-                  className="prose prose-lg max-w-none prose-img:rounded-lg prose-a:text-blue-600 hover:prose-a:text-blue-800 text-justify"
+                  className="mt-6 mb-6 prose prose-lg max-w-none prose-img:rounded-lg prose-a:text-blue-600 hover:prose-a:text-blue-800 text-justify"
                   dangerouslySetInnerHTML={createMarkup(blog.content)}
                 />
               </article>
