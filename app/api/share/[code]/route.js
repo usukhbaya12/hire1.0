@@ -9,7 +9,7 @@ const CANVAS_WIDTH = 1600;
 const CANVAS_HEIGHT = 837.7;
 const FONT_DIR = path.join(process.cwd(), "app/fonts");
 const PLACEHOLDER_IMG_URL = "https://www.hire.mn/placeholder.png";
-const LOGO_URL = "https://www.hire.mn/hire-all-white.png";
+const NAME_URL = "https://www.hire.mn/Group.png";
 const HEADER_ICON_URL = "https://www.hire.mn/header-top-white.png";
 const CACHE_CONTROL_SUCCESS = "public, max-age=31536000, immutable";
 const CACHE_CONTROL_ERROR = "no-cache";
@@ -180,15 +180,22 @@ export async function GET(request, { params }) {
 
       ctx.textAlign = "left";
 
+      try {
+        const nameIcon = await loadImage(NAME_URL);
+        ctx.drawImage(nameIcon, 78, 515, 64, 51);
+      } catch (e) {
+        console.error("Error loading name icon (non-critical):", e);
+      }
+
       ctx.font = "bold 47px Gilroy2, Arial, sans-serif";
       ctx.fillStyle = "#FFFFFF";
-      ctx.fillText(`${(examDetails.firstname || "").toUpperCase()}`, 83, 565);
+      ctx.fillText(`${(examDetails.firstname || "").toUpperCase()}`, 78, 565);
 
       ctx.strokeStyle = "#ffffff";
       ctx.lineWidth = 3;
       ctx.beginPath();
-      ctx.moveTo(83, 633);
-      ctx.lineTo(189, 633);
+      ctx.moveTo(78, 608);
+      ctx.lineTo(189, 608);
       ctx.stroke();
 
       const examType = examDetails.type;
@@ -198,13 +205,13 @@ export async function GET(request, { params }) {
 
         ctx.font = "60px Gilroy2, Arial, sans-serif";
         ctx.fillStyle = "#002B5B";
-        ctx.fillText(`${score}`, 222, 567);
+        ctx.fillText(`${score}`, 78, 638);
 
         const scoreWidth = ctx.measureText(`${score}`).width;
 
         ctx.font = "40px Gilroy2, Arial, sans-serif"; // 40px as requested
         ctx.fillStyle = "#FFFFFF";
-        ctx.fillText(`/ ${total}`, 222 + scoreWidth + 10, 567 + 6); // slight downward offset
+        ctx.fillText(`/ ${total}`, 78 + scoreWidth + 10, 567 + 6); // slight downward offset
 
         ctx.textAlign = "left";
       } else {
@@ -218,12 +225,12 @@ export async function GET(request, { params }) {
           resultText = examDetails.value;
         }
 
-        ctx.fillText(resultText, 72, 600);
+        ctx.fillText(resultText, 78, 638);
       }
 
       ctx.font = "24px Gilroy, Arial, sans-serif";
       ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
-      ctx.fillText("© Hire.mn", 72, 770);
+      ctx.fillText("© Hire.mn", 78, 770);
     } catch (drawingError) {
       console.error(
         `Error occurred during canvas drawing phase for code ${code}:`,

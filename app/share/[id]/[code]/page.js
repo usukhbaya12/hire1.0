@@ -37,8 +37,8 @@ export async function generateMetadata({ params }) {
 
       metadata.title = `${testName} / Hire.mn`;
       metadata.description = `Миний "${testName}" тестийн үр дүн`;
-      metadata.openGraph.title = `${testName} / Hire.mn`;
-      metadata.openGraph.description = `Миний "${testName}" тестийн үр дүн`;
+      metadata.openGraph.title = `Миний ${testName}-ийн үр дүн`;
+      metadata.openGraph.description = `Онлайн тест, хөндлөнгийн үнэлгээ`;
     }
   } catch (error) {
     console.error("Error fetching assessment data for metadata:", error);
