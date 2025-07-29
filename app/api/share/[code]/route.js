@@ -183,7 +183,7 @@ export async function GET(request, { params }) {
 
         ctx.font = `${60 * SCALE}px Gilroy2, Arial, sans-serif`;
         ctx.fillStyle = "#002B5B";
-        ctx.fillText(`${score}`, 78 * SCALE, 648 * SCALE + 6 * SCALE);
+        ctx.fillText(`${score}`, 78 * SCALE, 648 * SCALE + 8 * SCALE);
 
         const scoreWidth = ctx.measureText(`${score}`).width;
         ctx.font = `${40 * SCALE}px Gilroy2, Arial, sans-serif`;
