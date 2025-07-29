@@ -182,7 +182,7 @@ export async function GET(request, { params }) {
 
       try {
         const nameIcon = await loadImage(NAME_URL);
-        ctx.drawImage(nameIcon, 78, 515, 64, 51);
+        ctx.drawImage(nameIcon, 78, 465, 64, 51);
       } catch (e) {
         console.error("Error loading name icon (non-critical):", e);
       }
@@ -194,8 +194,8 @@ export async function GET(request, { params }) {
       ctx.strokeStyle = "#ffffff";
       ctx.lineWidth = 3;
       ctx.beginPath();
-      ctx.moveTo(78, 608);
-      ctx.lineTo(189, 608);
+      ctx.moveTo(78, 598);
+      ctx.lineTo(189, 598);
       ctx.stroke();
 
       const examType = examDetails.type;
@@ -230,7 +230,12 @@ export async function GET(request, { params }) {
 
       ctx.font = "24px Gilroy, Arial, sans-serif";
       ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
-      ctx.fillText("© Hire.mn", 78, 770);
+      const today = new Date();
+      const formattedDate = `${today.getFullYear()}.${String(
+        today.getMonth() + 1
+      ).padStart(2, "0")}.${String(today.getDate()).padStart(2, "0")}`;
+
+      ctx.fillText(`${formattedDate} © Hire.mn`, 78, 760);
     } catch (drawingError) {
       console.error(
         `Error occurred during canvas drawing phase for code ${code}:`,

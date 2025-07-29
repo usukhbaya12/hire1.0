@@ -37,7 +37,7 @@ export async function generateMetadata({ params }) {
 
       metadata.title = `${testName} / Hire.mn`;
       metadata.description = `Миний "${testName}" тестийн үр дүн`;
-      metadata.openGraph.title = `Миний ${testName}-ийн үр дүн`;
+      metadata.openGraph.title = `Миний "${testName}" тестийн үр дүн`;
       metadata.openGraph.description = `Онлайн тест, хөндлөнгийн үнэлгээ`;
     }
   } catch (error) {
