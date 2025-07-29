@@ -176,7 +176,7 @@ export async function GET(request, { params }) {
       const words = assessmentName.split(" ");
       let line = "";
       let lines = [];
-      let y = 280;
+      let y = 560;
 
       for (let i = 0; i < words.length; i++) {
         const testLine = line + words[i] + " ";
@@ -192,7 +192,7 @@ export async function GET(request, { params }) {
       lines.push(line);
 
       lines.forEach((l, index) => {
-        ctx.fillText(l.trim(), CANVAS_WIDTH - 83, y + index * lineHeight);
+        ctx.fillText(l.trim(), 682, y + index * lineHeight);
       });
 
       ctx.textAlign = "left";
