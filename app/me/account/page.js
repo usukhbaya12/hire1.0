@@ -414,7 +414,7 @@ const Account = () => {
                     Ажилтан
                   </h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 p-2">
-                    <Form.Item name="email" label="И-мейл хаяг" className="fnp">
+                    <Form.Item name="email" label="И-мэйл хаяг" className="fnp">
                       <Input
                         disabled
                         prefix={

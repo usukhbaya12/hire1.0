@@ -1,4 +1,5 @@
 import { getAssessmentById } from "@/app/api/assessment";
+import { api } from "@/app/utils/routes";
 import { redirect } from "next/navigation";
 
 export async function generateMetadata({ params }) {
@@ -6,16 +7,16 @@ export async function generateMetadata({ params }) {
   const { id, code } = resolvedParams;
 
   let metadata = {
-    title: "Тестийн үр дүн / Hire.mn",
+    title: "Тестийн үр дүн / localhost:3000",
     description: "Онлайн тест, хөндлөнгийн үнэлгээ",
     openGraph: {
-      title: "Тестийн үр дүн / Hire.mn",
+      title: "Тестийн үр дүн / localhost:3000",
       description: "Онлайн тест, хөндлөнгийн үнэлгээ",
-      url: `https://hire.mn/share/${id}/${code}`,
+      url: `https://localhost:3000/share/${id}/${code}`,
       type: "website",
       images: [
         {
-          url: `https://hire.mn/api/share/${code}`,
+          url: `https://localhost:3000/api/share/${code}`,
           width: 1600,
           height: 837.7,
           alt: "Test Results",
@@ -24,7 +25,7 @@ export async function generateMetadata({ params }) {
     },
     twitter: {
       card: "summary_large_image",
-      images: [`https://hire.mn/api/share/${code}`],
+      images: [`https://localhost:3000/api/share/${code}`],
     },
   };
 
@@ -34,9 +35,9 @@ export async function generateMetadata({ params }) {
     if (assessmentResponse.success && assessmentResponse.data?.data?.name) {
       const testName = assessmentResponse.data.data.name;
 
-      metadata.title = `${testName} / Hire.mn`;
+      metadata.title = `${testName} / localhost:3000`;
       metadata.description = `Миний "${testName}" тестийн үр дүн`;
-      metadata.openGraph.title = `${testName} / Hire.mn`;
+      metadata.openGraph.title = `${testName} / localhost:3000`;
       metadata.openGraph.description = `Миний "${testName}" тестийн үр дүн`;
     }
   } catch (error) {
@@ -73,8 +74,7 @@ export default async function SharePage({ params }) {
       </head>
       <body>
         <div style={{ padding: "20px", textAlign: "center" }}>
-          <h1>Redirecting...</h1>
-          <p>Please wait while we redirect you to the test page.</p>
+          <h1>Түр хүлээнэ үү...</h1>
         </div>
       </body>
     </html>

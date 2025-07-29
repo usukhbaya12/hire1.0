@@ -255,7 +255,7 @@ const EmployeeTable = ({ testData, onRefresh }) => {
       "Илгээсэн огноо": item.date,
       "Дуусах огноо": item.endDate,
       Шалгуулагч: item.name,
-      "И-мейл хаяг": item.email,
+      "И-мэйл хаяг": item.email,
       "Тест өгсөн огноо": item.userEndDate,
       Төлөв: item.status,
       "Шалгуулагч үр дүнгээ харах эсэх": item.visible ? "Тийм" : "Үгүй",

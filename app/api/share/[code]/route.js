@@ -3,11 +3,12 @@ import { createCanvas, loadImage, registerFont } from "canvas";
 import path from "path";
 import fs from "fs";
 import { getExamCalculation } from "../../exam";
+import { api } from "@/app/utils/routes";
 
 const CANVAS_WIDTH = 1600;
 const CANVAS_HEIGHT = 837.7;
 const FONT_DIR = path.join(process.cwd(), "app/fonts");
-const PLACEHOLDER_IMG_URL = "https://www.hire.mn/placeholder.png";
+const PLACEHOLDER_IMG_URL = "https://www.hire.mn/misc.png";
 const LOGO_URL = "https://www.hire.mn/hire-all-white.png";
 const HEADER_ICON_URL = "https://www.hire.mn/header-top-white.png";
 const CACHE_CONTROL_SUCCESS = "public, max-age=31536000, immutable";
@@ -43,43 +44,41 @@ async function getExamData(code) {
   }
 }
 
-async function drawBackground(ctx) {
+async function drawBackground(ctx, icons) {
+  const imageUrl = icons ? `${api}file/${icons}` : PLACEHOLDER_IMG_URL;
+
   try {
-    const backgroundImage = await loadImage(PLACEHOLDER_IMG_URL);
-    const imgWidth = backgroundImage.width;
-    const imgHeight = backgroundImage.height;
-    const canvasRatio = CANVAS_WIDTH / CANVAS_HEIGHT;
-    const imageRatio = imgWidth / imgHeight;
+    const image = await loadImage(imageUrl);
 
-    let drawWidth,
-      drawHeight,
-      offsetX = 0,
-      offsetY = 0;
+    const imageAspectRatio = image.width / image.height;
+    const targetHeight = CANVAS_HEIGHT;
+    const targetWidth = targetHeight * imageAspectRatio;
+    const imageX = CANVAS_WIDTH - targetWidth;
 
-    if (imageRatio > canvasRatio) {
-      drawHeight = CANVAS_HEIGHT;
-      drawWidth = imgWidth * (CANVAS_HEIGHT / imgHeight);
-      offsetX = (CANVAS_WIDTH - drawWidth) / 2;
-    } else {
-      drawWidth = CANVAS_WIDTH;
-      drawHeight = imgHeight * (CANVAS_WIDTH / imgWidth);
-      offsetY = (CANVAS_HEIGHT - drawHeight) / 2;
-    }
-    ctx.drawImage(backgroundImage, offsetX, offsetY, drawWidth, drawHeight);
-  } catch (e) {
-    console.error(
-      "Error loading background image, using fallback gradient:",
-      e
-    );
-    const gradient = ctx.createLinearGradient(
-      0,
-      0,
-      CANVAS_WIDTH,
-      CANVAS_HEIGHT
-    );
-    gradient.addColorStop(0, "#362c1e");
-    gradient.addColorStop(1, "#604c34");
+    // Fill background with white (optional base layer)
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+    // Draw image on the RIGHT side
+    ctx.drawImage(image, imageX, 0, targetWidth, targetHeight);
+
+    // Apply horizontal orange-to-transparent gradient over the whole canvas
+    const gradient = ctx.createLinearGradient(0, 0, CANVAS_WIDTH, 0);
+    gradient.addColorStop(0.0, "rgba(243, 100, 33, 1.0)"); // #F36421 @ 100%
+    gradient.addColorStop(0.33, "rgba(243, 100, 33, 0.75)"); // #F36421 @ 75%
+    gradient.addColorStop(1.0, "rgba(255, 255, 255, 0.0)"); // Transparent
+
     ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+  } catch (e) {
+    console.error("Error loading icon or placeholder image:", e);
+
+    // Optional: fallback solid gradient if everything else fails
+    const fallbackGradient = ctx.createLinearGradient(0, 0, CANVAS_WIDTH, 0);
+    fallbackGradient.addColorStop(0, "#362c1e");
+    fallbackGradient.addColorStop(1, "#604c34");
+
+    ctx.fillStyle = fallbackGradient;
     ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
   }
 }
@@ -140,7 +139,7 @@ export async function GET(request, { params }) {
     const canvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
     const ctx = canvas.getContext("2d");
 
-    await drawBackground(ctx);
+    await drawBackground(ctx, examData.icons);
 
     try {
       ctx.fillStyle = "rgba(0, 0, 0, 0.65)";

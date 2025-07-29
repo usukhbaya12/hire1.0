@@ -58,7 +58,7 @@ const Signup = () => {
 
   const handleResendEmail = async () => {
     if (!userEmail) {
-      messageApi.error("И-мейл хаяг олдсонгүй");
+      messageApi.error("И-мэйл хаяг олдсонгүй");
       return;
     }
 
@@ -66,9 +66,9 @@ const Signup = () => {
     try {
       const response = await emailVerify(userEmail);
       if (response.success) {
-        messageApi.success("Баталгаажуулах мейл дахин илгээгдлээ.");
+        messageApi.success("Баталгаажуулах мэйл дахин илгээгдлээ.");
       } else {
-        messageApi.error(response.message || "Мейл илгээхэд алдаа гарлаа");
+        messageApi.error(response.message || "мэйл илгээхэд алдаа гарлаа");
       }
     } catch (error) {
       console.error("Дахин илгээхэд алдаа гарлаа.", error);
@@ -145,7 +145,7 @@ const Signup = () => {
                     loading={resendLoading}
                     className="link-btn-2 border-none"
                   >
-                    Мейл ирээгүй юу? Дахин илгээх
+                    мэйл ирээгүй юу? Дахин илгээх
                   </Button>
                 </div>
               </div>
@@ -291,7 +291,7 @@ const Signup = () => {
                         {
                           required: true,
                           type: "email",
-                          message: "Зөв и-мейл хаяг оруулна уу.",
+                          message: "Зөв и-мэйл хаяг оруулна уу.",
                         },
                       ]}
                       validateTrigger="onSubmit"
@@ -304,7 +304,7 @@ const Signup = () => {
                             className="text-gray-400"
                           />
                         }
-                        placeholder="И-мейл хаяг"
+                        placeholder="И-мэйл хаяг"
                         className="sm:w-[240px]"
                       />
                     </Form.Item>
@@ -616,7 +616,7 @@ const Signup = () => {
                         {
                           required: true,
                           type: "email",
-                          message: "Зөв и-мейл хаяг оруулна уу.",
+                          message: "Зөв и-мэйл хаяг оруулна уу.",
                         },
                       ]}
                       validateTrigger="onSubmit"
@@ -629,7 +629,7 @@ const Signup = () => {
                             className="text-gray-400"
                           />
                         }
-                        placeholder="И-мейл хаяг"
+                        placeholder="И-мэйл хаяг"
                         className="sm:w-[240px]"
                       />
                     </Form.Item>
