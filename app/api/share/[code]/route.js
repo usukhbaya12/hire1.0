@@ -8,7 +8,7 @@ import { api } from "@/app/utils/routes";
 const CANVAS_WIDTH = 1600;
 const CANVAS_HEIGHT = 837.7;
 const FONT_DIR = path.join(process.cwd(), "app/fonts");
-const PLACEHOLDER_IMG_URL = "https://www.hire.mn/misc.png";
+const PLACEHOLDER_IMG_URL = "https://www.hire.mn/placeholder.png";
 const LOGO_URL = "https://www.hire.mn/hire-all-white.png";
 const HEADER_ICON_URL = "https://www.hire.mn/header-top-white.png";
 const CACHE_CONTROL_SUCCESS = "public, max-age=31536000, immutable";
@@ -138,15 +138,9 @@ export async function GET(request, { params }) {
     await drawBackground(ctx, examData.icons);
 
     try {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.65)";
-      ctx.fillRect(0, 0, 1600, 837.7);
-
-      const logo = await loadImage(LOGO_URL);
-      ctx.drawImage(logo, 1528, 72, 200, 58.5);
-
       try {
         const brainIcon = await loadImage(HEADER_ICON_URL);
-        ctx.drawImage(brainIcon, 930, 0, 675, 261);
+        ctx.drawImage(brainIcon, -345, 0, 961, 371);
       } catch (e) {
         console.error("Error loading brain icon (non-critical):", e);
       }
