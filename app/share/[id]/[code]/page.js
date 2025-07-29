@@ -7,10 +7,10 @@ export async function generateMetadata({ params }) {
   const { id, code } = resolvedParams;
 
   let metadata = {
-    title: "Тестийн үр дүн / hire.mn",
+    title: "Тестийн үр дүн / Hire.mn",
     description: "Онлайн тест, хөндлөнгийн үнэлгээ",
     openGraph: {
-      title: "Тестийн үр дүн / hire.mn",
+      title: "Тестийн үр дүн / Hire.mn",
       description: "Онлайн тест, хөндлөнгийн үнэлгээ",
       url: `https://hire.mn/share/${id}/${code}`,
       type: "website",
@@ -35,9 +35,9 @@ export async function generateMetadata({ params }) {
     if (assessmentResponse.success && assessmentResponse.data?.data?.name) {
       const testName = assessmentResponse.data.data.name;
 
-      metadata.title = `${testName} / hire.mn`;
+      metadata.title = `${testName} / Hire.mn`;
       metadata.description = `Миний "${testName}" тестийн үр дүн`;
-      metadata.openGraph.title = `${testName} / hire.mn`;
+      metadata.openGraph.title = `${testName} / Hire.mn`;
       metadata.openGraph.description = `Миний "${testName}" тестийн үр дүн`;
     }
   } catch (error) {

@@ -55,25 +55,21 @@ async function drawBackground(ctx, icons) {
     const targetWidth = targetHeight * imageAspectRatio;
     const imageX = CANVAS_WIDTH - targetWidth;
 
-    // Fill background with white (optional base layer)
     ctx.fillStyle = "#FFFFFF";
     ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-    // Draw image on the RIGHT side
     ctx.drawImage(image, imageX, 0, targetWidth, targetHeight);
 
-    // Apply horizontal orange-to-transparent gradient over the whole canvas
     const gradient = ctx.createLinearGradient(0, 0, CANVAS_WIDTH, 0);
-    gradient.addColorStop(0.0, "rgba(243, 100, 33, 1.0)"); // #F36421 @ 100%
-    gradient.addColorStop(0.33, "rgba(243, 100, 33, 0.75)"); // #F36421 @ 75%
-    gradient.addColorStop(1.0, "rgba(255, 255, 255, 0.0)"); // Transparent
+    gradient.addColorStop(0.0, "rgba(243, 100, 33, 1.0)");
+    gradient.addColorStop(0.33, "rgba(243, 100, 33, 0.75)");
+    gradient.addColorStop(1.0, "rgba(255, 255, 255, 0.0)");
 
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
   } catch (e) {
     console.error("Error loading icon or placeholder image:", e);
 
-    // Optional: fallback solid gradient if everything else fails
     const fallbackGradient = ctx.createLinearGradient(0, 0, CANVAS_WIDTH, 0);
     fallbackGradient.addColorStop(0, "#362c1e");
     fallbackGradient.addColorStop(1, "#604c34");
@@ -146,7 +142,7 @@ export async function GET(request, { params }) {
       ctx.fillRect(0, 0, 1600, 837.7);
 
       const logo = await loadImage(LOGO_URL);
-      ctx.drawImage(logo, 72, 72, 200, 58.5);
+      ctx.drawImage(logo, 1528, 72, 200, 58.5);
 
       try {
         const brainIcon = await loadImage(HEADER_ICON_URL);
