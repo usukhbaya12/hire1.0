@@ -151,12 +151,11 @@ export async function GET(request, { params }) {
       ctx.textAlign = "right";
 
       const maxWidth = 835;
-      const lineHeight = 115;
+      const lineHeight = 110;
       const words = assessmentName.split(" ");
       let line = "";
       let lines = [];
 
-      // Wrap text by maxWidth
       for (let i = 0; i < words.length; i++) {
         const testLine = line + words[i] + " ";
         const testWidth = ctx.measureText(testLine).width;
@@ -170,76 +169,53 @@ export async function GET(request, { params }) {
       }
       if (line) lines.push(line.trim());
 
-      // Bottom padding (72px from bottom)
-      const bottomY = CANVAS_HEIGHT - 72;
+      const bottomY = CANVAS_HEIGHT - 80;
       const totalTextHeight = lines.length * lineHeight;
       const startY = bottomY - (lines.length - 1) * lineHeight;
 
-      // Draw each line from bottom upward
       lines.forEach((textLine, index) => {
         const y = startY + index * lineHeight;
         ctx.fillText(textLine, CANVAS_WIDTH - 83, y);
       });
 
-      ctx.textAlign = "right";
+      ctx.textAlign = "left";
 
-      ctx.font = "bold 36px Gilroy, Arial, sans-serif";
+      ctx.font = "bold 47px Gilroy2, Arial, sans-serif";
       ctx.fillStyle = "#FFFFFF";
-      ctx.fillText(`${examDetails.firstname || ""}`, 83, 515);
+      ctx.fillText(`${(examDetails.firstname || "").toUpperCase()}`, 83, 565);
 
       ctx.strokeStyle = "#ffffff";
       ctx.lineWidth = 3;
       ctx.beginPath();
-      ctx.moveTo(86, 583);
-      ctx.lineTo(192, 583);
+      ctx.moveTo(83, 633);
+      ctx.lineTo(189, 633);
       ctx.stroke();
 
       const examType = examDetails.type;
       if (examType === 11 || examType === 10) {
-        const score = examDetails.point ?? 0;
-        const total = examDetails.total ?? 0;
-        const percent = total > 0 ? Math.round((score / total) * 100) : 0;
+        const score = examDetails.score ?? 0;
+        const total = examDetails.total ?? 100;
 
         ctx.font = "60px Gilroy2, Arial, sans-serif";
-        ctx.fillStyle = "#fff";
-        ctx.fillText(`${score}/${total}`, 222, 567);
+        ctx.fillStyle = "#002B5B";
+        ctx.fillText(`${score}`, 222, 567);
 
-        const centerX = 130;
-        const centerY = 550;
-        const radius = 60;
+        const scoreWidth = ctx.measureText(`${score}`).width;
 
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-        ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc(
-          centerX,
-          centerY,
-          radius,
-          -0.5 * Math.PI,
-          (percent / 100) * 2 * Math.PI - 0.5 * Math.PI,
-          false
-        );
-        ctx.strokeStyle = "#f36421";
-        ctx.lineWidth = 15;
-        ctx.stroke();
-
-        ctx.font = "bold 32px Gilroy, Arial, sans-serif";
+        ctx.font = "40px Gilroy2, Arial, sans-serif"; // 40px as requested
         ctx.fillStyle = "#FFFFFF";
-        ctx.textAlign = "center";
-        ctx.fillText(`${percent}%`, centerX + 2, centerY + 10);
-        ctx.textAlign = "left"; // Reset alignment
+        ctx.fillText(`/ ${total}`, 222 + scoreWidth + 10, 567 + 6); // slight downward offset
+
+        ctx.textAlign = "left";
       } else {
-        ctx.font = "50px Gilroy2, Arial, sans-serif";
-        ctx.fillStyle = "#fff";
+        ctx.font = "42px Gilroy2, Arial, sans-serif";
+        ctx.fillStyle = "#002B5B";
 
         let resultText = examDetails.result || "";
         if (examDetails.value && resultText) {
           resultText += ` / ${examDetails.value}`;
         } else if (examDetails.value) {
-          resultText = examDetails.value; // Use value if result is empty
+          resultText = examDetails.value;
         }
 
         ctx.fillText(resultText, 72, 600);
