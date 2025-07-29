@@ -55,7 +55,7 @@ async function drawBackground(ctx, icons) {
     const targetWidth = targetHeight * imageAspectRatio;
     const imageX = CANVAS_WIDTH - targetWidth;
 
-    ctx.fillStyle = "#FFFFFF";
+    ctx.fillStyle = "#F36421";
     ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
     ctx.drawImage(image, imageX, 0, targetWidth, targetHeight);
@@ -171,26 +171,31 @@ export async function GET(request, { params }) {
       ctx.font = "86px Gilroy2, sans-serif";
       ctx.fillStyle = "#FFFFFF";
 
-      const maxWidth = 800;
-      const lineHeight = 80;
+      const maxWidth = 835;
+      const lineHeight = 115;
       const words = assessmentName.split(" ");
       let line = "";
+      let lines = [];
       let y = 280;
 
       for (let i = 0; i < words.length; i++) {
         const testLine = line + words[i] + " ";
-        const metrics = ctx.measureText(testLine);
-        const testWidth = metrics.width;
+        const testWidth = ctx.measureText(testLine).width;
 
         if (testWidth > maxWidth && i > 0) {
-          ctx.fillText(line, 72, y);
+          lines.push(line);
           line = words[i] + " ";
-          y += lineHeight;
         } else {
           line = testLine;
         }
       }
-      ctx.fillText(line, 72, y);
+      lines.push(line);
+
+      lines.forEach((l, index) => {
+        ctx.fillText(l.trim(), CANVAS_WIDTH - 83, y + index * lineHeight);
+      });
+
+      ctx.textAlign = "left";
 
       ctx.font = "bold 36px Gilroy, Arial, sans-serif";
       ctx.fillStyle = "#FFFFFF";
@@ -259,7 +264,7 @@ export async function GET(request, { params }) {
 
       ctx.font = "24px Gilroy, Arial, sans-serif";
       ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
-      ctx.fillText("© Hire.mn", 1430, 770);
+      ctx.fillText("© Hire.mn", 72, 770);
     } catch (drawingError) {
       console.error(
         `Error occurred during canvas drawing phase for code ${code}:`,
