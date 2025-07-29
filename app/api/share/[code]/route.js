@@ -61,7 +61,7 @@ async function drawBackground(ctx, icons) {
     ctx.drawImage(image, imageX, 0, targetWidth, targetHeight);
 
     const gradient = ctx.createLinearGradient(0, 0, CANVAS_WIDTH, 0);
-    gradient.addColorStop(0.0, "rgba(243, 100, 33, 1.0)");
+    gradient.addColorStop(0.2, "rgba(243, 100, 33, 1.0)");
     gradient.addColorStop(0.33, "rgba(243, 100, 33, 0.75)");
     gradient.addColorStop(1.0, "rgba(255, 255, 255, 0.0)");
 
@@ -145,70 +145,53 @@ export async function GET(request, { params }) {
         console.error("Error loading brain icon (non-critical):", e);
       }
 
-      const firstInitial = examDetails.firstname
-        ? examDetails.firstname.charAt(0).toUpperCase()
-        : "";
-      const initials = `${firstInitial}`;
-
-      const circleX = 120;
-      const circleY = 730;
-      const circleRadius = 45;
-
-      ctx.beginPath();
-      ctx.arc(circleX, circleY, circleRadius, 0, 2 * Math.PI);
-      ctx.fillStyle = "#f36421";
-      ctx.fill();
-
-      ctx.font = "48px Gilroy2, Arial, sans-serif";
-      ctx.fillStyle = "#FFFFFF";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText(initials, circleX, circleY);
-      ctx.textAlign = "left";
-      ctx.textBaseline = "alphabetic";
-
       const assessmentName = examDetails.assessmentName || "Assessment Results";
       ctx.font = "86px Gilroy2, sans-serif";
       ctx.fillStyle = "#FFFFFF";
+      ctx.textAlign = "right";
 
       const maxWidth = 835;
       const lineHeight = 115;
       const words = assessmentName.split(" ");
       let line = "";
       let lines = [];
-      let y = 560;
 
+      // Wrap text by maxWidth
       for (let i = 0; i < words.length; i++) {
         const testLine = line + words[i] + " ";
         const testWidth = ctx.measureText(testLine).width;
 
         if (testWidth > maxWidth && i > 0) {
-          lines.push(line);
+          lines.push(line.trim());
           line = words[i] + " ";
         } else {
           line = testLine;
         }
       }
-      lines.push(line);
+      if (line) lines.push(line.trim());
 
-      lines.forEach((l, index) => {
-        ctx.fillText(l.trim(), 682, y + index * lineHeight);
+      // Bottom padding (72px from bottom)
+      const bottomY = CANVAS_HEIGHT - 72;
+      const totalTextHeight = lines.length * lineHeight;
+      const startY = bottomY - (lines.length - 1) * lineHeight;
+
+      // Draw each line from bottom upward
+      lines.forEach((textLine, index) => {
+        const y = startY + index * lineHeight;
+        ctx.fillText(textLine, CANVAS_WIDTH - 83, y);
       });
 
-      ctx.textAlign = "left";
+      ctx.textAlign = "right";
 
       ctx.font = "bold 36px Gilroy, Arial, sans-serif";
       ctx.fillStyle = "#FFFFFF";
-      ctx.fillText(`${examDetails.lastname || ""}`, 190, 720);
-      ctx.font = "bold 36px Gilroy, Arial, sans-serif";
-      ctx.fillStyle = "#FFFFFF";
-      ctx.fillText(`${examDetails.firstname || ""}`, 190, 760);
+      ctx.fillText(`${examDetails.firstname || ""}`, 83, 515);
 
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.4)";
+      ctx.strokeStyle = "#ffffff";
       ctx.lineWidth = 3;
       ctx.beginPath();
-      ctx.moveTo(72, 650);
-      ctx.lineTo(900, 650);
+      ctx.moveTo(86, 583);
+      ctx.lineTo(192, 583);
       ctx.stroke();
 
       const examType = examDetails.type;
