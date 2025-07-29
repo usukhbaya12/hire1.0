@@ -5,8 +5,9 @@ import fs from "fs";
 import { getExamCalculation } from "../../exam";
 import { api } from "@/app/utils/routes";
 
-const CANVAS_WIDTH = 1600;
-const CANVAS_HEIGHT = 837.7;
+const SCALE = 2;
+const CANVAS_WIDTH = 1600 * SCALE;
+const CANVAS_HEIGHT = Math.round(837.7 * SCALE);
 const FONT_DIR = path.join(process.cwd(), "app/fonts");
 const PLACEHOLDER_IMG_URL = "https://www.hire.mn/placeholder.png";
 const NAME_URL = "https://www.hire.mn/Group.png";
@@ -30,14 +31,10 @@ registerFontIfExists("Gilroy-Regular.ttf", "Gilroy", "normal");
 async function getExamData(code) {
   try {
     const response = await getExamCalculation(code);
-
-    if (response.success && response.data) {
-      return response.data;
-    } else {
-      throw new Error(
-        `Failed to get exam data: ${response.message || "Unknown API error"}`
-      );
-    }
+    if (response.success && response.data) return response.data;
+    throw new Error(
+      `Failed to get exam data: ${response.message || "Unknown API error"}`
+    );
   } catch (error) {
     console.error(`Error fetching exam data for code ${code}:`, error);
     throw new Error(`Could not retrieve exam data. ${error.message}`);
@@ -46,10 +43,8 @@ async function getExamData(code) {
 
 async function drawBackground(ctx, icons) {
   const imageUrl = icons ? `${api}file/${icons}` : PLACEHOLDER_IMG_URL;
-
   try {
     const image = await loadImage(imageUrl);
-
     const imageAspectRatio = image.width / image.height;
     const targetHeight = CANVAS_HEIGHT;
     const targetWidth = targetHeight * imageAspectRatio;
@@ -57,7 +52,6 @@ async function drawBackground(ctx, icons) {
 
     ctx.fillStyle = "#F36421";
     ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-
     ctx.drawImage(image, imageX, 0, targetWidth, targetHeight);
 
     const gradient = ctx.createLinearGradient(0, 0, CANVAS_WIDTH, 0);
@@ -69,11 +63,9 @@ async function drawBackground(ctx, icons) {
     ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
   } catch (e) {
     console.error("Error loading icon or placeholder image:", e);
-
     const fallbackGradient = ctx.createLinearGradient(0, 0, CANVAS_WIDTH, 0);
     fallbackGradient.addColorStop(0, "#362c1e");
     fallbackGradient.addColorStop(1, "#604c34");
-
     ctx.fillStyle = fallbackGradient;
     ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
   }
@@ -81,36 +73,25 @@ async function drawBackground(ctx, icons) {
 
 function generateFallbackImageBuffer() {
   const fallbackCanvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
-  const fallbackCtx = fallbackCanvas.getContext("2d");
-
-  fallbackCtx.fillStyle = "#000000";
-  fallbackCtx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-
-  fallbackCtx.font = "bold 48px Gilroy, Arial, sans-serif";
-  fallbackCtx.fillStyle = "#f36421";
-  fallbackCtx.textAlign = "center";
-  fallbackCtx.fillText(
-    "Тестийн үр дүн / Hire.mn",
-    CANVAS_WIDTH / 2,
-    CANVAS_HEIGHT / 2
-  );
-
-  fallbackCtx.font = "24px Gilroy, Arial, sans-serif";
-  fallbackCtx.fillStyle = "rgba(255, 255, 255, 0.6)";
-  fallbackCtx.textAlign = "left";
-  fallbackCtx.fillText("© Hire.mn", 1430, 770);
-
+  const ctx = fallbackCanvas.getContext("2d");
+  ctx.fillStyle = "#000000";
+  ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+  ctx.font = `${48 * SCALE}px Gilroy, Arial, sans-serif`;
+  ctx.fillStyle = "#f36421";
+  ctx.textAlign = "center";
+  ctx.fillText("Тестийн үр дүн / Hire.mn", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
+  ctx.font = `${24 * SCALE}px Gilroy, Arial, sans-serif`;
+  ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
+  ctx.textAlign = "left";
+  ctx.fillText("© Hire.mn", 1430 * SCALE, 770 * SCALE);
   return fallbackCanvas.toBuffer("image/png");
 }
 
 export async function GET(request, { params }) {
-  const resolvedParams = await params;
-  const code = resolvedParams.code;
-
+  const code = (await params).code;
   if (!code) {
     console.error("Error: Missing 'code' parameter in request.");
-    const errorBuffer = generateFallbackImageBuffer();
-    return new NextResponse(errorBuffer, {
+    return new NextResponse(generateFallbackImageBuffer(), {
       headers: {
         "Content-Type": "image/png",
         "Cache-Control": CACHE_CONTROL_ERROR,
@@ -121,45 +102,34 @@ export async function GET(request, { params }) {
 
   try {
     const examData = await getExamData(code);
-    if (
-      !examData ||
-      typeof examData.value !== "object" ||
-      examData.value === null
-    ) {
-      throw new Error(
-        "Fetched exam data is missing the expected 'value' object."
-      );
-    }
-    const examDetails = examData.value;
+    const examDetails = examData?.value;
+    if (!examDetails) throw new Error("Invalid exam data structure.");
 
     const canvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
     const ctx = canvas.getContext("2d");
-
     await drawBackground(ctx, examData.icons);
 
     try {
       try {
         const brainIcon = await loadImage(HEADER_ICON_URL);
-        ctx.drawImage(brainIcon, -345, 0, 961, 371);
+        ctx.drawImage(brainIcon, -345 * SCALE, 0, 961 * SCALE, 371 * SCALE);
       } catch (e) {
         console.error("Error loading brain icon (non-critical):", e);
       }
 
       const assessmentName = examDetails.assessmentName || "Assessment Results";
-      ctx.font = "86px Gilroy2, sans-serif";
+      ctx.font = `${86 * SCALE}px Gilroy2, sans-serif`;
       ctx.fillStyle = "#FFFFFF";
       ctx.textAlign = "right";
 
-      const maxWidth = 835;
-      const lineHeight = 110;
+      const maxWidth = 835 * SCALE;
+      const lineHeight = 110 * SCALE;
       const words = assessmentName.split(" ");
-      let line = "";
-      let lines = [];
-
+      let line = "",
+        lines = [];
       for (let i = 0; i < words.length; i++) {
         const testLine = line + words[i] + " ";
         const testWidth = ctx.measureText(testLine).width;
-
         if (testWidth > maxWidth && i > 0) {
           lines.push(line.trim());
           line = words[i] + " ";
@@ -169,33 +139,41 @@ export async function GET(request, { params }) {
       }
       if (line) lines.push(line.trim());
 
-      const bottomY = CANVAS_HEIGHT - 80;
+      const bottomY = CANVAS_HEIGHT - 80 * SCALE;
       const totalTextHeight = lines.length * lineHeight;
       const startY = bottomY - (lines.length - 1) * lineHeight;
-
       lines.forEach((textLine, index) => {
         const y = startY + index * lineHeight;
-        ctx.fillText(textLine, CANVAS_WIDTH - 83, y);
+        ctx.fillText(textLine, CANVAS_WIDTH - 83 * SCALE, y);
       });
 
       ctx.textAlign = "left";
-
       try {
         const nameIcon = await loadImage(NAME_URL);
-        ctx.drawImage(nameIcon, 78, 465, 64, 51);
+        ctx.drawImage(
+          nameIcon,
+          78 * SCALE,
+          445 * SCALE,
+          60 * SCALE,
+          48 * SCALE
+        );
       } catch (e) {
         console.error("Error loading name icon (non-critical):", e);
       }
 
-      ctx.font = "bold 47px Gilroy2, Arial, sans-serif";
+      ctx.font = `bold ${47 * SCALE}px Gilroy2, Arial, sans-serif`;
       ctx.fillStyle = "#FFFFFF";
-      ctx.fillText(`${(examDetails.firstname || "").toUpperCase()}`, 78, 565);
+      ctx.fillText(
+        `${(examDetails.firstname || "").toUpperCase()}`,
+        78 * SCALE,
+        565 * SCALE
+      );
 
       ctx.strokeStyle = "#ffffff";
-      ctx.lineWidth = 3;
+      ctx.lineWidth = 3 * SCALE;
       ctx.beginPath();
-      ctx.moveTo(78, 598);
-      ctx.lineTo(189, 598);
+      ctx.moveTo(78 * SCALE, 588 * SCALE);
+      ctx.lineTo(189 * SCALE, 588 * SCALE);
       ctx.stroke();
 
       const examType = examDetails.type;
@@ -203,19 +181,20 @@ export async function GET(request, { params }) {
         const score = examDetails.score ?? 0;
         const total = examDetails.total ?? 100;
 
-        ctx.font = "60px Gilroy2, Arial, sans-serif";
+        ctx.font = `${60 * SCALE}px Gilroy2, Arial, sans-serif`;
         ctx.fillStyle = "#002B5B";
-        ctx.fillText(`${score}`, 78, 638);
+        ctx.fillText(`${score}`, 78 * SCALE, 648 * SCALE);
 
         const scoreWidth = ctx.measureText(`${score}`).width;
-
-        ctx.font = "40px Gilroy2, Arial, sans-serif"; // 40px as requested
+        ctx.font = `${40 * SCALE}px Gilroy2, Arial, sans-serif`;
         ctx.fillStyle = "#FFFFFF";
-        ctx.fillText(`/ ${total}`, 78 + scoreWidth + 10, 567 + 6); // slight downward offset
-
-        ctx.textAlign = "left";
+        ctx.fillText(
+          `/ ${total}`,
+          78 * SCALE + scoreWidth + 5 * SCALE,
+          648 * SCALE + 6 * SCALE
+        );
       } else {
-        ctx.font = "42px Gilroy2, Arial, sans-serif";
+        ctx.font = `${42 * SCALE}px Gilroy2, Arial, sans-serif`;
         ctx.fillStyle = "#002B5B";
 
         let resultText = examDetails.result || "";
@@ -225,20 +204,19 @@ export async function GET(request, { params }) {
           resultText = examDetails.value;
         }
 
-        ctx.fillText(resultText, 78, 638);
+        ctx.fillText(resultText, 78 * SCALE, 648 * SCALE);
       }
 
-      ctx.font = "24px Gilroy, Arial, sans-serif";
+      ctx.font = `${24 * SCALE}px Gilroy, Arial, sans-serif`;
       ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
       const today = new Date();
       const formattedDate = `${today.getFullYear()}.${String(
         today.getMonth() + 1
       ).padStart(2, "0")}.${String(today.getDate()).padStart(2, "0")}`;
-
-      ctx.fillText(`${formattedDate} © Hire.mn`, 78, 760);
+      ctx.fillText(`${formattedDate} © Hire.mn`, 78 * SCALE, 760 * SCALE);
     } catch (drawingError) {
       console.error(
-        `Error occurred during canvas drawing phase for code ${code}:`,
+        `Error during drawing phase for code ${code}:`,
         drawingError
       );
       throw new Error(`Failed to draw image content. ${drawingError.message}`);
@@ -248,23 +226,17 @@ export async function GET(request, { params }) {
     return new NextResponse(buffer, {
       headers: {
         "Content-Type": "image/png",
-        "Cache-Control": CACHE_CONTROL_SUCCESS, // Use constant
+        "Cache-Control": CACHE_CONTROL_SUCCESS,
       },
     });
   } catch (error) {
     console.error(`Failed to generate share image for code ${code}:`, error);
-    try {
-      const fallbackBuffer = generateFallbackImageBuffer();
-      return new NextResponse(fallbackBuffer, {
-        headers: {
-          "Content-Type": "image/png",
-          "Cache-Control": CACHE_CONTROL_ERROR, // Use constant
-        },
-        status: 500, // Internal Server Error
-      });
-    } catch (fallbackError) {
-      console.error("CRITICAL: Error creating fallback image:", fallbackError);
-      return new NextResponse("Failed to generate image.", { status: 500 });
-    }
+    return new NextResponse(generateFallbackImageBuffer(), {
+      headers: {
+        "Content-Type": "image/png",
+        "Cache-Control": CACHE_CONTROL_ERROR,
+      },
+      status: 500,
+    });
   }
 }
