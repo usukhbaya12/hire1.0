@@ -25,12 +25,17 @@ const AboutPage = () => {
       title: "Үүсгэн байгуулагч",
       icon: <Rocket2BoldDuotone className="text-main" />,
       color: "from-main to-secondary",
+      color2: "from-main/10 to-secondary/10",
+      border: "orange-200",
+      text: "main",
+
       data: [
         {
           name: "Б.Нандин-Эрдэнэ",
           role: "Үүсгэн байгуулагч",
-          description: "Тайлбар байх уу?",
-          image: "/facebook.png",
+          description:
+            "СЭЗИС болон Австралийн Үндэсний Их сургуульд Бизнесийн удирдлагын магистр, Маркетингийн удирдлагын магистрын зэрэг хамгаалсан. Маркетинг, хүний нөөцийн салбарт багш, зөвлөх, судлаачаар 2003 оноос хойш ажиллаж байгаа.",
+          image: "/nandinerdene.png",
         },
       ],
     },
@@ -39,6 +44,10 @@ const AboutPage = () => {
       title: "Тест хөгжүүлэлтийн баг",
       icon: <Document1BoldDuotone className="text-blue-500" />,
       color: "from-blue-500 to-purple-500",
+      color2: "from-blue-500/10 to-purple-500/10",
+      border: "blue-200",
+      text: "blue-500",
+
       data: [
         {
           name: "Б.Нандин-Эрдэнэ",
@@ -77,6 +86,9 @@ const AboutPage = () => {
       title: "Систем хөгжүүлэлтийн баг",
       icon: <Laptop2BoldDuotone className="text-green-500" />,
       color: "from-green-500 to-teal-500",
+      color2: "from-green-500/10 to-teal-500/10",
+      border: "green-300",
+      text: "green-500",
       data: [
         {
           name: "Б.Нандин-Эрдэнэ",
@@ -175,7 +187,7 @@ const AboutPage = () => {
                 </div>
               </motion.div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {section.data.map((person, index) => (
                   <motion.div
                     key={`${section.id}-${index}`}
@@ -201,10 +213,14 @@ const AboutPage = () => {
                           {person.name}
                         </h3>
 
-                        <div
-                          className={`inline-block px-3 pt-0.5 rounded-full font-bold mb-2 bg-gradient-to-r ${section.color} bg-clip-text text-transparent bg-gray-100`}
-                        >
-                          {person.role}
+                        <div className="flex items-center justify-center py-2 pb-4">
+                          <div
+                            className={`flex items-center gap-2 bg-gradient-to-r ${section.color2} text-${section.text} px-3 py-1.5 rounded-3xl border border-${section.border}`}
+                          >
+                            <span className="text-sm truncate font-bold max-w-[220px]">
+                              {person.role}
+                            </span>
+                          </div>
                         </div>
 
                         <p className="text-gray-500 leading-relaxed">

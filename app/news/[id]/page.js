@@ -4,8 +4,10 @@ import { getBlogById } from "@/app/api/main";
 import { api } from "@/app/utils/routes";
 
 export async function generateMetadata({ params }) {
+  const { id } = await params;
+
   try {
-    const response = await getBlogById(params.id);
+    const response = await getBlogById(id);
     const blog = response.success ? response.data : null;
 
     if (!blog) return { title: "Blog Post" };
@@ -38,7 +40,7 @@ export async function generateMetadata({ params }) {
 
 export default function Page({ params }) {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div>Уншиж байна...</div>}>
       <BlogDetailPage params={params} />
     </Suspense>
   );

@@ -2,12 +2,12 @@ import axios from "axios";
 import { getAuthToken } from "../utils/auth";
 import { api } from "../utils/routes";
 
-export const getExamQuestions = async (id, category = null) => {
+export const getExamQuestions = async (id, category = null, con = false) => {
   const token = await getAuthToken();
 
   try {
     const { data } = await axios.post(
-      `${api}exam/code`,
+      `${api}exam/code/${con}`,
       {
         code: parseInt(id),
         ...(category !== null && { category: parseInt(category) }),

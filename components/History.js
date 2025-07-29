@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { Button, Collapse, Timeline } from "antd";
+import { Button, Collapse, Divider, Timeline } from "antd";
 import {
   CursorLineDuotone,
   MouseBoldDuotone,
@@ -16,11 +16,13 @@ import {
   GlobalLineDuotone,
   EyeClosedLineDuotone,
   NotificationLinesRemoveBoldDuotone,
+  CalendarBoldDuotone,
 } from "solar-icons";
 import { getReport } from "@/app/api/exam";
 import { DropdownIcon } from "./Icons";
 import Link from "next/link";
 import Image from "next/image";
+import { api } from "@/app/utils/routes";
 
 const AssessmentCard = ({ assessment, isInvited = false }) => {
   const router = useRouter();
@@ -131,6 +133,8 @@ const AssessmentCard = ({ assessment, isInvited = false }) => {
           const code = history.exams?.code;
           const isLoading = code ? loadingCodes[code] : false;
 
+          console.log("k", histories);
+
           return {
             dot: (
               <div
@@ -159,18 +163,90 @@ const AssessmentCard = ({ assessment, isInvited = false }) => {
             ),
             children: (
               <>
-                <div className="flex items-center justify-between w-full">
-                  <div className="flex items-center gap-2">
-                    <span>
-                      {examStartDate
-                        ? examStartDate.toLocaleDateString()
-                        : "Өгөөгүй"}
-                    </span>
-                    <div>•</div>
+                <div className="w-full bg-white rounded-3xl p-4 bg-white px-6 shadow shadow-slate-200">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2 text-gray-500">
+                      <CalendarBoldDuotone width={18} />
+                      <span>
+                        {(history.exams?.userEndDate &&
+                          new Date(
+                            history.exams.userEndDate
+                          ).toLocaleDateString()) ||
+                          (history.exams?.userStartDate &&
+                            new Date(
+                              history.exams.userStartDate
+                            ).toLocaleDateString()) ||
+                          new Date(history.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <div>
+                      {userEndDate ? (
+                        <div className="relative group w-fit">
+                          <div className="absolute -inset-0.5 bg-gradient-to-br from-lime-800/50 to-green-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+                          <div className="relative bg-gradient-to-br from-lime-600/20 to-green-600/30 rounded-full flex items-center justify-center border border-yellow-900/10">
+                            <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-black/60 to-black/70 bg-clip-text text-transparent py-1 px-3.5">
+                              <div className="w-2 h-2 bg-lime-600 rounded-full -mt-0.5"></div>
+                              Дуусгасан
+                            </div>
+                          </div>
+                        </div>
+                      ) : examStartDate && !userEndDate ? (
+                        <div className="relative group w-fit">
+                          <div className="absolute -inset-0.5 bg-gradient-to-br from-blue-600/50 to-blue-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+                          <div className="relative bg-gradient-to-br from-blue-400/30 to-blue-300/20 rounded-full flex items-center justify-center border border-blue-900/10">
+                            <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-1 px-3.5">
+                              <div className="w-2 h-2 bg-blue-500 rounded-full -mt-0.5"></div>
+                              Дуусгаагүй
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="relative group w-fit">
+                          <div className="absolute -inset-0.5 bg-gradient-to-br from-yellow-600/50 to-orange-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+                          <div className="relative bg-gradient-to-br from-yellow-400/30 to-yellow-300/20 rounded-full flex items-center justify-center border border-yellow-900/10">
+                            <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-1 px-3.5">
+                              <div className="w-2 h-2 bg-yellow-500 rounded-full -mt-0.5"></div>
+                              Өгөөгүй
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    {/* <div className="flex items-center gap-2">
+                      <div
+                        className={`h-2 w-2 rounded-full ${
+                          userEndDate
+                            ? "bg-green-600 border border-green-700"
+                            : examStartDate && !userEndDate
+                            ? "bg-blue-400 border border-blue-500"
+                            : isExpired
+                            ? "bg-red-500 border border-red-600"
+                            : "bg-yellow-500 border border-yellow-600"
+                        }`}
+                      ></div>
+                      <div className="font-bold">
+                        {userEndDate
+                          ? "Дуусгасан"
+                          : examStartDate && !userEndDate
+                          ? "Дуусгаагүй"
+                          : isExpired
+                          ? "Хугацаа дууссан"
+                          : "Өгөөгүй"}
+                      </div>
+                    </div> */}
+                  </div>
+                  <div className="font-bold pt-2">
+                    {history?.exams?.result?.result}
+                    {history?.exams?.result?.value
+                      ? ` / ${history?.exams?.result?.value}`
+                      : ""}
+                  </div>
+                  <Divider className="no-margin2" />
+                  <div className="flex items-center justify-between">
                     {isExpired ? (
                       <Button className="border-none link-btn-4" disabled>
                         <AlarmBoldDuotone width={18} />
-                        <span>Дууссан</span>
+                        <span>Хугацаа хэтэрсэн</span>
                       </Button>
                     ) : isCompletedButNotVisible ? (
                       <Button className="link-btn-4 border-none" disabled>
@@ -193,7 +269,7 @@ const AssessmentCard = ({ assessment, isInvited = false }) => {
                           <CursorLineDuotone width={18} height={18} />
                         )}
                         {userEndDate
-                          ? "Тайлан"
+                          ? "Тайлан татах"
                           : examStartDate && !userEndDate
                           ? "Үргэлжлүүлэх"
                           : "Тест өгөх"}
@@ -201,13 +277,12 @@ const AssessmentCard = ({ assessment, isInvited = false }) => {
                     )}
                     {userEndDate && !isCompletedButNotVisible && (
                       <div className="flex items-center gap-2">
-                        <span>•</span>
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             shareToFacebookWithMeta(assessment.id, code);
                           }}
-                          className="flex items-center justify-center transition-opacity hover:opacity-70"
+                          className="flex items-center gap-2"
                           title="Share on Facebook"
                         >
                           <Image
@@ -217,6 +292,9 @@ const AssessmentCard = ({ assessment, isInvited = false }) => {
                             height={18}
                             priority
                           />
+                          <div className="font-bold text-blue-700">
+                            Хуваалцах
+                          </div>
                         </button>
                       </div>
                     )}
@@ -234,6 +312,7 @@ const AssessmentCard = ({ assessment, isInvited = false }) => {
     <div className="w-full">
       <div className="w-full h-full relative overflow-hidden rounded-3xl shadow shadow-slate-200 bg-white/70 backdrop-blur-md px-6 pt-6">
         <div className="absolute inset-0 bg-gradient-to-br from-white to-main/10 blur opacity-30"></div>
+
         <div className="absolute top-0 right-0">
           <NotesBoldDuotone
             width={150}
@@ -241,12 +320,15 @@ const AssessmentCard = ({ assessment, isInvited = false }) => {
             className="opacity-10 text-main"
           />
         </div>
+
         <div className="relative z-10">
           <div className="flex justify-between items-start mb-2">
             <div>
               <Link href={`/test/${assessment.originalId || assessment.id}`}>
-                <h1 className="w-fit relative text-base font-extrabold leading-5 bg-gradient-to-r from-main to-secondary bg-clip-text text-transparent cursor-pointer after:absolute after:-bottom-[1px] after:left-0 after:w-full after:h-0.5 after:bg-gradient-to-r after:from-main after:to-secondary after:scale-x-0 hover:after:scale-x-100 after:transition-transform">
-                  {assessment.name}
+                <h1 className="w-fit text-base font-extrabold leading-5 sm:min-h-[2.5rem] flex items-start">
+                  <span className="pr-4 text-base leading-5 relative bg-gradient-to-r from-main to-secondary bg-clip-text text-transparent cursor-pointer line-clamp-2 after:absolute after:-bottom-[1px] after:left-0 after:w-full after:h-[2.5px] after:bg-gradient-to-r after:from-main after:to-secondary after:scale-x-0 hover:after:scale-x-100 after:transition-transform">
+                    {assessment.name}
+                  </span>
                 </h1>
               </Link>
               {isInvited && (
@@ -428,7 +510,7 @@ const HistoryCard = ({ data, isInvited = false }) => {
     : processUserData(data);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
       {Object.values(groupedData).map((assessment) => (
         <div key={assessment.id}>
           <AssessmentCard assessment={assessment} isInvited={isInvited} />

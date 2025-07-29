@@ -356,6 +356,10 @@ body {
   margin: 0;
 }
 
+.ant-divider-horizontal.no-margin2 {
+  margin: 8px 0px;
+}
+
 .ant-select-focused.ant-select-outlined:not(.ant-select-disabled):not(
     .ant-select-customize-input
   ):not(.ant-pagination-size-changer)
@@ -603,10 +607,6 @@ textarea.ant-input {
 
 .ant-timeline .ant-timeline-item-head {
   background-color: transparent !important;
-}
-
-.ant-timeline .ant-timeline-item-last {
-  padding-bottom: 0;
 }
 
 .ant-timeline .ant-timeline-item-content {
@@ -946,4 +946,18 @@ textarea.ant-input {
 .animate-marquee:hover,
 .animate-marquee-reverse:hover {
   animation-play-state: paused;
+}
+
+@keyframes pulse-slow {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 2s ease-in-out infinite;
 }
