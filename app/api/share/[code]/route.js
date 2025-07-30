@@ -5,7 +5,7 @@ import fs from "fs";
 import { getExamCalculation } from "../../exam";
 import { api } from "@/app/utils/routes";
 
-const SCALE = 2;
+const SCALE = 1.5;
 const CANVAS_WIDTH = 1600 * SCALE;
 const CANVAS_HEIGHT = Math.round(837.7 * SCALE);
 const FONT_DIR = path.join(process.cwd(), "app/fonts");
@@ -166,14 +166,14 @@ export async function GET(request, { params }) {
       ctx.fillText(
         `${(examDetails.firstname || "").toUpperCase()}`,
         78 * SCALE,
-        565 * SCALE
+        555 * SCALE
       );
 
       ctx.strokeStyle = "#ffffff";
       ctx.lineWidth = 3 * SCALE;
       ctx.beginPath();
-      ctx.moveTo(78 * SCALE, 588 * SCALE);
-      ctx.lineTo(189 * SCALE, 588 * SCALE);
+      ctx.moveTo(78 * SCALE, 578 * SCALE);
+      ctx.lineTo(189 * SCALE, 578 * SCALE);
       ctx.stroke();
 
       const examType = examDetails.type;
