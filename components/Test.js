@@ -175,12 +175,16 @@ export default function Test() {
       dataIndex: "report",
       align: "center",
     },
-    {
-      title: "Баримт",
-      key: "barimt",
-      dataIndex: "barimt",
-      align: "center",
-    },
+    ...(assessmentData?.data?.price > 0
+      ? [
+          {
+            title: "Баримт",
+            key: "barimt",
+            dataIndex: "barimt",
+            align: "center",
+          },
+        ]
+      : []),
   ];
 
   const columns2 = [
@@ -410,19 +414,21 @@ export default function Test() {
                   className="object-contain opacity-50 sm:opacity-100 z-[1]"
                   priority
                 />
-                <div className="absolute top-1 inset-x-0 h-[200px] sm:h-[150px] md:h-[150px] xl:h-[200px] 2xl:h-[250px] flex items-start justify-center overflow-hidden">
-                  <Image
-                    src={
-                      assessmentData.data.icons
-                        ? `${api}file/${assessmentData.data.icons}`
-                        : "/placeholder.png"
-                    }
-                    alt="Assessment Icon"
-                    width={600}
-                    height={200}
-                    className="w-[250px] sm:w-[250px] md:w-[320px] lg:w-[320px] xl:w-[420px] 2xl:w-[480px] object-top object-cover hidden sm:block"
-                    priority
-                  />
+                <div className="absolute top-1 inset-x-0 h-[60%] flex items-start justify-center overflow-hidden">
+                  <div className="relative overflow-hidden w-[250px] sm:w-[250px] md:w-[320px] lg:w-[320px] xl:w-[420px] 2xl:w-[480px] h-[calc(100%-30px)]">
+                    <Image
+                      src={
+                        assessmentData.data.icons
+                          ? `${api}file/${assessmentData.data.icons}`
+                          : "/placeholder.png"
+                      }
+                      alt="Assessment Icon"
+                      width={600}
+                      height={600}
+                      className="absolute top-[-30px] object-cover object-top w-full h-auto hidden sm:block"
+                      priority
+                    />
+                  </div>
                 </div>
               </div>
             </div>

@@ -68,7 +68,7 @@ const Signup = () => {
       if (response.success) {
         messageApi.success("Баталгаажуулах мэйл дахин илгээгдлээ.");
       } else {
-        messageApi.error(response.message || "мэйл илгээхэд алдаа гарлаа");
+        messageApi.error(response.message || "Мэйл илгээхэд алдаа гарлаа");
       }
     } catch (error) {
       console.error("Дахин илгээхэд алдаа гарлаа.", error);
@@ -145,7 +145,7 @@ const Signup = () => {
                     loading={resendLoading}
                     className="link-btn-2 border-none"
                   >
-                    мэйл ирээгүй юу? Дахин илгээх
+                    Мэйл ирээгүй юу? Дахин илгээх
                   </Button>
                 </div>
               </div>
