@@ -176,12 +176,13 @@ export default function TestDetails() {
                         <img
                           src={`${api}file/${assessmentData.data.icons}`}
                           alt="Test icon"
-                          className="w-52 h-52 object-contain rounded-full p-2"
+                          className="w-full h-full object-cover rounded-full p-7"
                         />
                       ) : (
                         <NotesBoldDuotone className="w-36 h-36 text-white" />
                       )}
                     </div>
+
                     <h2 className="text-2xl font-black text-center bg-gradient-to-r from-main to-secondary bg-clip-text text-transparent relative z-10 leading-tight">
                       {assessmentData.data?.name}
                     </h2>
