@@ -51,16 +51,23 @@ function NavbarContent() {
   }, [pathname, searchParams]);
 
   useEffect(() => {
-    const handleTestsVisibility = (event) => {
-      setIsTestsSectionVisible(event.detail.isVisible);
-    };
+    if (pathname !== "/") {
+      setIsTestsVisible(false);
+      return;
+    }
 
-    window.addEventListener("testsVisibility", handleTestsVisibility);
+    const testsSection = document.getElementById("tests");
+    if (!testsSection) return;
 
-    return () => {
-      window.removeEventListener("testsVisibility", handleTestsVisibility);
-    };
-  }, []);
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsTestsSectionVisible(entry.isIntersecting),
+      { threshold: 0.3 }
+    );
+
+    observer.observe(testsSection);
+
+    return () => observer.disconnect();
+  }, [pathname]);
 
   const knowledge = [
     {
@@ -405,6 +412,16 @@ function NavbarContent() {
               </div>
             </div>
           </div>
+          <Divider className="no-margin" />
+          <Link
+            href="/about"
+            className="cursor-pointer font-bold"
+            onClick={() => {
+              setIsExpanded(false);
+            }}
+          >
+            Бидний тухай
+          </Link>
           <Divider className="no-margin" />
           <Link
             href="/contact"
