@@ -52,7 +52,7 @@ function NavbarContent() {
 
   useEffect(() => {
     if (pathname !== "/") {
-      setIsTestsVisible(false);
+      setIsTestsSectionVisible(false);
       return;
     }
 
