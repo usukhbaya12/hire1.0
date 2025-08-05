@@ -51,23 +51,16 @@ function NavbarContent() {
   }, [pathname, searchParams]);
 
   useEffect(() => {
-    if (pathname !== "/") {
-      setIsTestsSectionVisible(false);
-      return;
-    }
+    const handleTestsVisibility = (event) => {
+      setIsTestsSectionVisible(event.detail.isVisible);
+    };
 
-    const testsSection = document.getElementById("tests");
-    if (!testsSection) return;
+    window.addEventListener("testsVisibility", handleTestsVisibility);
 
-    const observer = new IntersectionObserver(
-      ([entry]) => setIsTestsSectionVisible(entry.isIntersecting),
-      { threshold: 0.3 }
-    );
-
-    observer.observe(testsSection);
-
-    return () => observer.disconnect();
-  }, [pathname]);
+    return () => {
+      window.removeEventListener("testsVisibility", handleTestsVisibility);
+    };
+  }, []);
 
   const knowledge = [
     {
@@ -422,6 +415,7 @@ function NavbarContent() {
           >
             Бидний тухай
           </Link>
+          <Divider className="no-margin" />
           <Divider className="no-margin" />
           <Link
             href="/contact"
