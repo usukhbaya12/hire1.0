@@ -199,15 +199,15 @@ const ContactPage = () => {
                     <Form.Item
                       name="email"
                       validateTrigger="onFinish"
-                      label="И-мейл хаяг"
+                      label="И-мэйл хаяг"
                       rules={[
                         {
                           required: true,
-                          message: "И-мейл хаягаа оруулна уу.",
+                          message: "И-мэйл хаягаа оруулна уу.",
                         },
                         {
                           type: "email",
-                          message: "Зөв и-мейл хаяг оруулна уу.",
+                          message: "Зөв и-мэйл хаяг оруулна уу.",
                         },
                       ]}
                     >
@@ -219,7 +219,7 @@ const ContactPage = () => {
                             className="text-gray-400"
                           />
                         }
-                        placeholder="И-мейл хаяг"
+                        placeholder="И-мэйл хаяг"
                       />
                     </Form.Item>
                   </div>

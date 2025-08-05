@@ -288,7 +288,7 @@ const SpreadsheetInviteTable = ({ testData, onSuccess }) => {
 
           Object.keys(row).forEach((key) => {
             const lowerKey = key.toLowerCase();
-            if (lowerKey.includes("email") || lowerKey.includes("мейл")) {
+            if (lowerKey.includes("email") || lowerKey.includes("мэйл")) {
               result.email = row[key];
             } else if (
               (lowerKey.includes("first") || lowerKey.includes("нэр")) &&
@@ -342,7 +342,7 @@ const SpreadsheetInviteTable = ({ testData, onSuccess }) => {
 
     const worksheet = XLSX.utils.json_to_sheet(
       data.map((row) => ({
-        "И-мейл хаяг": row.email,
+        "И-мэйл хаяг": row.email,
         Овог: row.lastname,
         Нэр: row.firstname,
         "Утасны дугаар": row.phone,
@@ -388,7 +388,7 @@ const SpreadsheetInviteTable = ({ testData, onSuccess }) => {
 
     if (invalidEmails.length > 0) {
       messageApi.error(
-        `${invalidEmails.length} шалгуулагчийн и-мейл хаяг буруу байна.`
+        `${invalidEmails.length} шалгуулагчийн и-мэйл хаяг буруу байна.`
       );
       return false;
     }
@@ -539,7 +539,7 @@ const SpreadsheetInviteTable = ({ testData, onSuccess }) => {
             {text || (
               <span className="text-gray-400">
                 {dataIndex === "email"
-                  ? "И-мейл хаяг"
+                  ? "И-мэйл хаяг"
                   : dataIndex === "firstname"
                   ? "Нэр"
                   : dataIndex === "lastname"
@@ -561,7 +561,7 @@ const SpreadsheetInviteTable = ({ testData, onSuccess }) => {
 
   const columns = [
     {
-      title: "И-мейл хаяг",
+      title: "И-мэйл хаяг",
       dataIndex: "email",
       key: "email",
       width: "30%",
@@ -740,7 +740,7 @@ const SpreadsheetInviteTable = ({ testData, onSuccess }) => {
                     height={18}
                     className="text-main"
                   />
-                  Мейл илгээх
+                  мэйл илгээх
                 </div>
               </div>
             </div>
@@ -831,7 +831,7 @@ const SpreadsheetInviteTable = ({ testData, onSuccess }) => {
                   №
                 </th>
                 <th className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                  И-мейл хаяг
+                  И-мэйл хаяг
                 </th>
                 <th className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                   Нэр

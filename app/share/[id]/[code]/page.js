@@ -1,4 +1,5 @@
 import { getAssessmentById } from "@/app/api/assessment";
+import { api } from "@/app/utils/routes";
 import { redirect } from "next/navigation";
 
 export async function generateMetadata({ params }) {
@@ -36,8 +37,8 @@ export async function generateMetadata({ params }) {
 
       metadata.title = `${testName} / Hire.mn`;
       metadata.description = `Миний "${testName}" тестийн үр дүн`;
-      metadata.openGraph.title = `${testName} / Hire.mn`;
-      metadata.openGraph.description = `Миний "${testName}" тестийн үр дүн`;
+      metadata.openGraph.title = `Миний "${testName}" тестийн үр дүн`;
+      metadata.openGraph.description = `Онлайн тест, хөндлөнгийн үнэлгээ`;
     }
   } catch (error) {
     console.error("Error fetching assessment data for metadata:", error);
@@ -73,8 +74,7 @@ export default async function SharePage({ params }) {
       </head>
       <body>
         <div style={{ padding: "20px", textAlign: "center" }}>
-          <h1>Redirecting...</h1>
-          <p>Please wait while we redirect you to the test page.</p>
+          <h1>Түр хүлээнэ үү...</h1>
         </div>
       </body>
     </html>

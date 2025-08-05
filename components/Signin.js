@@ -244,10 +244,10 @@ function SigninForm() {
                   />
                 </div>
                 <div className="m-0 text-base font-bold">
-                  И-мейл хаягаа оруулна уу.
+                  И-мэйл хаягаа оруулна уу.
                 </div>
                 <Text className="text-gray-500 leading-4">
-                  Таны и-мейл хаяг руу баталгаажуулах код илгээх болно.
+                  Таны и-мэйл хаяг руу баталгаажуулах код илгээх болно.
                 </Text>
               </div>
 
@@ -262,7 +262,7 @@ function SigninForm() {
                     {
                       required: true,
                       type: "email",
-                      message: "Зөв и-мейл хаяг оруулна уу.",
+                      message: "Зөв и-мэйл хаяг оруулна уу.",
                     },
                   ]}
                   validateTrigger="onSubmit"
@@ -275,7 +275,7 @@ function SigninForm() {
                         className="text-gray-400"
                       />
                     }
-                    placeholder="И-мейл хаяг"
+                    placeholder="И-мэйл хаяг"
                     className="rounded-lg"
                   />
                 </Form.Item>
@@ -566,7 +566,7 @@ function SigninForm() {
                       {
                         required: true,
                         type: "email",
-                        message: "Зөв и-мейл хаяг оруулна уу.",
+                        message: "Зөв и-мэйл хаяг оруулна уу.",
                       },
                     ]}
                     validateTrigger="onSubmit"
@@ -579,7 +579,7 @@ function SigninForm() {
                           className="text-gray-400"
                         />
                       }
-                      placeholder="И-мейл хаяг"
+                      placeholder="И-мэйл хаяг"
                       className="sm:w-[280px] rounded-lg"
                     />
                   </Form.Item>
