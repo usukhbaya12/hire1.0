@@ -48,7 +48,10 @@ const AnimatedCounter = ({ value, duration = 2 }) => {
 };
 
 const Marquee = () => {
-  const logos = Array(12).fill("/hire-logo.png");
+  const logos = Array.from({ length: 12 }, (_, i) => {
+    const files = ["/mnums.png", "/ufe.png", "/axiom.png"];
+    return files[i % files.length];
+  });
 
   return (
     <div className="bg-white/95 backdrop-blur-md border-y border-gray-200 py-6 overflow-hidden">
@@ -84,7 +87,7 @@ const Marquee = () => {
           ))}
         </div>
 
-        <div className="flex animate-marquee-reverse">
+        {/* <div className="flex animate-marquee-reverse">
           {logos.map((logo, index) => (
             <div
               key={`row2-${index}`}
@@ -113,7 +116,7 @@ const Marquee = () => {
               />
             </div>
           ))}
-        </div>
+        </div> */}
 
         <div className="absolute top-0 left-0 w-32 h-full bg-gradient-to-r from-white to-transparent pointer-events-none" />
         <div className="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-white to-transparent pointer-events-none" />
@@ -132,7 +135,6 @@ export default function Home() {
   const testsSectionRef = useRef(null);
 
   useEffect(() => {
-    // This effect now correctly handles filtering whenever the source data or filters change
     let result = [...assessments];
 
     if (searchTerm) {
@@ -295,7 +297,7 @@ export default function Home() {
                   </div>
                   <AnimatedCounter value={100} />
                 </div>
-                <div className="font-semibold">Хэрэглэгчид</div>
+                <div className="font-semibold">Тест өгсөн тоо</div>
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -346,7 +348,7 @@ export default function Home() {
                     </div>
                     <AnimatedCounter value={100} />
                   </div>
-                  <div className="font-semibold">Хэрэглэгчид</div>
+                  <div className="font-semibold">Тест өгсөн тоо</div>
                 </motion.div>
 
                 <motion.div

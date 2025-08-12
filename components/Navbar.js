@@ -16,7 +16,6 @@ import {
 } from "solar-icons";
 import Link from "next/link";
 
-// Fallback component to show while Navbar is loading
 function NavbarFallback() {
   return (
     <div className="w-full px-6 md:px-10 py-5 relative shadow shadow-slate-200 sm:rounded-full bg-white/70 backdrop-blur-md flex justify-between items-center">
