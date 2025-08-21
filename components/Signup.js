@@ -84,7 +84,7 @@ const Signup = () => {
         {contextHolder}
         <Link href="/" className="flex sm:hidden justify-center pt-16">
           <Image
-            src="/hire-logo.png"
+            src="/hire-2.png"
             alt="Hire logo"
             width={80}
             height={26}
@@ -101,7 +101,7 @@ const Signup = () => {
           <div className="bg-white/70 backdrop-blur-md shadow-md shadow-slate-200 rounded-3xl px-8 py-12 sm:p-12">
             <Link className="hidden sm:flex justify-center mb-8" href="/">
               <Image
-                src="/hire-logo.png"
+                src="/hire-2.png"
                 alt="Hire logo"
                 width={80}
                 height={26}
@@ -168,7 +168,7 @@ const Signup = () => {
         href="/"
       >
         <Image
-          src="/hire-logo.png"
+          src="/hire-2.png"
           alt="Hire logo"
           width={80}
           height={26}
@@ -185,7 +185,7 @@ const Signup = () => {
             <div className="flex-col flex gap-5">
               <Link className="hidden sm:block cursor-pointer" href="/">
                 <Image
-                  src="/hire-logo.png"
+                  src="/hire-2.png"
                   alt="Hire logo"
                   width={80}
                   height={26}

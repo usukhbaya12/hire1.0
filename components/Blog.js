@@ -92,7 +92,7 @@ export default function BlogDetailPage() {
     if (typeof window !== "undefined") {
       const currentUrl = window.location.href;
       navigator.clipboard.writeText(currentUrl);
-      messageApi.success("Амжилттай хуулагдлаа.");
+      messageApi.success("Линк хуулсан.");
     }
   };
 
@@ -173,8 +173,8 @@ export default function BlogDetailPage() {
                   <div className="flex items-center gap-3">
                     <button
                       onClick={shareOnFacebook}
-                      className="flex items-center justify-center transition-transform hover:scale-110 cursor-pointer"
-                      title="Share on Facebook"
+                      className="flex items-center justify-center transition-transform hover:scale-105 cursor-pointer"
+                      title="Фэйсбүүкт хуваалцах"
                     >
                       <img
                         src="/facebook.png"
@@ -186,8 +186,8 @@ export default function BlogDetailPage() {
                     </button>
                     <button
                       onClick={copyLinkToClipboard}
-                      className="text-main hover:text-secondary transition-colors cursor-pointer"
-                      title="Copy link"
+                      className="text-main hover:text-secondary transition-colors hover:scale-105 cursor-pointer"
+                      title="Линк хуулах"
                     >
                       <LinkMinimalistic2Bold width={22} />
                     </button>

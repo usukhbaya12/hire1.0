@@ -511,7 +511,7 @@ function SigninForm() {
         className="flex sm:hidden justify-center cursor-pointer pt-20"
       >
         <Image
-          src="/hire-logo.png"
+          src="/hire-2.png"
           alt="Hire logo"
           width={80}
           height={26}
@@ -535,7 +535,7 @@ function SigninForm() {
                 className="flex sm:block justify-center cursor-pointer hidden"
               >
                 <Image
-                  src="/hire-logo.png"
+                  src="/hire-2.png"
                   alt="Hire logo"
                   width={80}
                   height={26}

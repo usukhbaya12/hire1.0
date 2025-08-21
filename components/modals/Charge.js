@@ -32,7 +32,7 @@ const ChargeModal = ({ isOpen, onClose }) => {
     navigator.clipboard.writeText(text);
     messageApi.open({
       type: "success",
-      content: "Хуулагдлаа.",
+      content: "Хуулсан.",
       duration: 2,
     });
     setCopiedAccount(type);

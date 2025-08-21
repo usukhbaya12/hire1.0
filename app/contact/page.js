@@ -98,10 +98,10 @@ const ContactPage = () => {
       <title>Hire.mn</title>
       {contextHolder}
 
-      <div className="inset-0 fixed">
+      {/* <div className="inset-0 fixed">
         <div className="absolute left-[-5%] w-[200px] h-[200px] md:w-[400px] md:h-[400px] rounded-full bg-orange-600/10 blur-[80px]" />
         <div className="absolute bottom-[-20%] right-[-10%] w-[200px] h-[200px] md:w-[500px] md:h-[500px] rounded-full bg-orange-600/10 blur-[100px]" />
-      </div>
+      </div> */}
 
       <div className="relative">
         <div className="relative 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6">
@@ -119,9 +119,12 @@ const ContactPage = () => {
                   height={32}
                 />
               </div>
-              <h1 className="text-3xl font-black bg-gradient-to-r from-main to-secondary bg-clip-text text-transparent text-center">
+              <h2 className="text-3xl font-black bg-gradient-to-r from-main via-pink-500 to-secondary bg-clip-text text-transparent tracking-tight leading-[1.1]">
                 Бидэнтэй холбогдох
-              </h1>
+              </h2>
+              {/* <div className="absolute top-40 inset-0 -z-10 flex items-center justify-center">
+                <div className="w-[600px] h-[600px] rounded-full bg-gradient-to-r from-[#f36421]/70 via-[#ff6f3c]/70 to-[#ffb347]/70 blur-3xl opacity-30 animate-pulse" />
+              </div> */}
             </motion.div>
           </div>
 

@@ -23,28 +23,44 @@ import { motion } from "framer-motion";
 import AssessmentSkeleton from "@/components/Skeleton";
 import { useAssessments } from "./utils/providers";
 
-const AnimatedCounter = ({ value, duration = 2 }) => {
+const AnimatedCounter = ({ value, duration = 2, loading = false }) => {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    let startTime;
-    const startValue = 0;
-    const endValue = value;
+    let intervalId;
+    let step = 1;
 
-    const animation = (currentTime) => {
-      if (!startTime) startTime = currentTime;
-      const progress = Math.min(
-        (currentTime - startTime) / (duration * 1000),
-        1
-      );
-      setCount(Math.floor(startValue + (endValue - startValue) * progress));
-      if (progress < 1) requestAnimationFrame(animation);
+    if (loading) {
+      intervalId = setInterval(() => {
+        setCount((prev) => prev + step);
+        step = Math.max(0.1, step - 0.05);
+      }, 700);
+    } else if (value != null) {
+      let startTime;
+      const startValue = count;
+      const endValue = value;
+
+      const animate = (currentTime) => {
+        if (!startTime) startTime = currentTime;
+        const progress = Math.min(
+          (currentTime - startTime) / (duration * 1000),
+          1
+        );
+        setCount(Math.floor(startValue + (endValue - startValue) * progress));
+        if (progress < 1) requestAnimationFrame(animate);
+      };
+
+      requestAnimationFrame(animate);
+    }
+
+    return () => {
+      clearInterval(intervalId);
     };
+  }, [loading, value, duration]);
 
-    requestAnimationFrame(animation);
-  }, [value, duration]);
-
-  return <div className="text-4xl font-black text-main">{count}+</div>;
+  return (
+    <div className="text-4xl font-black text-main">{Math.floor(count)}+</div>
+  );
 };
 
 const Marquee = () => {
@@ -126,7 +142,7 @@ const Marquee = () => {
 };
 
 export default function Home() {
-  const { assessments, categories, loading } = useAssessments();
+  const { assessments, categories, home, loading } = useAssessments();
   const [filteredAssessments, setFilteredAssessments] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -295,7 +311,7 @@ export default function Home() {
                   <div className="text-main">
                     <UserCheckRoundedBoldDuotone />
                   </div>
-                  <AnimatedCounter value={100} />
+                  <AnimatedCounter value={home?.exams} loading={loading} />
                 </div>
                 <div className="font-semibold">Тест өгсөн тоо</div>
               </motion.div>
@@ -309,7 +325,7 @@ export default function Home() {
                   <div className="text-main">
                     <Buildings2BoldDuotone />
                   </div>
-                  <AnimatedCounter value={10} />
+                  <AnimatedCounter value={home?.orgs} loading={loading} />
                 </div>
                 <div className="font-semibold">Хамтрагч байгууллагууд</div>
               </motion.div>
@@ -323,7 +339,7 @@ export default function Home() {
                   <div className="text-main">
                     <NotesBoldDuotone />
                   </div>
-                  <AnimatedCounter value={55} />
+                  <AnimatedCounter value={home?.count} loading={loading} />
                 </div>
                 <div className="font-semibold">Тестийн сан</div>
               </motion.div>
@@ -346,7 +362,7 @@ export default function Home() {
                     <div className="text-main">
                       <UserCheckRoundedBoldDuotone />
                     </div>
-                    <AnimatedCounter value={100} />
+                    <AnimatedCounter value={home?.exams} loading={loading} />
                   </div>
                   <div className="font-semibold">Тест өгсөн тоо</div>
                 </motion.div>
@@ -361,7 +377,7 @@ export default function Home() {
                     <div className="text-main">
                       <NotesBoldDuotone />
                     </div>
-                    <AnimatedCounter value={55} />
+                    <AnimatedCounter value={home?.count} loading={loading} />
                   </div>
                   <div className="font-semibold">Тестийн сан</div>
                 </motion.div>
@@ -377,7 +393,7 @@ export default function Home() {
                   <div className="text-main">
                     <Buildings2BoldDuotone />
                   </div>
-                  <AnimatedCounter value={10} />
+                  <AnimatedCounter value={home?.orgs} loading={loading} />
                 </div>
                 <div className="font-semibold">Хамтрагч байгууллагууд</div>
               </motion.div>

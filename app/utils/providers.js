@@ -1,7 +1,11 @@
 "use client";
 
 import React, { useState, useEffect, createContext, useContext } from "react";
-import { getAssessmentCategory, getAssessments } from "../api/assessment";
+import {
+  getAssessmentCategory,
+  getAssessments,
+  getHome,
+} from "../api/assessment";
 import { message } from "antd";
 
 const AssessmentContext = createContext();
@@ -9,6 +13,7 @@ const AssessmentContext = createContext();
 export const AssessmentProvider = ({ children }) => {
   const [assessments, setAssessments] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [home, setHome] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dataFetched, setDataFetched] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
@@ -20,10 +25,12 @@ export const AssessmentProvider = ({ children }) => {
     }
     setLoading(true);
     try {
-      const [categoriesResponse, assessmentsResponse] = await Promise.all([
-        getAssessmentCategory(),
-        getAssessments(),
-      ]);
+      const [categoriesResponse, assessmentsResponse, homeResponse] =
+        await Promise.all([
+          getAssessmentCategory(),
+          getAssessments(),
+          getHome(),
+        ]);
 
       if (categoriesResponse.success) {
         setCategories(categoriesResponse.data);
@@ -34,6 +41,9 @@ export const AssessmentProvider = ({ children }) => {
           [10, 30].includes(item.data.status)
         );
         setAssessments(filteredData);
+      }
+      if (homeResponse.success) {
+        setHome(homeResponse.data);
       }
       setDataFetched(true);
     } catch (error) {
@@ -53,6 +63,7 @@ export const AssessmentProvider = ({ children }) => {
       value={{
         assessments,
         categories,
+        home,
         loading,
         contextHolder,
       }}

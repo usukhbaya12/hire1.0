@@ -754,7 +754,7 @@ export default function Test() {
                                     shareToFacebookWithMeta(item.exams[0].code)
                                   }
                                   className="flex items-center justify-center transition-opacity hover:opacity-70"
-                                  title="Share on Facebook"
+                                  title="Фэйсбүүкт хуваалцах"
                                 >
                                   <Image
                                     src="/facebook.png"
@@ -939,7 +939,7 @@ export default function Test() {
                                   onClick={() =>
                                     shareToFacebookWithMeta(item.exams[0].code)
                                   }
-                                  title="Facebook share"
+                                  title="Фэйсбүүкт хуваалцах"
                                 >
                                   <Image
                                     src="/facebook.png"
@@ -1138,7 +1138,7 @@ export default function Test() {
                                       shareToFacebookWithMeta(item.code)
                                     }
                                     className="flex items-center justify-center transition-opacity hover:opacity-70"
-                                    title="Share on Facebook"
+                                    title="Фэйсбүүкт хуваалцах"
                                   >
                                     <Image
                                       src="/facebook.png"
@@ -1349,7 +1349,7 @@ export default function Test() {
                                         onClick={() =>
                                           shareToFacebookWithMeta(item.code)
                                         }
-                                        title="Facebook share"
+                                        title="Фэйсбүүкт хуваалцах"
                                       >
                                         <Image
                                           src="/facebook.png"

@@ -19,6 +19,7 @@ import {
   getCurrentUser,
   updatePassword,
 } from "@/app/api/main";
+import Footer from "@/components/Footer";
 
 const Account = () => {
   const router = useRouter();
@@ -732,7 +733,7 @@ const Account = () => {
         <div className="absolute left-[-5%] w-[200px] h-[200px] md:w-[400px] md:h-[400px] rounded-full bg-orange-600/10 blur-[80px]" />
         <div className="absolute bottom-[-20%] right-[-10%] w-[200px] h-[200px] md:w-[500px] md:h-[500px] rounded-full bg-orange-600/10 blur-[100px]" />
       </div>
-      <div className="relative 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6 pt-8 md:pt-12 pb-16 z-[3]">
+      <div className="relative 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6 pt-8 md:pt-12 pb-8 z-[3]">
         <div className="flex flex-col md:flex-row gap-6">
           <div className="w-full md:w-1/5 space-y-4">
             <div className="relative p-6 bg-white/40 backdrop-blur-md rounded-3xl shadow shadow-slate-200 overflow-hidden">
@@ -808,6 +809,7 @@ const Account = () => {
           <div className="w-full md:w-4/5">{renderContent()}</div>
         </div>
       </div>
+      <Footer />
     </>
   );
 };

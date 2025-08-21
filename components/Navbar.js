@@ -187,7 +187,7 @@ function NavbarContent() {
             }}
           >
             <Image
-              src="/hire-logo.png"
+              src="/hire-2.png"
               alt="Hire logo"
               width={80}
               height={26}
@@ -407,7 +407,9 @@ function NavbarContent() {
           <Divider className="no-margin" />
           <Link
             href="/about"
-            className="cursor-pointer font-bold"
+            className={`cursor-pointer font-bold ${
+              pathname === "/about" ? "text-main" : ""
+            }`}
             onClick={() => {
               setIsExpanded(false);
             }}
@@ -415,10 +417,11 @@ function NavbarContent() {
             Бидний тухай
           </Link>
           <Divider className="no-margin" />
-          <Divider className="no-margin" />
           <Link
             href="/contact"
-            className="cursor-pointer font-bold"
+            className={`cursor-pointer font-bold ${
+              pathname === "/contact" ? "text-main" : ""
+            }`}
             onClick={() => {
               setIsExpanded(false);
             }}

@@ -23,6 +23,27 @@ export const getAssessments = async () => {
   }
 };
 
+export const getHome = async () => {
+  try {
+    const res = await axios.get(`${api}assessment/home/page`);
+    return {
+      data: res.data.payload,
+      token: true,
+      message: res.data?.message,
+      status: res.data?.status,
+      success: res.data.succeed,
+    };
+  } catch (error) {
+    console.error(error);
+
+    return {
+      success: false,
+      message:
+        error.response?.data?.message || "Сервертэй холбогдоход алдаа гарлаа.",
+    };
+  }
+};
+
 export const getAssessmentCategory = async () => {
   try {
     const res = await axios.get(`${api}assessmentCategory`);

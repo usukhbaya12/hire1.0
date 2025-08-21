@@ -15,6 +15,11 @@ import {
   Rocket2BoldDuotone,
   Document1BoldDuotone,
   Laptop2BoldDuotone,
+  PeopleNearbyBoldDuotone,
+  HandHeartBoldDuotone,
+  SuitcaseTagBoldDuotone,
+  MapPointSchoolBoldDuotone,
+  GlassesBoldDuotone,
 } from "solar-icons";
 import Footer from "@/components/Footer";
 
@@ -34,7 +39,7 @@ const AboutPage = () => {
           name: "Б.Нандин-Эрдэнэ",
           role: "Үүсгэн байгуулагч",
           description:
-            "СЭЗИС болон Австралийн Үндэсний Их сургуульд Бизнесийн удирдлагын магистр, Маркетингийн удирдлагын магистрын зэрэг хамгаалсан. Маркетинг, хүний нөөцийн салбарт багш, зөвлөх, судлаачаар 2003 оноос хойш ажиллаж байгаа.",
+            "СЭЗИС болон Австралийн Үндэсний Их сургуульд Бизнесийн удирдлагын магистр, Маркетингийн удирдлагын магистрын зэрэг хамгаалсан. Маркетинг, хүний нөөцийн салбарт багш, зөвлөх, судлаачаар 2003 оноос хойш ажиллаж байна.",
           image: "/nandia.png",
         },
       ],
@@ -51,9 +56,9 @@ const AboutPage = () => {
       data: [
         {
           name: "Б.Үүрцайх",
-          role: "Тест хөгжүүлэгч",
+          role: "Ахлах тест хөгжүүлэгч",
           description:
-            "АШУҮИС-д Хүний их эмч мэргэжил, АНУ-ын Вашингтоны Их Сургуульд Олон улсын эрүүл мэнд судлал, Нийгмийн эрүүл мэнд судлал чиглэлээр магистрын зэрэг хамгаалсан. Нийгмийн эрүүл мэнд, биостатистик, эрүүл мэндийн систем, эрүүл мэндийн их өгөгдөл, хиймэл оюун ухаан/машин сургалт зэрэг чиглэлд судлаачаар 2015 оноос хойш ажиллаж байна.",
+            "АШУҮИС-д Хүний их эмч мэргэжил, АНУ-ын Вашингтоны Их сургуульд Олон улсын эрүүл мэнд судлал, Нийгмийн эрүүл мэнд судлал чиглэлээр магистрын зэрэг хамгаалсан. Нийгмийн эрүүл мэнд, биостатистик,  эрүүл мэндийн систем, эрүүл мэндийн их өгөгдөл, хиймэл оюун ухаан/машин сургалт зэрэг чиглэлд судлаачаар 2015 оноос хойш ажиллаж байна. ",
           image: "/uurtsaih.png",
         },
         {
@@ -67,7 +72,7 @@ const AboutPage = () => {
           name: "Д.Гэрэлмаа",
           role: "Тест хөгжүүлэгч",
           description:
-            "ЗХУ, Москва хотын Цахилгаан холбооны дээд сургуулийн  магистр, Удирдлагын Академи удирдахуйн ухааны доктор зэрэгтэй. Хүний нөөц,  Байгууллагын зан төлөв, байгууллагын хөгжил, Компаний засаглалийн чиглэлээр багш, зөвлөх, судлаачаар 1992 оноос хойш ажиллаж байна.",
+            "ЗХУ, Москва хотын Цахилгаан Холбооны Дээд сургуулийн  магистр, Удирдлагын Академи удирдахуйн ухааны доктор зэрэгтэй. Хүний нөөц, байгууллагын зан төлөв, байгууллагын хөгжил, компаний засаглалийн чиглэлээр багш, зөвлөх, судлаачаар 1992 оноос хойш ажиллаж байна.",
           image: "/gerelmaa.png",
         },
         {
@@ -81,34 +86,56 @@ const AboutPage = () => {
           name: "Ц.Булган",
           role: "Тест хөгжүүлэгч",
           description:
-            "СЭЗИС болон АНУ-ын Вашингтоны Их Сургуульд Бизнесийн удирдлагын магистр, Боловсролын Удирдлага ба Бодлого судлалын магистрын зэрэг хамгаалсан. Байгууллагын зан төлөв, байгууллагын хөгжил, сэтгэл хөдлөлийн менежмент ба манлайлал, бүтээлч байдал ба инновац зэрэг чиглэлүүдээр багш, зөвлөх, судлаачаар 2005 оноос хойш ажиллаж байна.",
+            "СЭЗИС болон АНУ-ын Вашингтоны Их сургуульд Бизнесийн удирдлагын магистр, Боловсролын Удирдлага ба Бодлого судлалын магистрын зэрэг хамгаалсан. Байгууллагын зан төлөв, байгууллагын хөгжил, сэтгэл хөдлөлийн менежмент ба манлайлал, бүтээлч байдал ба инновац зэрэг чиглэлүүдээр багш, зөвлөх, судлаачаар 2005 оноос хойш ажиллаж байна.",
           image: "/bulgaa.png",
         },
         {
           name: "Г.Нарантунгалаг",
           role: "Тест хөгжүүлэгч",
           description:
-            "СЭЗИС-д Бизнесийн удирдлагын магистр, докторант. Байгууллагын зан төлөв, Ажлын байран дахь зохисгүй зан төлөв, Хүний нөөцийн стратеги, Ажайл менежмент, манлайлал, Төслийн удирдлгага чиглэлүүдээр багш, зөвлөх, судлаачаар 2005 оноос хойш ажиллаж байна.",
+            "СЭЗИС-д Бизнесийн удирдлагын магистр, докторант. Байгууллагын зан төлөв, ажлын байран дахь зохисгүй зан төлөв, хүний нөөцийн стратеги, ажайл менежмент, манлайлал, төслийн удирдлгага чиглэлүүдээр багш, зөвлөх, судлаачаар 2005 оноос хойш ажиллаж байна.",
           image: "/naraa.png",
         },
         {
           name: "Б.Дэлгэрсайхан",
           role: "Тест хөгжүүлэгч",
           description:
-            "СЭЗИС болон  Нягтлан бодох бүртгэл, Санхүүгийн Удирдлагын Магистр, докторант. Mонголын Мэргэшсэн Нягтлан Бодогч зэрэгтэй. Нягтлан бодогчдын мэргэжлийн ёс зүй, Эрсдлийн удирдлага, Дотоод аудит, Удирдлагын бүртгэл, Тогтвортой хөгжлийн тайлагнал чиглэлүүдээр багш, зөвлөх, судлаачаар 2012 оноос хойш ажиллаж байна.",
+            "СЭЗИС болон АНУ-ын Деврай Их сургуульд Нягтлан бодох бүртгэл, санхүүгийн удирдлагын магистр, докторант. Mонголын мэргэшсэн нягтлан бодогч зэрэгтэй. Нягтлан бодогчдын мэргэжлийн ёс зүй, эрсдлийн удирдлага, дотоод аудит, удирдлагын бүртгэл, тогтвортой хөгжлийн тайлагнал чиглэлүүдээр багш, зөвлөх, судлаачаар 2012 оноос хойш ажиллаж байна.",
           image: "/deegii.png",
         },
         {
-          name: "Б.Мөнхнаран",
+          name: "Б.Батгэрэл",
           role: "Тест хөгжүүлэгч",
-          description: "Тайлбар байх уу?",
-          image: "/munhuu.png",
+          description:
+            "АШУҮИС-ийг хүний их эмчээр төгссөн. Сэтгэцийн эмч болон сэтгэл засалч мэргэжил эзэмшсэн. Одоогоор Япон улсын Кансай Анагаах Ухааны Их Сургуульд сэтгэц судлалын чиглэлээр докторын сургалтад суралцаж байна.",
+          image: "/facebook.png",
+        },
+        {
+          name: "С.Ишцэдэн",
+          role: "Тест хөгжүүлэгч",
+          description: "Тест хөгжүүлэгч",
+          image: "/facebook.png",
+        },
+        {
+          name: "Ш.Эрдэнэбуян",
+          role: "Тест хөгжүүлэгч",
+          description:
+            "Удирдлагын Хөгжлийн Институт-д Удирдахуйн ухааны магистрын зэрэг хамгаалсан. Бүтээмж ба чанарын удирдлага, Үйлдвэрлэл үйл ажиллагааны менежмент чиглэлүүдээр дэд профессороор, багш, зөвлөх, судлаачаар 1995 оноос хойш ажиллаж байна.",
+          image: "/facebook.png",
         },
         {
           name: "О.Алтанцаг",
-          role: "Тест хөгжүүлэгч",
-          description: "Тайлбар байх уу?",
+          role: "Төслийн зохицуулагч",
+          description:
+            "СЭЗИС-д Бизнесийн удирдлагын бакалаврын хөтөлбөр төгссөн. 2019 оноос хойш судлаач, зохицуулагчаар ажиллаж байна.",
           image: "/agii.png",
+        },
+        {
+          name: "Л.Золжаргал",
+          role: "Тест хөгжүүлэгч",
+          description:
+            "АШУҮИС-ийг Хүний их эмч мэргэжлээр, Жонс Хопкинсийн Их Сургуулийг Нийгмийн эрүүл мэндийн магистр зэрэгтэйгээр тус тус дүүргэсэн. Одоогоор Вашингтоны Их сургуульд Эрүүл мэндийн мэдээлэл зүйн чиглэлээр докторын зэрэгт суралцаж байна. 2018 оноос хойш цахим эрүүл мэнд, эрүүл мэндийн мэдээлэл зүй, өгөгдлийн шинжлэх ухааны чиглэлээр Жонс Хопкинсийн Их Сургуулийн харъяа Тооцооллын анагаах ухааны институт (Johns Hopkins Institute for Computational Medicine), Вашингтоны Их Сургуулийн Олон улсын эрүүл мэндийн тэнхимийн харьяа Эрүүл мэндийн сургалт, боловсролын олон улсын төв (International Training and Education Center for Health) зэрэг байгууллагуудад судлаачаар ажиллаж байна.",
+          image: "/facebook.png",
         },
       ],
     },
@@ -123,26 +150,30 @@ const AboutPage = () => {
       data: [
         {
           name: "Н.Саранчимэг",
-          role: "Систем хөгжүүлэгч",
-          description: "Тайлбар байх уу?",
+          role: "Системийн шинжээч",
+          description:
+            "СЭЗИС болон МУИС-д Мэдээллийн системийн бакалавр, магистрын зэрэг хамгаалсан. Системийн шинжилгээ, Бизнес процесс менежмент, чадамжид суурилсан боловсрол чиглэлээр багш, зөвлөх, судлаачаар 2011 оноос хойш ажиллаж байна.",
           image: "/saraa.png",
         },
         {
           name: "Г.Эрдэнэцэцэг",
           role: "Систем хөгжүүлэгч",
-          description: "Тайлбар байх уу?",
+          description:
+            "СЭЗИС-д Мэдээллийн системийн бакалавр, Бизнесийн удирдлагын магистрын зэрэг хамгаалсан. Програм хангамж хөгжүүлэлт, Системийн шинжилгээ, Өгөгдлийн сангийн чиглэлээр хөгжүүлэгч, багш, судлаачаар 2012 оноос хойш ажиллаж байна.",
           image: "/erka.png",
         },
         {
           name: "М.Доржнямбуу",
-          role: "Систем хөгжүүлэгч",
-          description: "Тайлбар байх уу?",
+          role: "Back-end хөгжүүлэгч",
+          description:
+            "СЭЗИС-д Мэдээллийн системийн бакалаврын хөтөлбөр. Програм хангамжын back-end хөгжүүлэлт, Өгөгдлийн сангийн програмчлалын чиглэлээр ажиллаж байна.",
           image: "/dorjoo.png",
         },
         {
           name: "А.Өсөхбаяр",
-          role: "Систем хөгжүүлэгч",
-          description: "Тайлбар байх уу?",
+          role: "Front-end хөгжүүлэгч",
+          description:
+            "СЭЗИС-д Мэдээллийн системийн бакалаврын хөтөлбөр төгссөн. Програм хангамжын front-end, UX, UI хөгжүүлэлт, өгөгдлийн шинжилгээ чиглэлээр ажиллаж байна.",
           image: "/usukhu.png",
         },
       ],
@@ -168,34 +199,137 @@ const AboutPage = () => {
     <div>
       <title>Hire.mn</title>
 
-      <div className="inset-0 fixed">
+      {/* <div className="inset-0 fixed">
         <div className="absolute left-[-5%] w-[200px] h-[200px] md:w-[400px] md:h-[400px] rounded-full bg-orange-600/10 blur-[80px]" />
         <div className="absolute bottom-[-20%] right-[-10%] w-[200px] h-[200px] md:w-[500px] md:h-[500px] rounded-full bg-orange-600/10 blur-[100px]" />
-      </div>
+      </div> */}
 
       <div className="relative">
         <div className="relative 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6">
-          <div className="pt-20 pb-6">
+          <div className="pt-12 pb-6">
+            <div className="relative pt-28 text-center">
+              <motion.h2
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                className="text-5xl md:text-6xl font-black bg-gradient-to-r from-main via-pink-500 to-secondary bg-clip-text text-transparent tracking-tight leading-[1.1]"
+              >
+                ЗӨВ ХҮН,
+                <br />
+                ЗӨВ ГАЗАРТ
+              </motion.h2>
+
+              <div className="absolute top-40 inset-0 -z-10 flex items-center justify-center">
+                <div className="w-[600px] h-[600px] rounded-full bg-gradient-to-r from-[#f36421]/70 via-[#ff6f3c]/70 to-[#ffb347]/70 blur-3xl opacity-30 animate-pulse" />
+              </div>
+            </div>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              className="pt-6 font-bold text-lg leading-6 text-center text-gray-600"
+            >
+              Зан төлөв, чадамж, мэргэжил, ур чадварын тест, өөрийн үнэлгээ
+            </motion.p>
+
+            <div className="flex justify-center">
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.6 }}
+                className="pt-6 text-center max-w-4xl"
+              >
+                Hire.mn нь хувь хүний зан төлөв, чадамж, мэргэжлийн мэдлэг,
+                ажлын байрны төрөл бүрийн ур чадварыг шалгах зориулалттай тест,
+                өөрийн үнэлгээний цогц платформ. Энэхүү платформыг хүний нөөцийн
+                сургалт, судалгааны Аксиом Инк компаниас санаачлан их дээд
+                сургуулийн багш нар болон бие даасан судлаач нартай хамтран 2024
+                оноос хойш хөгжүүлж байна.
+              </motion.p>
+            </div>
+
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7 }}
-              className="flex flex-col items-center gap-3"
+              className="pt-4 flex flex-col items-center gap-3"
             >
-              <div className="w-16 h-16 bg-main/10 rounded-full flex items-center justify-center">
-                <Buildings2BoldDuotone
-                  className="text-main"
-                  width={32}
-                  height={32}
-                />
-              </div>
               <div className="text-center">
-                <h1 className="text-3xl font-black bg-gradient-to-r from-main to-secondary bg-clip-text text-transparent text-center">
+                {/* <h1 className="text-3xl font-black bg-gradient-to-r from-main to-secondary bg-clip-text text-transparent text-center">
                   Бидний тухай
-                </h1>
-                <p className="text-gray-600 max-w-2xl py-4">
-                  Энэ хэсэгт текст оруулах эсэх?
-                </p>
+                </h1> */}
+
+                <div className="flex gap-8 my-4 bg-white/80 backdrop-blur-md shadow shadow-slate-200 rounded-3xl md:rounded-full px-10 py-8 h-full transition-all duration-300">
+                  <div>
+                    {/* <div className="font-bold text-center">
+                      <p className="pb-2">Бидний тест, өөрийн үнэлгээг:</p>
+                    </div> */}
+                    <div className="flex gap-2 items-center grid grid-cols-2 gap-6 md:grid-cols-6">
+                      <div className="flex flex-col justify-center items-center leading-[1.1]">
+                        <div className="mb-3 w-14 h-14 bg-main/10 rounded-full flex items-center justify-center">
+                          <PeopleNearbyBoldDuotone
+                            className="text-main"
+                            width={26}
+                            height={26}
+                          />
+                        </div>
+                        Ажлын байрны сонгон шалгаруулалт
+                      </div>
+                      <div className="flex flex-col justify-center items-center leading-[1.1]">
+                        <div className="mb-3 w-14 h-14 bg-main/10 rounded-full flex items-center justify-center">
+                          <HandHeartBoldDuotone
+                            className="text-main"
+                            width={26}
+                            height={26}
+                          />
+                        </div>
+                        Хувь хүний сэтгэл зүйн байдлаа таньж ойлгох
+                      </div>
+                      <div className="flex flex-col justify-center items-center leading-[1.1]">
+                        <div className="mb-3 w-14 h-14 bg-main/10 rounded-full flex items-center justify-center">
+                          <SuitcaseTagBoldDuotone
+                            className="text-main"
+                            width={26}
+                            height={26}
+                          />
+                        </div>
+                        Ажилтнуудын аттестатчилал
+                      </div>
+                      <div className="flex flex-col justify-center items-center leading-[1.1]">
+                        <div className="mb-3 w-14 h-14 bg-main/10 rounded-full flex items-center justify-center">
+                          <Buildings2BoldDuotone
+                            className="text-main"
+                            width={26}
+                            height={26}
+                          />
+                        </div>
+                        Ажлын байран дээрх зан төлөв
+                      </div>
+
+                      <div className="flex flex-col justify-center items-center leading-[1.1]">
+                        <div className="mb-3 w-14 h-14 bg-main/10 rounded-full flex items-center justify-center">
+                          <MapPointSchoolBoldDuotone
+                            className="text-main"
+                            width={26}
+                            height={26}
+                          />
+                        </div>
+                        Оюутан залуучууд өөрийгөө үнэлэх
+                      </div>
+                      <div className="flex flex-col justify-center items-center leading-[1.1]">
+                        <div className="mb-3 w-14 h-14 bg-main/10 rounded-full flex items-center justify-center">
+                          <GlassesBoldDuotone
+                            className="text-main"
+                            width={26}
+                            height={26}
+                          />
+                        </div>
+                        Ажлын байранд өөрийгөө бэлдэх
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </motion.div>
           </div>
@@ -209,8 +343,8 @@ const AboutPage = () => {
               className="mb-8"
             >
               <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
                 className="mb-4"
               >

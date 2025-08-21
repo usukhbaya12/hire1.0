@@ -10,7 +10,7 @@ const Header = ({ assessment }) => {
       <div className="flex justify-between items-center gap-4">
         <div>
           <Image
-            src="/hire-logo.png"
+            src="/hire-2.png"
             alt="Hire logo"
             width={80}
             height={26}

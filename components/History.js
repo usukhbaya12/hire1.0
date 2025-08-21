@@ -283,7 +283,7 @@ const AssessmentCard = ({ assessment, isInvited = false }) => {
                             shareToFacebookWithMeta(assessment.id, code);
                           }}
                           className="flex items-center gap-2"
-                          title="Share on Facebook"
+                          title="Фэйсбүүкт хуваалцах"
                         >
                           <Image
                             src="/facebook.png"

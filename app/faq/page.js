@@ -3,7 +3,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import Footer from "@/components/Footer";
-import { Collapse } from "antd";
+import { Collapse, Divider } from "antd";
 import {
   QuestionCircleBoldDuotone,
   ChatDotsBoldDuotone,
@@ -16,16 +16,28 @@ const { Panel } = Collapse;
 
 const faqData = [
   {
-    id: "how-to-use",
-    question: "Тестийн тайланг хэрхэн авах вэ?",
+    id: "1",
+    question: "Тест, өөрийн үнэлгээгээ хэрхэн сонгох вэ?",
     answer:
-      "Тест өгч дууссаны дараа тестийн тайлан таны бүртгүүлсэн и-мэйл хаяг руу автоматаар илгээгдэх бөгөөд та мөн Өгсөн тестүүд цэснээс тестийн тайлантай дахин танилцах боломжтой.",
+      "Төрөл бүрийн тест болон өөрийн үнэлгээнүүдээс сонгохдоо та өөрийн сонирхож буй тестийн дэлгэрэнгүй гэсэн товч дээр дарж тестийн товч тайлбар, хэмжих зүйлс, хэрэглээг нь уншиж сонгоорой. Мөн түүнчлэн тухайн тестийн үр дүнд хүлээн авах жишиг тайлантай урьдчилан танилцаж болно.",
   },
   {
-    id: "payment-options",
-    question: "Асуулт 2?",
+    id: "2",
+    question: "Бүх тестүүд төлбөртэй юу?",
     answer:
-      "Тест өгч дууссаны дараа тестийн тайлан таны бүртгүүлсэн и-мэйл хаяг руу автоматаар илгээгдэх бөгөөд та мөн Өгсөн тестүүд цэснээс тестийн тайлантай дахин танилцах боломжтой.",
+      "Үгүй. Тест бүрийн айкон зургийн зүүн доод хэсэгт тухайн тест, өөрийн үнэлгээний төлбөрийн дүн эсвэл төлбөргүй гэсэн тэмдэглэл байгаа. Мөн түүнчлэн та тестийн шүүлтүүр хэсэг рүү орж төлбөргүй гэсэн сонголтыг дарвал Hire.mn-с санал болгож төлбөргүй тестүүдийг харах боломжтой.",
+  },
+  {
+    id: "3",
+    question: "Төлбөрөө хэрхэн төлөх вэ?",
+    answer:
+      "Хэрвээ та хувиараа төлбөртэй тест өгөх бол QPay ашиглан өөрийн ашигладаг банкны апп-аар төлөх боломжтой. Төлбөр шилжсэний дараа тестийг эхлүүлэх цонх нээгдэнэ. Харин байгууллагаас таныг тестэнд оролцохоор урьсан бол таны бүртгэлтэй имэйл хаяг тестийн линк очих бөгөөд төлбөр нь байгууллагын хэрэглэгчийн хэтэвчнээс хасагдах болно.",
+  },
+  {
+    id: "4",
+    question: "Хэрхэн тест, өөрийн үнэлгээний асуумжид хариулах вэ?",
+    answer:
+      "Таны сонгосон тест, өөрийн үнэлгээний төрлөөс хамаарах заавар тестийг эхлүүлэх гэсэн товчыг дарсны дараа нэмэлт цонхоор харагдах болно. Та тус заавартай сайтар танилцсаны дараа ойлголоо гэсэн товчыг дарснаар тест эхлэх болно. Мөн түүнчлэн тестэнд хариулж байх явцдаа зааврыг зүүн хэсэгт байгаа асуумжид хариулах заавар гэсэн товчийг дарж харах боломжтой.",
   },
 ];
 
@@ -33,10 +45,10 @@ const FAQPage = () => {
   return (
     <div>
       <title>Hire.mn</title>
-      <div className="inset-0 fixed">
+      {/* <div className="inset-0 fixed">
         <div className="absolute left-[-5%] w-[200px] h-[200px] md:w-[400px] md:h-[400px] rounded-full bg-orange-600/10 blur-[80px]" />
         <div className="absolute bottom-[-20%] right-[-10%] w-[200px] h-[200px] md:w-[500px] md:h-[500px] rounded-full bg-orange-600/10 blur-[100px]" />
-      </div>
+      </div> */}
 
       <div className="relative">
         <div className="relative 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6">
@@ -54,9 +66,9 @@ const FAQPage = () => {
                   height={32}
                 />
               </div>
-              <h1 className="text-3xl font-black bg-gradient-to-r from-main to-secondary bg-clip-text text-transparent text-center">
+              <h2 className="text-3xl font-black bg-gradient-to-r from-main via-pink-500 to-secondary bg-clip-text text-transparent tracking-tight leading-[1.1]">
                 Түгээмэл асуултууд
-              </h1>
+              </h2>
             </motion.div>
           </div>
 
@@ -95,8 +107,9 @@ const FAQPage = () => {
                             </div>
                           ),
                           children: (
-                            <div className="text-gray-700 leading-5 px-8 pb-4">
-                              {item.answer}
+                            <div className="text-gray-700 leading-5 px-9 pb-4">
+                              <Divider className="no-margin" />
+                              <p className="pt-5 text-justify">{item.answer}</p>
                             </div>
                           ),
                         },

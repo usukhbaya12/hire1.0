@@ -92,10 +92,10 @@ const GlossaryPage = () => {
   return (
     <div>
       <title>Hire.mn</title>
-      <div className="inset-0 fixed">
+      {/* <div className="inset-0 fixed">
         <div className="absolute left-[-5%] w-[200px] h-[200px] md:w-[400px] md:h-[400px] rounded-full bg-orange-600/10 blur-[80px]" />
         <div className="absolute bottom-[-20%] right-[-10%] w-[200px] h-[200px] md:w-[500px] md:h-[500px] rounded-full bg-orange-600/10 blur-[100px]" />
-      </div>
+      </div> */}
 
       <div className="relative">
         <div className="relative 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6 pb-12">
@@ -113,9 +113,9 @@ const GlossaryPage = () => {
                   height={32}
                 />
               </div>
-              <h1 className="text-3xl font-black bg-gradient-to-r from-main to-secondary bg-clip-text text-transparent text-center">
+              <h2 className="text-3xl font-black bg-gradient-to-r from-main via-pink-500 to-secondary bg-clip-text text-transparent tracking-tight leading-[1.1]">
                 Нэр томьёоны тайлбар
-              </h1>
+              </h2>
             </motion.div>
           </div>
 

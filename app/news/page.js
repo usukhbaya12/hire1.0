@@ -222,9 +222,9 @@ export default function News() {
                 height={32}
               />
             </div>
-            <h1 className="text-3xl font-black bg-gradient-to-r from-main to-secondary bg-clip-text text-transparent text-center">
+            <h2 className="text-3xl font-black bg-gradient-to-r from-main via-pink-500 to-secondary bg-clip-text text-transparent tracking-tight leading-[1.1]">
               Блог, зөвлөмжүүд
-            </h1>
+            </h2>
           </m.div>
           <m.div
             initial={{ opacity: 0, y: 20 }}

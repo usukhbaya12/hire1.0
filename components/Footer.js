@@ -22,8 +22,8 @@ export default function Footer() {
   ];
   const support = [
     { key: "1", label: "Түгээмэл асуултууд", link: "/faq" },
-    { key: "2", label: "Үйлчилгээний нөхцөл", link: "/" },
-    { key: "3", label: "Нууцлалын бодлого", link: "/" },
+    { key: "2", label: "Үйлчилгээний нөхцөл", link: "/terms" },
+    { key: "3", label: "Нууцлалын бодлого", link: "/privacy" },
     // { key: "4", label: "Гарах", link: "signout" },
   ];
   const link = [
@@ -59,7 +59,7 @@ export default function Footer() {
         <div className="flex flex-col gap-4 col-span-2">
           <div>
             <Image
-              src="/hire-logo.png"
+              src="/hire-2.png"
               alt="Hire logo"
               width={100}
               height={26}
@@ -75,18 +75,29 @@ export default function Footer() {
             <div className="text-gray-700">Улаанбаатар хот 13381</div>
           </div>
           <div className="flex items-center gap-4">
-            <div className="text-gray-700 flex items-center gap-2">
+            <a
+              href="tel:75111111"
+              className="text-gray-700 flex items-center gap-2 hover:underline"
+            >
               <PhoneCallingRoundedBoldDuotone width={18} />
               7511-1111
-            </div>
-            <div className="text-gray-700 flex items-center gap-2">
+            </a>
+            <a
+              href="tel:99099371"
+              className="text-gray-700 flex items-center gap-2 hover:underline"
+            >
               <PhoneCallingRoundedBoldDuotone width={18} />
               9909-9371
-            </div>
+            </a>
           </div>
           <div className="text-gray-700 flex items-center gap-2">
-            <LetterBoldDuotone width={18} />
-            support@hire.mn
+            <a
+              href="mailto:support@hire.mn"
+              className="text-gray-700 flex items-center gap-2 hover:underline"
+            >
+              <LetterBoldDuotone width={18} />
+              support@hire.mn
+            </a>
           </div>
         </div>
         <div className="pt-8 sm:pt-0 sm:pl-4">
@@ -165,48 +176,62 @@ export default function Footer() {
       </div>
       <div className="flex justify-between">
         <div className="w-2/3 sm:w-full text-gray-700">
-          © 2025 Аксиом Инк. Бүх эрх хуулиар хамгаалагдсан.
+          ©{" "}
+          {new Date().getFullYear() === 2025
+            ? "2025"
+            : `2025-${new Date().getFullYear()}`}{" "}
+          <span className="hover:underline cursor-pointer">
+            <a
+              href="https://axiominc.mn"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Аксиом Инк ХХК.
+            </a>
+          </span>{" "}
+          Бүх эрх хуулиар хамгаалагдсан.
         </div>
+
         <div className="flex items-center gap-3">
           <a
-            href="https://facebook.com"
+            href="https://facebook.com/AxiomIncLLC"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:opacity-80 transition-opacity"
+            className="hover:opacity-80 transition-opacity hover:scale-105"
           >
             <Image
               src="/facebook.png"
               alt="Facebook icon"
-              width={16}
-              height={16}
+              width={22}
+              height={22}
               priority
             />
           </a>
           <a
-            href="https://youtube.com"
+            href="https://www.youtube.com/channel/UCdnghV8zhXE4-M90YOhGfBQ/featured"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:opacity-80 transition-opacity"
+            className="hover:opacity-80 transition-opacity hover:scale-105"
           >
             <Image
               src="/youtube.png"
               alt="YouTube icon"
-              width={16}
-              height={16}
+              width={26}
+              height={26}
               priority
             />
           </a>
           <a
-            href="https://linkedin.com"
+            href="https://www.linkedin.com/company/axiom-inc-mongolia/"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:opacity-80 transition-opacity"
+            className="hover:opacity-80 transition-opacity hover:scale-105"
           >
             <Image
               src="/linkedin.png"
               alt="LinkedIn icon"
-              width={16}
-              height={16}
+              width={22}
+              height={22}
               priority
             />
           </a>
