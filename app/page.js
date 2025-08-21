@@ -241,7 +241,7 @@ export default function Home() {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="inset-0 fixed">
+        {/* <div className="inset-0 fixed">
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 0.2, scale: 1 }}
@@ -254,7 +254,10 @@ export default function Home() {
             transition={{ duration: 1, delay: 0.2 }}
             className="absolute bottom-[-20%] right-[-10%] w-[200px] h-[200px] md:w-[500px] md:h-[500px] rounded-full bg-orange-600 blur-[100px]"
           />
-        </div>
+          <div className="absolute top-40 inset-0 -z-10 flex items-center justify-center">
+                <div className="w-[600px] h-[600px] rounded-full bg-gradient-to-r from-[#f36421]/70 via-[#ff6f3c]/70 to-[#ffb347]/70 blur-3xl opacity-30 animate-pulse" />
+              </div>
+        </div> */}
 
         <div className="relative">
           <div className="relative 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6">

@@ -197,7 +197,7 @@ export default function Footer() {
             href="https://facebook.com/AxiomIncLLC"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:opacity-80 transition-opacity hover:scale-105"
+            className="transition-transform"
           >
             <Image
               src="/facebook.png"
@@ -205,13 +205,14 @@ export default function Footer() {
               width={22}
               height={22}
               priority
+              className="filter grayscale brightness-125 hover:grayscale-0 hover:brightness-100 transition duration-300"
             />
           </a>
           <a
             href="https://www.youtube.com/channel/UCdnghV8zhXE4-M90YOhGfBQ/featured"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:opacity-80 transition-opacity hover:scale-105"
+            className="transition-transform"
           >
             <Image
               src="/youtube.png"
@@ -219,13 +220,14 @@ export default function Footer() {
               width={26}
               height={26}
               priority
+              className="filter grayscale brightness-125 hover:grayscale-0 hover:brightness-100 transition duration-300"
             />
           </a>
           <a
             href="https://www.linkedin.com/company/axiom-inc-mongolia/"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:opacity-80 transition-opacity hover:scale-105"
+            className="transition-transform"
           >
             <Image
               src="/linkedin.png"
@@ -233,6 +235,7 @@ export default function Footer() {
               width={22}
               height={22}
               priority
+              className="filter grayscale brightness-125 hover:grayscale-0 hover:brightness-100 transition duration-300"
             />
           </a>
         </div>

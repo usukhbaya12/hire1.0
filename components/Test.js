@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { getAssessmentById, getUserTestHistory } from "@/app/api/assessment";
@@ -31,6 +31,7 @@ import {
   QrCodeBoldDuotone,
   QuestionCircleBoldDuotone,
   SquareArrowRightDownBoldDuotone,
+  StarFall2BoldDuotone,
   TicketSaleBoldDuotone,
   UserPlusBoldDuotone,
   Wallet2BoldDuotone,
@@ -53,6 +54,9 @@ import NotFoundPage from "@/app/not-found";
 import Link from "next/link";
 import EBarimtModal from "./modals/EBarimt";
 import LoadingSpinner from "./Spin";
+import { useAssessments } from "@/app/utils/providers";
+import Assessment from "./Assessment";
+import Footer from "./Footer";
 
 export default function Test() {
   const params = useParams();
@@ -73,6 +77,12 @@ export default function Test() {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const historyTableRef = useRef(null);
   const [error, setError] = useState(null);
+  const { assessments } = useAssessments();
+
+  const recommend = useMemo(() => {
+    if (!assessments) return [];
+    return [...assessments].sort(() => Math.random() - 0.5).slice(0, 3);
+  }, [assessments]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -446,7 +456,7 @@ export default function Test() {
                     { title: assessmentData.category.name },
                   ]}
                 />
-                <h1 className="text-4xl font-black mb-4 w-3/4 w-3/4 xl:w-[80%] 2xl:w-[90%] bg-gradient-to-r from-main to-secondary bg-clip-text text-transparent">
+                <h1 className="text-4xl font-black mb-4 w-3/4 w-3/4 xl:w-[80%] 2xl:w-[90%] bg-gradient-to-r from-main via-pink-500 to-secondary bg-clip-text text-transparent tracking-tight leading-[1.1]">
                   {assessmentData.data.name}
                 </h1>
                 <div className="text-gray-700 mb-8 flex items-center gap-2">
@@ -1379,7 +1389,22 @@ export default function Test() {
                   )}
                 </div>
               )}
-
+            {session?.user?.role === 20 && (
+              <div className="pt-12 sm:pt-8">
+                <div className="font-black text-xl inline-flex gap-1 text-main">
+                  <StarFall2BoldDuotone />
+                  Танд санал болгох
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
+                  {recommend.map((assessment) => (
+                    <Assessment
+                      key={assessment.data.id}
+                      assessment={assessment}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
             <QPay
               isOpen={showPaymentModal}
               onClose={() => setShowPaymentModal(false)}
@@ -1459,6 +1484,7 @@ export default function Test() {
                 </div>
               )}
           </div>
+          <Footer />
         </div>
       )}
     </>
