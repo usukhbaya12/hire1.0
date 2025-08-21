@@ -68,7 +68,9 @@ const Assessment = ({ assessment }) => {
               <div className="absolute bottom-3 left-3 backdrop-blur-md bg-black/20 text-white px-3 py-1 rounded-full text-xs font-semibold border border-white/20">
                 <div className="flex items-center gap-1.5">
                   <TagBoldDuotone width={14} />
-                  {assessment.category.name}
+                  {assessment.category?.name
+                    ? assessment.category?.name
+                    : assessment.data?.category?.name}
                 </div>
               </div>
             </div>

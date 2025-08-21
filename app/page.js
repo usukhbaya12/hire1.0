@@ -223,11 +223,6 @@ export default function Home() {
     scrollToTestsTop();
   };
 
-  const featuredTests = assessments.filter((test) => test.data.status === 30);
-  const popularTests = [...assessments]
-    .sort((a, b) => (b.data.count || 0) - (a.data.count || 0))
-    .slice(0, 3);
-
   const renderSkeletonCards = (count = 6) => {
     return Array(count)
       .fill(null)
@@ -422,7 +417,7 @@ export default function Home() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
                 {loading
                   ? renderSkeletonCards(3)
-                  : featuredTests.map((assessment) => (
+                  : home.new.map((assessment) => (
                       <Assessment
                         key={assessment.data.id}
                         assessment={assessment}
@@ -493,9 +488,9 @@ export default function Home() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
                 {loading
                   ? renderSkeletonCards(3)
-                  : popularTests.map((assessment) => (
+                  : home.demand.map((assessment) => (
                       <Assessment
-                        key={assessment.data.id}
+                        key={assessment?.data?.id}
                         assessment={assessment}
                       />
                     ))}
