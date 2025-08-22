@@ -202,23 +202,8 @@ export default function Footer() {
             <Image
               src="/facebook.png"
               alt="Facebook icon"
-              width={22}
-              height={22}
-              priority
-              className="filter grayscale brightness-125 hover:grayscale-0 hover:brightness-100 transition duration-300"
-            />
-          </a>
-          <a
-            href="https://www.youtube.com/channel/UCdnghV8zhXE4-M90YOhGfBQ/featured"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="transition-transform"
-          >
-            <Image
-              src="/youtube.png"
-              alt="YouTube icon"
-              width={26}
-              height={26}
+              width={20}
+              height={20}
               priority
               className="filter grayscale brightness-125 hover:grayscale-0 hover:brightness-100 transition duration-300"
             />
@@ -232,8 +217,8 @@ export default function Footer() {
             <Image
               src="/linkedin.png"
               alt="LinkedIn icon"
-              width={22}
-              height={22}
+              width={19}
+              height={19}
               priority
               className="filter grayscale brightness-125 hover:grayscale-0 hover:brightness-100 transition duration-300"
             />

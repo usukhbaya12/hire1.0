@@ -2,7 +2,13 @@
 
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+  useCallback,
+} from "react";
 import Image from "next/image";
 import {
   Buildings2BoldDuotone,
@@ -15,13 +21,196 @@ import {
   VerifiedCheckBoldDuotone,
   Wallet2BoldDuotone,
 } from "solar-icons";
-import { Input, Select, Empty } from "antd";
+import { Input, Select, Empty, Button } from "antd";
 import Assessment from "@/components/Assessment";
-import { DropdownIcon } from "@/components/Icons";
+import { DropdownIcon, XIcon } from "@/components/Icons";
 import Footer from "@/components/Footer";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import AssessmentSkeleton from "@/components/Skeleton";
 import { useAssessments } from "./utils/providers";
+
+const PriceRangeSlider = ({
+  assessments,
+  onPriceRangeChange,
+  selectedRange,
+}) => {
+  const [localRange, setLocalRange] = useState([0, 0]);
+  const [isDragging, setIsDragging] = useState(null);
+  const sliderRef = useRef(null);
+
+  const { minPrice, maxPrice, priceStep } = useMemo(() => {
+    if (!assessments || assessments.length === 0) {
+      return { minPrice: 0, maxPrice: 100000, priceStep: 1000 };
+    }
+
+    const prices = assessments
+      .map((a) => a.data.price)
+      .filter((price) => typeof price === "number" && price >= 0);
+
+    // Always start from 0 to include free tests
+    const min = 0;
+    const max = Math.max(...prices);
+
+    // Round max up to nearest 1000
+    const roundedMax = Math.ceil(max / 1000) * 1000;
+
+    return {
+      minPrice: min,
+      maxPrice: roundedMax,
+      priceStep: 1000,
+    };
+  }, [assessments]);
+
+  // Initialize local range
+  useEffect(() => {
+    if (selectedRange && selectedRange.length === 2) {
+      setLocalRange(selectedRange);
+    } else {
+      setLocalRange([minPrice, maxPrice]);
+    }
+  }, [minPrice, maxPrice, selectedRange]);
+
+  // Handle slider interaction
+  const handleMouseDown = (thumb) => (e) => {
+    setIsDragging(thumb);
+    e.preventDefault();
+  };
+
+  const handleMouseMove = useCallback(
+    (e) => {
+      if (!isDragging || !sliderRef.current) return;
+
+      const slider = sliderRef.current.getBoundingClientRect();
+      const percent = Math.max(
+        0,
+        Math.min(1, (e.clientX - slider.left) / slider.width)
+      );
+      const value =
+        Math.round((minPrice + percent * (maxPrice - minPrice)) / priceStep) *
+        priceStep;
+
+      setLocalRange((prev) => {
+        const newRange = [...prev];
+        if (isDragging === "min") {
+          newRange[0] = Math.min(value, prev[1] - priceStep);
+        } else {
+          newRange[1] = Math.max(value, prev[0] + priceStep);
+        }
+        return newRange;
+      });
+    },
+    [isDragging, minPrice, maxPrice, priceStep]
+  );
+
+  const handleMouseUp = useCallback(() => {
+    if (isDragging) {
+      onPriceRangeChange(localRange);
+      setIsDragging(null);
+    }
+  }, [isDragging, localRange, onPriceRangeChange]);
+
+  // Touch events for mobile
+  const handleTouchStart = (thumb) => (e) => {
+    setIsDragging(thumb);
+    e.preventDefault();
+  };
+
+  const handleTouchMove = useCallback(
+    (e) => {
+      if (!isDragging || !sliderRef.current) return;
+
+      const touch = e.touches[0];
+      const slider = sliderRef.current.getBoundingClientRect();
+      const percent = Math.max(
+        0,
+        Math.min(1, (touch.clientX - slider.left) / slider.width)
+      );
+      const value =
+        Math.round((minPrice + percent * (maxPrice - minPrice)) / priceStep) *
+        priceStep;
+
+      setLocalRange((prev) => {
+        const newRange = [...prev];
+        if (isDragging === "min") {
+          newRange[0] = Math.min(value, prev[1] - priceStep);
+        } else {
+          newRange[1] = Math.max(value, prev[0] + priceStep);
+        }
+        return newRange;
+      });
+    },
+    [isDragging, minPrice, maxPrice, priceStep]
+  );
+
+  const getPercentage = (value) =>
+    ((value - minPrice) / (maxPrice - minPrice)) * 100;
+
+  const formatPrice = (price) => {
+    if (price === 0) return "Үнэгүй";
+    return `${price.toLocaleString()}₮`;
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+    document.addEventListener("touchmove", handleTouchMove);
+    document.addEventListener("touchend", handleMouseUp);
+
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+      document.removeEventListener("touchmove", handleTouchMove);
+      document.removeEventListener("touchend", handleMouseUp);
+    };
+  }, [handleMouseMove, handleMouseUp, handleTouchMove]);
+
+  return (
+    <div className="w-full md:w-64 px-3">
+      {/* Single line display */}
+      <div className="flex justify-between items-center mb-1">
+        <span className="text-sm font-medium text-gray-700">
+          {formatPrice(localRange[0])} - {formatPrice(localRange[1])}
+        </span>
+      </div>
+
+      {/* Slider */}
+      <div className="relative h-6 flex items-center">
+        {/* Track */}
+        <div
+          ref={sliderRef}
+          className="w-full h-2 bg-gray-200 rounded-full relative cursor-pointer"
+        >
+          {/* Active range */}
+          <div
+            className="absolute h-2 bg-gradient-to-r from-main to-secondary rounded-full"
+            style={{
+              left: `${getPercentage(localRange[0])}%`,
+              width: `${
+                getPercentage(localRange[1]) - getPercentage(localRange[0])
+              }%`,
+            }}
+          />
+
+          {/* Min thumb */}
+          <div
+            className="absolute w-4 h-4 bg-white border-2 border-main rounded-full cursor-pointer transform -translate-x-2 -translate-y-1 hover:scale-110 transition-transform shadow-md z-10"
+            style={{ left: `${getPercentage(localRange[0])}%` }}
+            onMouseDown={handleMouseDown("min")}
+            onTouchStart={handleTouchStart("min")}
+          />
+
+          {/* Max thumb */}
+          <div
+            className="absolute w-4 h-4 bg-white border-2 border-main rounded-full cursor-pointer transform -translate-x-2 -translate-y-1 hover:scale-110 transition-transform shadow-md z-10"
+            style={{ left: `${getPercentage(localRange[1])}%` }}
+            onMouseDown={handleMouseDown("max")}
+            onTouchStart={handleTouchStart("max")}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const AnimatedCounter = ({ value, duration = 2, loading = false }) => {
   const [count, setCount] = useState(0);
@@ -103,37 +292,6 @@ const Marquee = () => {
           ))}
         </div>
 
-        {/* <div className="flex animate-marquee-reverse">
-          {logos.map((logo, index) => (
-            <div
-              key={`row2-${index}`}
-              className="flex-shrink-0 mx-8 w-32 h-16 relative opacity-60 hover:opacity-100 transition-opacity duration-300"
-            >
-              <Image
-                draggable={false}
-                src={logo}
-                alt="Company logo"
-                fill
-                className="object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
-              />
-            </div>
-          ))}
-          {logos.map((logo, index) => (
-            <div
-              key={`row2-duplicate-${index}`}
-              className="flex-shrink-0 mx-8 w-32 h-16 relative opacity-60 hover:opacity-100 transition-opacity duration-300"
-            >
-              <Image
-                src={logo}
-                draggable={false}
-                alt="Company logo"
-                fill
-                className="object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
-              />
-            </div>
-          ))}
-        </div> */}
-
         <div className="absolute top-0 left-0 w-32 h-full bg-gradient-to-r from-white to-transparent pointer-events-none" />
         <div className="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-white to-transparent pointer-events-none" />
       </div>
@@ -147,49 +305,60 @@ export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedPrice, setSelectedPrice] = useState(null);
+  const [searchType, setSearchType] = useState("name");
+  const [isInTestSection, setIsInTestSection] = useState(false);
+  const [priceRange, setPriceRange] = useState([0, 0]);
 
   const testsSectionRef = useRef(null);
 
   useEffect(() => {
-    let result = [...assessments];
+    setFilteredAssessments([...assessments]);
+  }, [assessments]);
 
-    if (searchTerm) {
-      result = result.filter(
-        (assessment) =>
-          assessment.data.name
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase()) ||
-          assessment.data.description
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase())
-      );
+  useEffect(() => {
+    const handleScroll = () => {
+      if (testsSectionRef.current) {
+        const rect = testsSectionRef.current.getBoundingClientRect();
+        const isVisible = rect.top <= 100 && rect.bottom >= 100;
+        setIsInTestSection(isVisible);
+
+        // Dispatch the event that Navbar is listening for
+        window.dispatchEvent(
+          new CustomEvent("testsVisibility", {
+            detail: { isVisible },
+          })
+        );
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    handleScroll(); // Check initial position
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (
+      assessments &&
+      assessments.length > 0 &&
+      priceRange[0] === 0 &&
+      priceRange[1] === 0
+    ) {
+      const prices = assessments
+        .map((a) => a.data.price)
+        .filter((price) => typeof price === "number" && price >= 0);
+
+      if (prices.length > 0) {
+        const minPrice = 0;
+        const maxPrice = Math.ceil(Math.max(...prices) / 1000) * 1000;
+        setPriceRange([minPrice, maxPrice]);
+      } else {
+        setPriceRange([0, 55000]);
+      }
     }
-
-    if (selectedCategory !== null && selectedCategory !== undefined) {
-      result = result.filter(
-        (assessment) => assessment.category.id === selectedCategory
-      );
-    }
-
-    if (selectedPrice !== null && selectedPrice !== undefined) {
-      result = result.filter(
-        (assessment) => Number(assessment.data.price) === Number(selectedPrice)
-      );
-    }
-
-    setFilteredAssessments(result);
-  }, [searchTerm, selectedCategory, selectedPrice, assessments]);
-
-  const getPriceOptions = (assessmentsData) => {
-    if (!Array.isArray(assessmentsData)) return [];
-    const uniquePrices = [
-      ...new Set(assessmentsData.map((a) => a.data.price)),
-    ].sort((a, b) => a - b);
-    return uniquePrices.map((price) => ({
-      value: price,
-      label: price === 0 ? "Үнэгүй" : `${price.toLocaleString()}₮`,
-    }));
-  };
+  }, [assessments]);
 
   const scrollToTestsTop = () => {
     if (testsSectionRef.current) {
@@ -201,32 +370,87 @@ export default function Home() {
     }
   };
 
-  const handleInputChange = (e) => {
-    setSearchTerm(e.target.value);
-    scrollToTestsTop();
-  };
-
-  const handleCategoryChange = (value) => {
-    setSelectedCategory(value);
-    scrollToTestsTop();
-  };
-
-  const handlePriceChange = (value) => {
-    setSelectedPrice(value);
-    scrollToTestsTop();
+  const handleSearchTypeChange = (value) => {
+    setSearchType(value);
+    // Reset all filters when changing search type
+    setSearchTerm("");
+    setSelectedCategory(null);
+    setSelectedPrice(null);
   };
 
   const handleResetFilters = () => {
     setSearchTerm("");
     setSelectedCategory(null);
     setSelectedPrice(null);
-    scrollToTestsTop();
+
+    // Reset price range to full range (0 to max)
+    const prices = assessments
+      .map((a) => a.data.price)
+      .filter((price) => typeof price === "number" && price >= 0);
+
+    if (prices.length > 0) {
+      const minPrice = 0; // Always start from 0
+      const maxPrice = Math.ceil(Math.max(...prices) / 1000) * 1000;
+      setPriceRange([minPrice, maxPrice]);
+    } else {
+      setPriceRange([0, 55000]);
+    }
+
+    setSearchType("name");
+    setFilteredAssessments(assessments);
+    setCurrentPage(1);
   };
 
   const renderSkeletonCards = (count = 6) => {
     return Array(count)
       .fill(null)
       .map((_, index) => <AssessmentSkeleton key={`skeleton-${index}`} />);
+  };
+
+  const renderSearchInput = () => {
+    switch (searchType) {
+      case "name":
+        return (
+          <Input
+            className="w-full md:w-64"
+            prefix={
+              <MagniferBoldDuotone color={"#f36421"} width={18} height={18} />
+            }
+            placeholder="Нэрээр хайх"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        );
+      case "category":
+        return (
+          <Select
+            placeholder="Төрлөө сонгох"
+            suffixIcon={
+              <DropdownIcon width={15} height={15} color={"#f36421"} />
+            }
+            options={categories.map((c) => ({
+              value: c.id,
+              label: c.name,
+            }))}
+            value={selectedCategory}
+            onChange={setSelectedCategory}
+            allowClear
+            className="w-full md:w-64 no-zoom"
+          />
+        );
+      case "price":
+        return (
+          <PriceRangeSlider
+            assessments={assessments}
+            onPriceRangeChange={(range) => {
+              setPriceRange(range);
+            }}
+            selectedRange={priceRange}
+          />
+        );
+      default:
+        return null;
+    }
   };
 
   return (
@@ -236,24 +460,6 @@ export default function Home() {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
-        {/* <div className="inset-0 fixed">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 0.2, scale: 1 }}
-            transition={{ duration: 1 }}
-            className="absolute left-[-5%] w-[200px] h-[200px] md:w-[400px] md:h-[400px] rounded-full bg-orange-600 blur-[80px]"
-          />
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 0.2, scale: 1 }}
-            transition={{ duration: 1, delay: 0.2 }}
-            className="absolute bottom-[-20%] right-[-10%] w-[200px] h-[200px] md:w-[500px] md:h-[500px] rounded-full bg-orange-600 blur-[100px]"
-          />
-          <div className="absolute top-40 inset-0 -z-10 flex items-center justify-center">
-                <div className="w-[600px] h-[600px] rounded-full bg-gradient-to-r from-[#f36421]/70 via-[#ff6f3c]/70 to-[#ffb347]/70 blur-3xl opacity-30 animate-pulse" />
-              </div>
-        </div> */}
-
         <div className="relative">
           <div className="relative 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6">
             <motion.div
@@ -426,7 +632,6 @@ export default function Home() {
               </div>
             </motion.div>
           </div>
-
           <motion.div
             className="relative h-16 sm:h-20 mt-6 overflow-hidden"
             initial={{ opacity: 0 }}
@@ -466,7 +671,6 @@ export default function Home() {
               />
             </svg>
           </motion.div>
-
           <motion.div
             className="relative 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6 bg-orange-500 -mt-1"
             initial={{ opacity: 0 }}
@@ -497,7 +701,6 @@ export default function Home() {
               </div>
             </div>
           </motion.div>
-
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -514,85 +717,21 @@ export default function Home() {
             </motion.div>
             <Marquee />
           </motion.div>
-
           <div
             ref={testsSectionRef}
             id="tests"
             className="bg-gray-50 relative 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6 pb-14"
           >
-            <div className="sticky top-[72px] z-40 bg-gray-50 pb-2">
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5 }}
-                className="font-black text-xl inline-flex gap-1 text-main mt-6 sm:mt-10"
-              >
-                <NotesBoldDuotone />
-                Тестүүд
-              </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
+              className="font-black text-xl inline-flex gap-1 text-main mt-6 sm:mt-10 mb-4"
+            >
+              <NotesBoldDuotone />
+              Тестүүд
+            </motion.div>
 
-              <motion.div
-                className="flex flex-col md:flex-row gap-3 sm:gap-6 pt-4 md:w-3/4"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 1.1 }}
-              >
-                <Input
-                  className="w-full min-w-[200px]"
-                  prefix={
-                    <MagniferBoldDuotone
-                      color={"#f36421"}
-                      width={18}
-                      height={18}
-                    />
-                  }
-                  placeholder="Нэрээр хайх"
-                  value={searchTerm}
-                  onChange={handleInputChange}
-                />
-                <Select
-                  placeholder="Төрлөөр хайх"
-                  suffixIcon={
-                    <DropdownIcon width={15} height={15} color={"#f36421"} />
-                  }
-                  options={categories.map((c) => ({
-                    value: c.id,
-                    label: c.name,
-                  }))}
-                  value={selectedCategory}
-                  onChange={handleCategoryChange}
-                  allowClear
-                  className="w-full no-zoom"
-                />
-                <Select
-                  className="w-full"
-                  suffixIcon={
-                    <DropdownIcon width={15} height={15} color={"#f36421"} />
-                  }
-                  placeholder="Төлбөрөөр шүүх"
-                  options={getPriceOptions(assessments)}
-                  value={selectedPrice}
-                  onChange={handlePriceChange}
-                  allowClear
-                />
-                <div
-                  className="relative group cursor-pointer"
-                  onClick={handleResetFilters}
-                >
-                  <div className="absolute -inset-0.5 bg-gradient-to-br from-main/50 to-main/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-                  <div className="relative bg-gradient-to-br from-main/30 to-secondary/20 rounded-full flex items-center justify-center border border-main/10">
-                    <div className="flex items-center gap-1.5 font-extrabold bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent py-1.5 px-7">
-                      <FiltersBoldDuotone
-                        width={17}
-                        height={17}
-                        className="text-main"
-                      />
-                      Арилгах
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            </div>
             {loading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
                 {renderSkeletonCards(9)}
@@ -614,7 +753,214 @@ export default function Home() {
               </div>
             )}
           </div>
+          <AnimatePresence>
+            {isInTestSection && (
+              <motion.div
+                initial={{ opacity: 0, y: -20, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                transition={{ duration: 0.3 }}
+                className="fixed top-24 left-6 right-6 md:left-auto md:right-12 lg:right-16 xl:right-24 2xl:right-72 z-50"
+              >
+                {/* Desktop Layout */}
+                <div className="hidden md:block bg-white/70 backdrop-blur-md shadow-xl shadow-slate-20 rounded-full p-3 pr-3 border border-gray-100">
+                  <div className="flex items-center gap-2">
+                    <Select
+                      value={searchType}
+                      onChange={handleSearchTypeChange}
+                      suffixIcon={
+                        <DropdownIcon
+                          width={15}
+                          height={15}
+                          color={"#f36421"}
+                        />
+                      }
+                      className="w-32 no-zoom flex-shrink-0"
+                      options={[
+                        { value: "name", label: "Нэрээр" },
+                        { value: "category", label: "Төрлөөр" },
+                        { value: "price", label: "Үнээр" },
+                      ]}
+                    />
 
+                    {renderSearchInput()}
+
+                    <Button
+                      onClick={() => {
+                        // Apply filters here
+                        let result = [...assessments];
+
+                        if (searchTerm) {
+                          if (searchType === "name") {
+                            result = result.filter(
+                              (assessment) =>
+                                assessment.data.name
+                                  .toLowerCase()
+                                  .includes(searchTerm.toLowerCase()) ||
+                                assessment.data.description
+                                  .toLowerCase()
+                                  .includes(searchTerm.toLowerCase())
+                            );
+                          }
+                        }
+
+                        if (
+                          searchType === "category" &&
+                          selectedCategory !== null &&
+                          selectedCategory !== undefined
+                        ) {
+                          result = result.filter(
+                            (assessment) =>
+                              assessment.category.id === selectedCategory
+                          );
+                        }
+
+                        if (
+                          searchType === "price" &&
+                          priceRange &&
+                          priceRange.length === 2
+                        ) {
+                          result = result.filter((assessment) => {
+                            const price = Number(assessment.data.price);
+                            return (
+                              price >= priceRange[0] && price <= priceRange[1]
+                            );
+                          });
+                        }
+
+                        setFilteredAssessments(result);
+                        scrollToTestsTop();
+                      }}
+                      className="grd-btn"
+                    >
+                      <MagniferBoldDuotone width={16} height={16} />
+                      <span>Хайх</span>
+                    </Button>
+
+                    <button
+                      onClick={() => {
+                        handleResetFilters();
+                        setFilteredAssessments([...assessments]);
+                        scrollToTestsTop();
+                      }}
+                      className="bg-gray-100 hover:bg-gray-200 text-gray-600 p-1 rounded-full transition-all duration-300 group relative flex-shrink-0"
+                      title="Арилгах"
+                    >
+                      <XIcon width={22} height={22} />
+
+                      {/* Desktop Tooltip */}
+                      <div className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-10">
+                        Арилгах
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          <AnimatePresence>
+            {isInTestSection && (
+              <motion.div
+                initial={{ opacity: 0, y: -20, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                transition={{ duration: 0.3 }}
+                className="md:hidden fixed top-[72px] w-full z-50"
+              >
+                {/* Mobile Layout */}
+                <div className="md:hidden bg-white/70 backdrop-blur-md shadow-xl shadow-slate-200 p-3 px-6">
+                  <div className="font-black text-xl inline-flex gap-1 text-main mt-2 mb-4">
+                    <NotesBoldDuotone />
+                    Тестүүд
+                  </div>
+                  {/* First Row - Select and Input */}
+                  <div className="flex items-center gap-2 mb-3">
+                    <Select
+                      value={searchType}
+                      onChange={handleSearchTypeChange}
+                      suffixIcon={
+                        <DropdownIcon
+                          width={15}
+                          height={15}
+                          color={"#f36421"}
+                        />
+                      }
+                      className="min-w-30 max-w-30 no-zoom flex-shrink-0"
+                      options={[
+                        { value: "name", label: "Нэрээр" },
+                        { value: "category", label: "Төрлөөр" },
+                        { value: "price", label: "Үнээр" },
+                      ]}
+                    />
+
+                    <div className="flex-1">{renderSearchInput()}</div>
+
+                    <Button
+                      onClick={() => {
+                        // Apply filters here
+                        let result = [...assessments];
+
+                        if (searchTerm) {
+                          if (searchType === "name") {
+                            result = result.filter(
+                              (assessment) =>
+                                assessment.data.name
+                                  .toLowerCase()
+                                  .includes(searchTerm.toLowerCase()) ||
+                                assessment.data.description
+                                  .toLowerCase()
+                                  .includes(searchTerm.toLowerCase())
+                            );
+                          }
+                        }
+
+                        if (
+                          searchType === "category" &&
+                          selectedCategory !== null &&
+                          selectedCategory !== undefined
+                        ) {
+                          result = result.filter(
+                            (assessment) =>
+                              assessment.category.id === selectedCategory
+                          );
+                        }
+
+                        if (
+                          searchType === "price" &&
+                          priceRange &&
+                          priceRange.length === 2
+                        ) {
+                          result = result.filter((assessment) => {
+                            const price = Number(assessment.data.price);
+                            return (
+                              price >= priceRange[0] && price <= priceRange[1]
+                            );
+                          });
+                        }
+
+                        setFilteredAssessments(result);
+                        scrollToTestsTop();
+                      }}
+                      className="grd-btn"
+                    >
+                      <MagniferBoldDuotone width={18} height={18} />
+                    </Button>
+                    <button
+                      onClick={() => {
+                        handleResetFilters();
+                        setFilteredAssessments([...assessments]);
+                        scrollToTestsTop();
+                      }}
+                      className="bg-gray-100 hover:bg-gray-200 text-gray-600 p-1.5 rounded-full transition-all duration-300 flex-shrink-0"
+                      aria-label="Арилгах"
+                    >
+                      <XIcon width={22} height={22} />
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
           <motion.footer
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

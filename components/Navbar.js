@@ -61,6 +61,12 @@ function NavbarContent() {
     };
   }, []);
 
+  useEffect(() => {
+    if ((pathname === "/news" || pathname === "/glossary") && isExpanded) {
+      setDropdown("knowledge");
+    }
+  }, [pathname, isExpanded]);
+
   const knowledge = [
     {
       key: "1",
@@ -361,7 +367,9 @@ function NavbarContent() {
         <div className="flex flex-col gap-3 mt-4 px-[6px]">
           <div>
             <div
-              className="flex items-center gap-[6px] cursor-pointer"
+              className={`flex items-center gap-[6px] cursor-pointer ${
+                pathname === "/" && isTestsSectionVisible ? "text-main" : ""
+              }`}
               onClick={handleTestsClick}
             >
               <span className="font-bold">Тестүүд</span>
@@ -434,7 +442,6 @@ function NavbarContent() {
   );
 }
 
-// Main component with Suspense boundary
 export default function Navbar() {
   return (
     <Suspense fallback={<NavbarFallback />}>
