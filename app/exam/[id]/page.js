@@ -377,7 +377,7 @@ export default function Exam() {
           />
         </div>
 
-        <div className="max-w-3xl mx-auto px-6 sm:px-0 pt-[92px] sm:pt-4">
+        <div className="max-w-3xl 2xl:max-w-4xl mx-auto px-6 sm:px-0 pt-[92px] sm:pt-4">
           <div className="md:bg-white/70 md:py-[22px] relative rounded-full md:shadow md:shadow-slate-200 backdrop-blur-md md:px-8">
             <div className="flex items-center justify-between">
               <h1 className="text-lg font-black bg-gradient-to-r from-main to-secondary bg-clip-text text-transparent">
@@ -472,7 +472,7 @@ export default function Exam() {
           )}
         </div>
 
-        <div className="max-w-3xl mx-auto px-6 sm:px-0">
+        <div className="max-w-3xl 2xl:max-w-4xl mx-auto px-6 sm:px-0">
           <div className="sticky top-[72px] sm:top-0 z-10 pt-3 md:pt-4 rounded-b-2xl bg-gradient-to-r from-gray-100 from-100% md:from-60% to-transparent">
             <div className="bg-white backdrop-blur-md rounded-3xl shadow-lg shadow-slate-200">
               <div className="px-4 py-[15px] px-7 md:px-8">

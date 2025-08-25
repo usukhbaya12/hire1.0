@@ -431,7 +431,7 @@ const QuestionCard = ({
                       }}
                       marks={marks}
                       disabled={false}
-                      className="w-[262px] md:w-80 lg:w-96 custom-slider"
+                      className="w-[262px] md:w-80 lg:w-96 2xl:w-[500px] custom-slider"
                     />
                   </div>
                 </div>

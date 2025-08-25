@@ -131,6 +131,14 @@ export default function Test() {
 
   const stats = [
     {
+      icon: <Wallet2BoldDuotone width={36} height={36} />,
+      label: "Тестийн үнэ",
+      value:
+        assessmentData.data?.price > 0
+          ? assessmentData.data?.price.toLocaleString() + "₮"
+          : "Үнэгүй" || "Үнэгүй",
+    },
+    {
       icon: <AlarmBoldDuotone width={36} height={36} />,
       label: "Хугацаа",
       value:
@@ -138,11 +146,7 @@ export default function Test() {
           ? assessmentData.data?.duration + " " + "минут"
           : "Хугацаагүй",
     },
-    {
-      icon: <Flag2BoldDuotone width={36} height={36} />,
-      label: "Түвшин",
-      value: assessmentData.data?.level || "Хамаарахгүй",
-    },
+
     {
       icon: <FolderCloudBoldDuotone width={36} height={36} />,
       label: "Тест банк",
@@ -415,7 +419,7 @@ export default function Test() {
             <div className="absolute bottom-[-20%] right-[-10%] w-[200px] h-[200px] md:w-[500px] md:h-[500px] rounded-full bg-orange-600/5 blur-[100px]" />
           </div>
           <div className="absolute top-0 right-0 w-full h-full overflow-hidden pointer-events-none">
-            <div className="absolute top-0 -right-10 sm:-right-8 lg:right-0 xl:right-[20px] 2xl:right-[150px] w-[600px] sm:w-[520px] md:w-[600px] lg:w-[600px] xl:w-[820px] 2xl:w-[880px] 3xl:w-[1000px] flex items-center justify-center">
+            <div className="absolute top-0 -right-10 sm:-right-8 lg:right-0 xl:right-[20px] 2xl:right-[210px] w-[600px] sm:w-[520px] md:w-[600px] lg:w-[600px] xl:w-[820px] 2xl:w-[880px] 3xl:w-[1000px] flex items-center justify-center">
               <div className="relative w-full pb-[50%]">
                 <Image
                   src="/halfcircle.png"
@@ -456,21 +460,15 @@ export default function Test() {
                     { title: assessmentData.category.name },
                   ]}
                 />
-                <h1 className="text-4xl font-black mb-4 w-3/4 w-3/4 xl:w-[80%] 2xl:w-[90%] bg-gradient-to-r from-main via-pink-500 to-secondary bg-clip-text text-transparent tracking-tight leading-[1.1]">
+                <h1 className="text-4xl 2xl:text-5xl font-black mb-4 w-[65%] 2xl:w-[75%] bg-gradient-to-r from-main via-pink-500 to-secondary bg-clip-text text-transparent tracking-tight leading-[1.1]">
                   {assessmentData.data.name}
                 </h1>
                 <div className="text-gray-700 mb-8 flex items-center gap-2">
                   <div className="text-main">
                     <BookBookmarkBoldDuotone width={18} height={18} />
                   </div>
-                  {assessmentData.data.author || "Тест зохиогч"}
-                  <div>•</div>
-                  <div className="text-black font-bold">
-                    {assessmentData.data.price > 0 ? (
-                      <span>{assessmentData.data.price.toLocaleString()}₮</span>
-                    ) : (
-                      "Үнэгүй"
-                    )}
+                  <div className="xl:w-[65%]">
+                    {assessmentData.data.author || "Тест зохиогч"}
                   </div>
                 </div>
               </div>
@@ -580,7 +578,7 @@ export default function Test() {
               </Button>
               {assessmentData?.data?.exampleReport && (
                 <Button
-                  className="grd-btn-2 h-10 w-full"
+                  className="grd-btn-2 h-10 w-[212px]"
                   onClick={() => {
                     window.location.href = `${api}file/${assessmentData.data.exampleReport}`;
                   }}
