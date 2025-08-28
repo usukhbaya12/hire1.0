@@ -701,57 +701,55 @@ export default function Home() {
               </div>
             </div>
           </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.1 }}
-          >
+          <div ref={testsSectionRef} id="tests">
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-              className="font-black text-xl inline-flex gap-1 text-main relative 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6 pb-4 pt-8 bg-white/95 backdrop-blur-md w-full"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 1.1 }}
             >
-              <Buildings2BoldDuotone />
-              Тест хамтран хөгжүүлэгч байгууллагууд
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5 }}
+                className="font-black text-xl inline-flex gap-1 text-main relative 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6 pb-4 pt-8 bg-white/95 backdrop-blur-md w-full"
+              >
+                <Buildings2BoldDuotone />
+                Тест хамтран хөгжүүлэгч байгууллагууд
+              </motion.div>
+              <Marquee />
             </motion.div>
-            <Marquee />
-          </motion.div>
-          <div
-            ref={testsSectionRef}
-            id="tests"
-            className="bg-gray-50 relative 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6 pb-14"
-          >
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-              className="font-black text-xl inline-flex gap-1 text-main mt-6 sm:mt-10 mb-4"
-            >
-              <NotesBoldDuotone />
-              Тестүүд
-            </motion.div>
+            <div className="bg-gray-50 relative 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6 pb-14">
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5 }}
+                className="font-black text-xl inline-flex gap-1 text-main mt-6 sm:mt-10 mb-4"
+              >
+                <NotesBoldDuotone />
+                Тестүүд
+              </motion.div>
 
-            {loading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
-                {renderSkeletonCards(9)}
-              </div>
-            ) : filteredAssessments.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
-                {filteredAssessments.map((assessment) => (
-                  <Assessment
-                    key={assessment.data.id}
-                    assessment={assessment}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center py-16">
-                <div className="text-gray-300 mb-4">
-                  <Empty description="Тест олдсонгүй." />
+              {loading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
+                  {renderSkeletonCards(9)}
                 </div>
-              </div>
-            )}
+              ) : filteredAssessments.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
+                  {filteredAssessments.map((assessment) => (
+                    <Assessment
+                      key={assessment.data.id}
+                      assessment={assessment}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-16">
+                  <div className="text-gray-300 mb-4">
+                    <Empty description="Тест олдсонгүй." />
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
           <AnimatePresence>
             {isInTestSection && (
