@@ -25,7 +25,7 @@ function registerFontIfExists(filePath, family, weight) {
 }
 
 registerFontIfExists("Gilroy-Bold.ttf", "Gilroy", "bold");
-registerFontIfExists("Gilroy-Black.ttf", "Gilroy2", "normal");
+registerFontIfExists("Gilroy-Black.ttf", "Gilroy", "900"); // or "black"
 registerFontIfExists("Gilroy-Regular.ttf", "Gilroy", "normal");
 
 async function getExamData(code) {
@@ -118,7 +118,7 @@ export async function GET(request, { params }) {
       }
 
       const assessmentName = examDetails.assessmentName || "Assessment Results";
-      ctx.font = `${86 * SCALE}px Gilroy2, sans-serif`;
+      ctx.font = `900 ${86 * SCALE}px Gilroy, sans-serif`;
       ctx.fillStyle = "#221e1d";
       ctx.textAlign = "right";
 
@@ -161,7 +161,7 @@ export async function GET(request, { params }) {
         console.error("Error loading name icon (non-critical):", e);
       }
 
-      ctx.font = `bold ${47 * SCALE}px Gilroy2`;
+      ctx.font = `900 ${47 * SCALE}px Gilroy`;
       ctx.fillStyle = "#FFFFFF";
       ctx.fillText(
         `${(examDetails.firstname || "").toUpperCase()}`,
@@ -179,15 +179,15 @@ export async function GET(request, { params }) {
       const examType = examDetails.type;
       if (examType === 11 || examType === 10) {
         console.log("ss", examDetails);
-        const score = examDetails.score ?? 0;
+        const score = examDetails.point ?? 0;
         const total = examDetails.total ?? 100;
 
-        ctx.font = `${60 * SCALE}px Gilroy2`;
+        ctx.font = `900 ${60 * SCALE}px Gilroy`;
         ctx.fillStyle = "#002B5B";
         ctx.fillText(`${score}`, 78 * SCALE, 648 * SCALE + 8 * SCALE);
 
         const scoreWidth = ctx.measureText(`${score}`).width;
-        ctx.font = `${40 * SCALE}px Gilroy2`;
+        ctx.font = `900 ${40 * SCALE}px Gilroy`;
         ctx.fillStyle = "#FFFFFF";
         ctx.fillText(
           `/ ${total}`,
@@ -195,7 +195,7 @@ export async function GET(request, { params }) {
           648 * SCALE + 6 * SCALE
         );
       } else {
-        ctx.font = `${42 * SCALE}px Gilroy2`;
+        ctx.font = `900 ${42 * SCALE}px Gilroy`;
         ctx.fillStyle = "#002B5B";
 
         let resultText = examDetails.result || "";
