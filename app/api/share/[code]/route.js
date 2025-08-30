@@ -25,7 +25,7 @@ function registerFontIfExists(filePath, family, weight) {
 }
 
 registerFontIfExists("Gilroy-Bold.ttf", "Gilroy", "bold");
-registerFontIfExists("Gilroy-Black.ttf", "Gilroy", "900"); // or "black"
+registerFontIfExists("Gilroy-Black.ttf", "Gilroy2", "normal");
 registerFontIfExists("Gilroy-Regular.ttf", "Gilroy", "normal");
 
 async function getExamData(code) {
@@ -76,11 +76,11 @@ function generateFallbackImageBuffer() {
   const ctx = fallbackCanvas.getContext("2d");
   ctx.fillStyle = "#000000";
   ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-  ctx.font = `${48 * SCALE}px Gilroy`;
+  ctx.font = `${48 * SCALE}px Gilroy, Arial, sans-serif`;
   ctx.fillStyle = "#f36421";
   ctx.textAlign = "center";
   ctx.fillText("Тестийн үр дүн / Hire.mn", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
-  ctx.font = `${24 * SCALE}px Gilroy`;
+  ctx.font = `${24 * SCALE}px Gilroy, Arial, sans-serif`;
   ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
   ctx.textAlign = "left";
   ctx.fillText("© Hire.mn", 1430 * SCALE, 770 * SCALE);
@@ -118,7 +118,7 @@ export async function GET(request, { params }) {
       }
 
       const assessmentName = examDetails.assessmentName || "Assessment Results";
-      ctx.font = `900 ${86 * SCALE}px Gilroy, sans-serif`;
+      ctx.font = `${86 * SCALE}px Gilroy2, sans-serif`;
       ctx.fillStyle = "#221e1d";
       ctx.textAlign = "right";
 
@@ -161,7 +161,7 @@ export async function GET(request, { params }) {
         console.error("Error loading name icon (non-critical):", e);
       }
 
-      ctx.font = `900 ${47 * SCALE}px Gilroy`;
+      ctx.font = `bold ${47 * SCALE}px Gilroy2, Arial, sans-serif`;
       ctx.fillStyle = "#FFFFFF";
       ctx.fillText(
         `${(examDetails.firstname || "").toUpperCase()}`,
@@ -177,25 +177,41 @@ export async function GET(request, { params }) {
       ctx.stroke();
 
       const examType = examDetails.type;
+      const halfWidth = (canvas.width / 2) * SCALE; // 50% of canvas
+
       if (examType === 11 || examType === 10) {
-        console.log("ss", examDetails);
         const score = examDetails.point ?? 0;
         const total = examDetails.total ?? 100;
 
-        ctx.font = `900 ${60 * SCALE}px Gilroy`;
-        ctx.fillStyle = "#002B5B";
-        ctx.fillText(`${score}`, 78 * SCALE, 648 * SCALE + 8 * SCALE);
+        const scoreText = `${score}`;
+        const totalText = `/ ${total}`;
 
-        const scoreWidth = ctx.measureText(`${score}`).width;
-        ctx.font = `900 ${40 * SCALE}px Gilroy`;
+        // --- measure text widths ---
+        ctx.font = `${60 * SCALE}px Gilroy2, Arial, sans-serif`;
+        const scoreWidth = ctx.measureText(scoreText).width;
+
+        ctx.font = `${40 * SCALE}px Gilroy2, Arial, sans-serif`;
+        const totalWidth = ctx.measureText(totalText).width;
+
+        const totalBlockWidth = scoreWidth + 5 * SCALE + totalWidth;
+
+        // --- center it inside 50% of canvas ---
+        const startX = (halfWidth - totalBlockWidth) / 2;
+
+        // --- draw texts ---
+        ctx.font = `${60 * SCALE}px Gilroy2, Arial, sans-serif`;
+        ctx.fillStyle = "#002B5B";
+        ctx.fillText(scoreText, startX, 648 * SCALE + 8 * SCALE);
+
+        ctx.font = `${40 * SCALE}px Gilroy2, Arial, sans-serif`;
         ctx.fillStyle = "#FFFFFF";
         ctx.fillText(
-          `/ ${total}`,
-          78 * SCALE + scoreWidth + 5 * SCALE,
+          totalText,
+          startX + scoreWidth + 5 * SCALE,
           648 * SCALE + 6 * SCALE
         );
       } else {
-        ctx.font = `900 ${42 * SCALE}px Gilroy`;
+        ctx.font = `${42 * SCALE}px Gilroy2, Arial, sans-serif`;
         ctx.fillStyle = "#002B5B";
 
         let resultText = examDetails.result || "";
@@ -205,10 +221,14 @@ export async function GET(request, { params }) {
           resultText = examDetails.value;
         }
 
-        ctx.fillText(resultText, 78 * SCALE, 648 * SCALE);
+        // measure and center inside 50%
+        const textWidth = ctx.measureText(resultText).width;
+        const startX = (halfWidth - textWidth) / 2;
+
+        ctx.fillText(resultText, startX, 648 * SCALE);
       }
 
-      ctx.font = `${24 * SCALE}px Gilroy`;
+      ctx.font = `${24 * SCALE}px Gilroy, Arial, sans-serif`;
       ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
       const today = new Date();
       const formattedDate = `${today.getFullYear()}.${String(
