@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { Button, Collapse, Divider, Timeline } from "antd";
+import { Button, Collapse, Divider, Progress, Timeline } from "antd";
 import {
   CursorLineDuotone,
   MouseBoldDuotone,
@@ -17,6 +17,8 @@ import {
   EyeClosedLineDuotone,
   NotificationLinesRemoveBoldDuotone,
   CalendarBoldDuotone,
+  PlayCircleBoldDuotone,
+  StarFallMinimalistic2BoldDuotone,
 } from "solar-icons";
 import { getReport } from "@/app/api/exam";
 import { DropdownIcon } from "./Icons";
@@ -47,7 +49,6 @@ const AssessmentCard = ({ assessment, isInvited = false }) => {
     (sum, history) => sum + (history.price || 0),
     0
   );
-
   const downloadReport = async (code) => {
     try {
       setLoadingCodes((prev) => ({ ...prev, [code]: true }));
@@ -103,6 +104,8 @@ const AssessmentCard = ({ assessment, isInvited = false }) => {
 
     window.open(facebookShareUrl, "_blank", "width=600,height=400");
   };
+
+  console.log(histories);
 
   const AssessmentTimeline = ({ histories }) => {
     return (
@@ -163,8 +166,8 @@ const AssessmentCard = ({ assessment, isInvited = false }) => {
             ),
             children: (
               <>
-                <div className="w-full bg-white rounded-3xl p-4 bg-white px-6 shadow shadow-slate-200">
-                  <div className="flex justify-between items-center">
+                <div className="w-full bg-white rounded-3xl p-4 bg-white px-6 shadow shadow-slate-200 space-y-2">
+                  <div className="flex pt-1 justify-between items-center">
                     <div className="flex items-center gap-2 text-gray-500">
                       <CalendarBoldDuotone width={18} />
                       <span>
@@ -181,35 +184,20 @@ const AssessmentCard = ({ assessment, isInvited = false }) => {
                     </div>
                     <div>
                       {userEndDate ? (
-                        <div className="relative group w-fit">
-                          <div className="absolute -inset-0.5 bg-gradient-to-br from-lime-800/50 to-green-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-                          <div className="relative bg-gradient-to-br from-lime-600/20 to-green-600/30 rounded-full flex items-center justify-center border border-yellow-900/10">
-                            <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-black/60 to-black/70 bg-clip-text text-transparent py-1 px-3.5">
-                              <div className="w-2 h-2 bg-lime-600 rounded-full -mt-0.5"></div>
-                              Дуусгасан
-                            </div>
-                          </div>
-                        </div>
+                        <Button className="grd-div-6 cursor-default shadow-md shadow-slate-200">
+                          <div className="w-1.5 h-1.5 bg-emerald-600 rounded-full"></div>
+                          Дуусгасан
+                        </Button>
                       ) : examStartDate && !userEndDate ? (
-                        <div className="relative group w-fit">
-                          <div className="absolute -inset-0.5 bg-gradient-to-br from-blue-600/50 to-blue-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-                          <div className="relative bg-gradient-to-br from-blue-400/30 to-blue-300/20 rounded-full flex items-center justify-center border border-blue-900/10">
-                            <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-1 px-3.5">
-                              <div className="w-2 h-2 bg-blue-500 rounded-full -mt-0.5"></div>
-                              Дуусгаагүй
-                            </div>
-                          </div>
-                        </div>
+                        <Button className="grd-div-5 cursor-default shadow-md shadow-slate-200 ">
+                          <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
+                          Дуусгаагүй
+                        </Button>
                       ) : (
-                        <div className="relative group w-fit">
-                          <div className="absolute -inset-0.5 bg-gradient-to-br from-yellow-600/50 to-orange-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-                          <div className="relative bg-gradient-to-br from-yellow-400/30 to-yellow-300/20 rounded-full flex items-center justify-center border border-yellow-900/10">
-                            <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-1 px-3.5">
-                              <div className="w-2 h-2 bg-yellow-500 rounded-full -mt-0.5"></div>
-                              Өгөөгүй
-                            </div>
-                          </div>
-                        </div>
+                        <Button className="shadow-md shadow-slate-200 grd-div-4">
+                          <div className="w-1.5 h-1.5 bg-amber-500 rounded-full"></div>
+                          Өгөөгүй
+                        </Button>
                       )}
                     </div>
                     {/* <div className="flex items-center gap-2">
@@ -235,54 +223,108 @@ const AssessmentCard = ({ assessment, isInvited = false }) => {
                       </div>
                     </div> */}
                   </div>
-                  <div className="font-bold pt-2">
-                    {history?.exams?.result?.result}
-                    {history?.exams?.result?.value
-                      ? ` / ${history?.exams?.result?.value}`
-                      : ""}
+                  <div>
+                    Үр дүн:
+                    {isCompletedButNotVisible ? (
+                      <div className="flex items-center gap-2 text-main font-bold">
+                        <EyeClosedLineDuotone width={14} />
+                        <span>Байгууллагад илгээсэн</span>
+                      </div>
+                    ) : history?.exams?.result ? (
+                      [10, 11].includes(history.exams?.result?.type) ? (
+                        <div className="flex items-center gap-2 justify-between">
+                          <Progress
+                            size="small"
+                            percent={Math.round(
+                              (history?.exams?.result?.point /
+                                history?.exams?.result?.total) *
+                                100
+                            )}
+                            strokeColor={{
+                              "0%": "#FF8400",
+                              "100%": "#FF5C00",
+                            }}
+                          />
+                          <span className="min-w-11">
+                            ({history?.exams?.result?.point}/
+                            {history?.exams?.result?.total})
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="font-extrabold text-lg">
+                          {history?.exams?.result?.result}
+                          {history?.exams?.result?.value
+                            ? ` / ${history?.exams?.result?.value}`
+                            : ""}
+                        </div>
+                      )
+                    ) : isExpired ? (
+                      <div className="flex items-center gap-2 text-red-400 font-bold">
+                        <AlarmBoldDuotone width={16} />
+                        <span>Хугацаа хэтэрсэн</span>
+                      </div>
+                    ) : history.exams?.userStartDate &&
+                      !history.exams?.userEndDate ? (
+                      <div className="font-bold text-blue-700 -my-[3px]">
+                        Тест дуусгаагүй
+                      </div>
+                    ) : !history.exams?.userStartDate &&
+                      !history.exams?.userEndDate ? (
+                      <div className="font-bold text-amber-600 -my-[3px]">
+                        Тест өгөөгүй
+                      </div>
+                    ) : null}
                   </div>
-                  <Divider className="no-margin2" />
+                  {!isExpired && <Divider className="no-margin2" />}
                   <div className="flex items-center justify-between">
                     {isExpired ? (
-                      <Button className="border-none link-btn-4" disabled>
-                        <AlarmBoldDuotone width={18} />
-                        <span>Хугацаа хэтэрсэн</span>
-                      </Button>
+                      <></>
                     ) : isCompletedButNotVisible ? (
-                      <Button className="link-btn-4 border-none" disabled>
-                        <EyeClosedLineDuotone width={18} />
-                        <span>Байгууллага</span>
+                      <button className="text-main flex text-center">
+                        <NotificationLinesRemoveBoldDuotone width={18} />
+                      </button>
+                    ) : userEndDate ? (
+                      <Button
+                        loading={isLoading}
+                        className="grd-btn"
+                        onClick={() => handleButtonClick(history)}
+                        disabled={isExpired || isCompletedButNotVisible}
+                      >
+                        <ClipboardTextBoldDuotone width={18} height={18} />
+                        Тайлан татах
+                      </Button>
+                    ) : examStartDate && !userEndDate ? (
+                      <Button
+                        loading={isLoading}
+                        className="grd-btn-5 border-none"
+                        onClick={() => handleButtonClick(history)}
+                        disabled={isExpired || isCompletedButNotVisible}
+                      >
+                        <PlayCircleBoldDuotone width={18} height={18} />
+                        Үргэлжлүүлэх
                       </Button>
                     ) : (
                       <Button
                         loading={isLoading}
-                        type="link"
-                        className="link-btn-2 border-none"
+                        className="grd-btn-4 border-none"
                         onClick={() => handleButtonClick(history)}
                         disabled={isExpired || isCompletedButNotVisible}
                       >
-                        {userEndDate ? (
-                          <ClipboardTextBoldDuotone width={18} height={18} />
-                        ) : examStartDate && !userEndDate ? (
-                          <MouseBoldDuotone width={18} height={18} />
-                        ) : (
-                          <CursorLineDuotone width={18} height={18} />
-                        )}
-                        {userEndDate
-                          ? "Тайлан татах"
-                          : examStartDate && !userEndDate
-                          ? "Үргэлжлүүлэх"
-                          : "Тест өгөх"}
+                        <StarFallMinimalistic2BoldDuotone
+                          width={18}
+                          height={18}
+                        />
+                        Тест өгөх
                       </Button>
                     )}
                     {userEndDate && !isCompletedButNotVisible && (
                       <div className="flex items-center gap-2">
-                        <button
+                        <Button
                           onClick={(e) => {
                             e.stopPropagation();
                             shareToFacebookWithMeta(assessment.id, code);
                           }}
-                          className="flex items-center gap-2"
+                          className="grd-btn-3"
                           title="Фэйсбүүкт хуваалцах"
                         >
                           <Image
@@ -292,10 +334,7 @@ const AssessmentCard = ({ assessment, isInvited = false }) => {
                             height={18}
                             priority
                           />
-                          <div className="font-bold text-blue-700">
-                            Хуваалцах
-                          </div>
-                        </button>
+                        </Button>
                       </div>
                     )}
                   </div>
@@ -456,6 +495,7 @@ const HistoryCard = ({ data, isInvited = false }) => {
           examStarted: item.exams[0]?.userStartDate,
           exams: item.exams[0],
           assessment: item.assessment.id,
+          type: item.assessment.type,
           service: item.service,
         });
       }
@@ -492,12 +532,15 @@ const HistoryCard = ({ data, isInvited = false }) => {
         examStarted: item.userStartDate,
         endDate: item.endDate,
         exams: {
+          result: item.result,
           code: item.code,
           userStartDate: item.userStartDate,
           userEndDate: item.userEndDate,
           visible: item.visible,
         },
         assessment: assessment.id,
+        type: item.assessment.type,
+
         service: item.service,
       });
 

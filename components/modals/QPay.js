@@ -100,12 +100,13 @@ const QPay = ({ isOpen, onClose, paymentData, serviceId, onSuccess }) => {
   return (
     <Modal
       open={isOpen}
-      onCancel={onClose}
+      onCancel={null} // Disable X button close
       title="QPay-р төлбөрөө төлөх"
       footer={null}
       width={400}
       centered
-      closable={false}
+      closable={false} // Disable X button
+      maskClosable={false} // Disable outside click close
     >
       <div className="flex flex-col items-center pb-1">
         {contextHolder}
@@ -153,7 +154,7 @@ const QPay = ({ isOpen, onClose, paymentData, serviceId, onSuccess }) => {
         </div>
 
         <div
-          className="relative group cursor-pointer w-full"
+          className="relative group cursor-pointer w-full mb-3"
           onClick={() => handleCheckPayment()}
         >
           <div className="absolute -inset-0.5 bg-gradient-to-br from-main/50 to-main/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
@@ -172,6 +173,20 @@ const QPay = ({ isOpen, onClose, paymentData, serviceId, onSuccess }) => {
               ) : (
                 "Төлбөр шалгах"
               )}
+            </div>
+          </div>
+        </div>
+
+        <div
+          className="relative group cursor-pointer w-full"
+          onClick={() => {
+            stopAutoCheck();
+            onClose();
+          }}
+        >
+          <div className="relative bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center border border-gray-300 transition duration-300">
+            <div className="flex items-center gap-1.5 font-bold text-gray-700 py-[7px] px-7 w-full justify-center">
+              Буцах
             </div>
           </div>
         </div>

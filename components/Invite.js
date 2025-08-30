@@ -740,7 +740,7 @@ const SpreadsheetInviteTable = ({ testData, onSuccess }) => {
                     height={18}
                     className="text-main"
                   />
-                  мэйл илгээх
+                  Мэйл илгээх
                 </div>
               </div>
             </div>

@@ -769,6 +769,172 @@ textarea.ant-input {
   margin-right: 6px;
 }
 
+/* 🔶 Yellow-ish version */
+.grd-div-4.ant-btn {
+  font-weight: 800 !important;
+  color: #e07e0d !important; /* amber-500 */
+  position: relative !important;
+  background: linear-gradient(
+    to bottom right,
+    rgba(234, 179, 8, 0.2),
+    rgba(234, 179, 8, 0.2)
+  ) !important;
+  border-radius: 9999px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 1px solid rgba(234, 179, 8, 0.1) !important;
+  padding: 8px 16px;
+  transition: all 0.3s !important;
+}
+
+/* 🟢 Green-ish version */
+.grd-div-6.ant-btn {
+  font-weight: 800 !important;
+  color: #16a34a !important; /* green-600 */
+  position: relative !important;
+  background: linear-gradient(
+    to bottom right,
+    rgba(34, 197, 94, 0.2),
+    /* green-500 */ rgba(34, 197, 94, 0.2)
+  ) !important;
+  border-radius: 9999px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 1px solid rgba(34, 197, 94, 0.1) !important;
+  padding: 8px 16px;
+  transition: all 0.3s !important;
+}
+
+.grd-btn-6.ant-btn {
+  font-weight: 800 !important;
+  color: #16a34a;
+  background-color: transparent;
+  box-shadow: none;
+  padding-inline: 0px;
+  padding-block: 0px;
+  /* backdrop-filter: blur(12px); */
+}
+
+.grd-btn-6.ant-btn-variant-outlined:not(:disabled):not(
+    .ant-btn-disabled
+  ):hover {
+  color: #078f39 !important;
+  background-color: transparent;
+  transition: all 0.3s;
+}
+
+.grd-div-5 {
+  font-weight: 800 !important;
+  color: #3b82f6 !important; /* blue-500 */
+  position: relative !important;
+  background: linear-gradient(
+    to bottom right,
+    rgba(59, 130, 246, 0.2),
+    rgba(59, 130, 246, 0.2)
+  ) !important;
+  border-radius: 9999px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 1px solid rgba(59, 130, 246, 0.1) !important;
+  padding: 8px 16px;
+  transition: all 0.3s !important;
+}
+
+.grd-btn-5.ant-btn {
+  font-weight: 800 !important;
+  color: #3b82f6;
+  background-color: transparent;
+  box-shadow: none;
+  padding-inline: 0px;
+  padding-block: 0px;
+  /* backdrop-filter: blur(12px); */
+}
+
+.grd-btn-5.ant-btn-variant-outlined:not(:disabled):not(
+    .ant-btn-disabled
+  ):hover {
+  color: #2374f6 !important;
+  background-color: transparent;
+  transition: all 0.3s;
+}
+
+.grd-btn-4.ant-btn {
+  font-weight: 800 !important;
+  color: #e07e0d;
+  background-color: transparent;
+  box-shadow: none;
+  padding-inline: 0px;
+  padding-block: 0px;
+  /* backdrop-filter: blur(12px); */
+}
+
+.grd-btn-4.ant-btn-variant-outlined:not(:disabled):not(
+    .ant-btn-disabled
+  ):hover {
+  color: #d97706 !important;
+  background-color: transparent;
+  transition: all 0.3s;
+}
+
+.grd-btn-3.ant-btn {
+  font-weight: 800 !important;
+  color: #f36421 !important;
+  position: relative !important;
+  background: linear-gradient(
+    to bottom right,
+    rgba(243, 100, 33, 0.1),
+    rgba(243, 100, 33, 0.1)
+  ) !important;
+  border-radius: 9999px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 1px solid rgba(243, 100, 33, 0.2) !important;
+  padding: 8px 8px;
+  transition: all 0.3s !important;
+}
+
+.grd-btn-3.ant-btn:hover,
+.grd-btn-3.ant-btn-variant-outlined:not(:disabled):not(
+    .ant-btn-disabled
+  ):hover {
+  background: linear-gradient(
+    to bottom right,
+    rgba(243, 100, 33, 0.2),
+    rgba(243, 100, 33, 0.2)
+  ) !important;
+  color: #f36421 !important;
+  border-color: transparent !important;
+  border: 1px solid rgba(243, 100, 33, 0.3) !important;
+}
+
+.grd-btn-3.ant-btn::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(
+    to bottom right,
+    rgba(243, 100, 33, 0.5),
+    rgba(243, 100, 33, 0.5)
+  );
+  border-radius: 9999px;
+  filter: blur(4px);
+  opacity: 0.3;
+  z-index: -1;
+  transition: opacity 0.3s;
+}
+
+.grd-btn-3.ant-btn:hover::before {
+  opacity: 0.4;
+}
+
+.grd-btn-3.ant-btn .btn-icon {
+  margin-right: 6px;
+}
+
 .back-btn.ant-btn {
   font-weight: 700 !important;
   border-radius: 9999px !important;

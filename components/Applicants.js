@@ -137,51 +137,31 @@ const EmployeeTable = ({ testData, onRefresh }) => {
     switch (status) {
       case "Дуусгасан":
         return (
-          <div className="relative group w-fit">
-            <div className="absolute -inset-0.5 bg-gradient-to-br from-lime-800/50 to-green-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-            <div className="relative bg-gradient-to-br from-lime-600/20 to-green-600/30 rounded-full flex items-center justify-center border border-yellow-900/10">
-              <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-black/60 to-black/70 bg-clip-text text-transparent py-1 px-3.5">
-                <div className="w-2 h-2 bg-lime-600 rounded-full -mt-0.5"></div>
-                Дуусгасан
-              </div>
-            </div>
-          </div>
+          <Button className="grd-div-6 cursor-default shadow-md shadow-slate-200">
+            <div className="w-1.5 h-1.5 bg-emerald-600 rounded-full"></div>
+            Дуусгасан
+          </Button>
         );
       case "Эхэлсэн":
         return (
-          <div className="relative group w-fit">
-            <div className="absolute -inset-0.5 bg-gradient-to-br from-blue-600/50 to-blue-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-            <div className="relative bg-gradient-to-br from-blue-400/30 to-blue-300/20 rounded-full flex items-center justify-center border border-blue-900/10">
-              <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-1 px-3.5">
-                <div className="w-2 h-2 bg-blue-500 rounded-full -mt-0.5"></div>
-                Эхэлсэн
-              </div>
-            </div>
-          </div>
+          <Button className="grd-div-5 cursor-default shadow-md shadow-slate-200">
+            <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
+            Эхэлсэн
+          </Button>
         );
       case "Мэйл илгээсэн":
         return (
-          <div className="relative group w-fit">
-            <div className="absolute -inset-0.5 bg-gradient-to-br from-yellow-600/50 to-orange-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-            <div className="relative bg-gradient-to-br from-yellow-400/30 to-yellow-300/20 rounded-full flex items-center justify-center border border-yellow-900/10">
-              <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-1 px-3.5">
-                <div className="min-w-2 min-h-2 w-2 h-2 bg-yellow-500 rounded-full -mt-0.5"></div>
-                Мэйл илгээсэн
-              </div>
-            </div>
-          </div>
+          <Button className="shadow-md shadow-slate-200 grd-div-4">
+            <div className="w-1.5 h-1.5 bg-amber-500 rounded-full"></div>
+            Мэйл илгээсэн
+          </Button>
         );
       default:
         return (
-          <div className="relative group w-fit">
-            <div className="absolute -inset-0.5 bg-gradient-to-br from-gray-600/50 to-gray-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-            <div className="relative bg-gradient-to-br from-gray-400/30 to-gray-300/20 rounded-full flex items-center justify-center border border-gray-900/10">
-              <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-1 px-3.5">
-                <div className="min-w-2 min-h-2 w-2 h-2 bg-gray-500 rounded-full -mt-0.5"></div>
-                Хүлээгдэж буй
-              </div>
-            </div>
-          </div>
+          <Button className="shadow-md shadow-slate-200 grd-div-4">
+            <div className="w-1.5 h-1.5 bg-amber-500 rounded-full"></div>
+            Хүлээгдэж буй
+          </Button>
         );
     }
   };

@@ -28,10 +28,12 @@ import {
   HistoryBoldDuotone,
   MouseBoldDuotone,
   NotificationLinesRemoveBoldDuotone,
+  PlayCircleBoldDuotone,
   QrCodeBoldDuotone,
   QuestionCircleBoldDuotone,
   SquareArrowRightDownBoldDuotone,
   StarFall2BoldDuotone,
+  StarFallMinimalistic2BoldDuotone,
   TicketSaleBoldDuotone,
   UserPlusBoldDuotone,
   Wallet2BoldDuotone,
@@ -192,7 +194,7 @@ export default function Test() {
     ...(assessmentData?.data?.price > 0
       ? [
           {
-            title: "Баримт",
+            title: "Үйлдэл",
             key: "barimt",
             dataIndex: "barimt",
             align: "center",
@@ -286,6 +288,8 @@ export default function Test() {
 
     if (session?.user?.role === 30) {
       setIsModalOpen(true);
+      setLoadingTakeTest(false);
+
       return;
     }
 
@@ -460,7 +464,7 @@ export default function Test() {
                     { title: assessmentData.category.name },
                   ]}
                 />
-                <h1 className="text-4xl 2xl:text-5xl font-black mb-4 w-[65%] 2xl:w-[75%] bg-gradient-to-r from-main via-pink-500 to-secondary bg-clip-text text-transparent tracking-tight leading-[1.1]">
+                <h1 className="text-4xl 2xl:text-5xl font-black mb-4 w-full lg:w-[65%] 2xl:w-[75%] bg-gradient-to-r from-main via-pink-500 to-secondary bg-clip-text text-transparent tracking-tight leading-[1.1]">
                   {assessmentData.data.name}
                 </h1>
                 <div className="text-gray-700 mb-8 flex items-center gap-2">
@@ -607,36 +611,21 @@ export default function Test() {
                           status:
                             item.exams[0]?.userStartDate == null &&
                             item.exams[0]?.userEndDate == null ? (
-                              <div className="relative group w-fit">
-                                <div className="absolute -inset-0.5 bg-gradient-to-br from-yellow-600/50 to-orange-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-                                <div className="relative bg-gradient-to-br from-yellow-400/30 to-yellow-300/20 rounded-full flex items-center justify-center border border-yellow-900/10">
-                                  <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-1 px-3.5">
-                                    <div className="w-2 h-2 bg-yellow-500 rounded-full -mt-0.5"></div>
-                                    Өгөөгүй
-                                  </div>
-                                </div>
-                              </div>
+                              <Button className="shadow-md shadow-slate-200 grd-div-4">
+                                <div className="w-1.5 h-1.5 bg-amber-500 rounded-full"></div>
+                                Өгөөгүй
+                              </Button>
                             ) : item.exams[0]?.userStartDate != null &&
                               item.exams[0]?.userEndDate == null ? (
-                              <div className="relative group w-fit">
-                                <div className="absolute -inset-0.5 bg-gradient-to-br from-blue-600/50 to-blue-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-                                <div className="relative bg-gradient-to-br from-blue-400/30 to-blue-300/20 rounded-full flex items-center justify-center border border-blue-900/10">
-                                  <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-1 px-3.5">
-                                    <div className="w-2 h-2 bg-blue-500 rounded-full -mt-0.5"></div>
-                                    Дуусгаагүй
-                                  </div>
-                                </div>
-                              </div>
+                              <Button className="grd-div-5 cursor-default shadow-md shadow-slate-200">
+                                <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
+                                Дуусгаагүй
+                              </Button>
                             ) : (
-                              <div className="relative group w-fit">
-                                <div className="absolute -inset-0.5 bg-gradient-to-br from-lime-800/50 to-green-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-                                <div className="relative bg-gradient-to-br from-lime-600/20 to-green-600/30 rounded-full flex items-center justify-center border border-yellow-900/10">
-                                  <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-black/60 to-black/70 bg-clip-text text-transparent py-1 px-3.5">
-                                    <div className="w-2 h-2 bg-lime-600 rounded-full -mt-0.5"></div>
-                                    Дуусгасан
-                                  </div>
-                                </div>
-                              </div>
+                              <Button className="grd-div-6 cursor-default shadow-md shadow-slate-200">
+                                <div className="w-1.5 h-1.5 bg-emerald-600 rounded-full"></div>
+                                Дуусгасан
+                              </Button>
                             ),
                           result:
                             item.exams && item.exams.length > 0 ? (
@@ -662,7 +651,7 @@ export default function Test() {
                                     </span>
                                   </div>
                                 ) : (
-                                  <div>
+                                  <div className="font-extrabold">
                                     {item.exams[0]?.result
                                       ? (item.exams[0].result.result
                                           ? `${item.exams[0].result.result}`
@@ -692,17 +681,16 @@ export default function Test() {
                           payment:
                             item.price > 0 ? (
                               <div className="flex items-center gap-2 justify-center">
-                                <img src="/qpay.png" width={40}></img>•
-                                <div>{item.price.toLocaleString()}₮</div>
+                                QPay / <div>{item.price.toLocaleString()}₮</div>
                               </div>
                             ) : (
                               "Үнэгүй"
                             ),
                           barimt:
                             item.status == 20 && item.price > 0 ? (
-                              <div className="flex justify-center">
+                              <div className="flex justify-center gap-2">
                                 <Button
-                                  className="link-btn-2 border-none"
+                                  className="grd-btn-3"
                                   onClick={() => {
                                     getBarimt(item.id);
                                   }}
@@ -714,7 +702,22 @@ export default function Test() {
                                       alt="E-Barimt"
                                     ></img>
                                   </>
-                                  ebarimt
+                                </Button>
+
+                                <Button
+                                  onClick={() =>
+                                    shareToFacebookWithMeta(item.exams[0].code)
+                                  }
+                                  className="grd-btn-3"
+                                  title="Фэйсбүүкт хуваалцах"
+                                >
+                                  <Image
+                                    src="/facebook.png"
+                                    alt="Facebook icon"
+                                    width={18}
+                                    height={18}
+                                    priority
+                                  />
                                 </Button>
                               </div>
                             ) : null,
@@ -723,19 +726,21 @@ export default function Test() {
                             item.exams[0]?.userEndDate == null ? (
                               <div className="flex justify-center">
                                 <Link href={`/test/details/${testId}`}>
-                                  <Button className="link-btn-2 border-none">
-                                    <CursorLineDuotone width={18} />
+                                  <Button className="grd-btn-4 border-none">
+                                    <StarFallMinimalistic2BoldDuotone
+                                      width={18}
+                                    />
                                     Тест өгөх
                                   </Button>
                                 </Link>
                               </div>
                             ) : item.exams[0]?.userStartDate != null &&
                               item.exams[0]?.userEndDate == null ? (
-                              <div>
+                              <div className="flex justify-center">
                                 {item.exams && item.exams.length > 0 && (
                                   <Link href={`/exam/${item.exams[0].code}`}>
-                                    <Button className="link-btn-2 border-none">
-                                      <MouseBoldDuotone width={18} />
+                                    <Button className="grd-btn-5 border-none">
+                                      <PlayCircleBoldDuotone width={18} />
                                       Үргэлжлүүлэх
                                     </Button>
                                   </Link>
@@ -746,7 +751,7 @@ export default function Test() {
                                 <Button
                                   type="link"
                                   loading={loadingBtn === item.exams[0].code}
-                                  className="link-btn-2 outline-none border-none"
+                                  className="grd-btn"
                                   onClick={() =>
                                     item.exams &&
                                     item.exams.length > 0 &&
@@ -756,22 +761,6 @@ export default function Test() {
                                   <ClipboardTextBoldDuotone width={18} />
                                   Татах
                                 </Button>
-                                <span>•</span>
-                                <button
-                                  onClick={() =>
-                                    shareToFacebookWithMeta(item.exams[0].code)
-                                  }
-                                  className="flex items-center justify-center transition-opacity hover:opacity-70"
-                                  title="Фэйсбүүкт хуваалцах"
-                                >
-                                  <Image
-                                    src="/facebook.png"
-                                    alt="Facebook icon"
-                                    width={18}
-                                    height={18}
-                                    priority
-                                  />
-                                </button>
                               </div>
                             ),
                         }))}
@@ -798,46 +787,31 @@ export default function Test() {
                             <div>
                               {item.exams[0]?.userStartDate == null &&
                               item.exams[0]?.userEndDate == null ? (
-                                <div className="relative group w-fit">
-                                  <div className="absolute -inset-0.5 bg-gradient-to-br from-yellow-600/50 to-orange-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-                                  <div className="relative bg-gradient-to-br from-yellow-400/30 to-yellow-300/20 rounded-full flex items-center justify-center border border-yellow-900/10">
-                                    <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-1 px-3.5">
-                                      <div className="w-2 h-2 bg-yellow-500 rounded-full -mt-0.5"></div>
-                                      Өгөөгүй
-                                    </div>
-                                  </div>
-                                </div>
+                                <Button className="shadow-md shadow-slate-200 grd-div-4">
+                                  <div className="w-1.5 h-1.5 bg-amber-500 rounded-full"></div>
+                                  Өгөөгүй
+                                </Button>
                               ) : item.exams[0]?.userStartDate != null &&
                                 item.exams[0]?.userEndDate == null ? (
-                                <div className="relative group w-fit">
-                                  <div className="absolute -inset-0.5 bg-gradient-to-br from-blue-600/50 to-blue-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-                                  <div className="relative bg-gradient-to-br from-blue-400/30 to-blue-300/20 rounded-full flex items-center justify-center border border-blue-900/10">
-                                    <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-1 px-3.5">
-                                      <div className="w-2 h-2 bg-blue-500 rounded-full -mt-0.5"></div>
-                                      Дуусгаагүй
-                                    </div>
-                                  </div>
-                                </div>
+                                <Button className="grd-div-5 cursor-default shadow-md shadow-slate-200 ">
+                                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
+                                  Дуусгаагүй
+                                </Button>
                               ) : (
-                                <div className="relative group w-fit">
-                                  <div className="absolute -inset-0.5 bg-gradient-to-br from-lime-800/50 to-green-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-                                  <div className="relative bg-gradient-to-br from-lime-600/20 to-green-600/30 rounded-full flex items-center justify-center border border-yellow-900/10">
-                                    <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-black/60 to-black/70 bg-clip-text text-transparent py-1 px-3.5">
-                                      <div className="w-2 h-2 bg-lime-600 rounded-full -mt-0.5"></div>
-                                      Дуусгасан
-                                    </div>
-                                  </div>
-                                </div>
+                                <Button className="grd-div-6 cursor-default shadow-md shadow-slate-200">
+                                  <div className="w-1.5 h-1.5 bg-emerald-600 rounded-full"></div>
+                                  Дуусгасан
+                                </Button>
                               )}
                             </div>
                           </div>
-                          <div className="font-bold text-lg">
+                          <div>
+                            Үр дүн:
                             {item.exams && item.exams.length > 0 ? (
                               item.exams[0].visible ? (
                                 item.assessment.report === 10 &&
                                 item.exams[0].result ? (
                                   <>
-                                    <div className="-mb-1">Үр дүн:</div>
                                     <div className="flex items-center gap-2">
                                       <Progress
                                         size="small"
@@ -858,19 +832,23 @@ export default function Test() {
                                     </div>
                                   </>
                                 ) : (
-                                  <div className="font-bold text-lg">
-                                    {item.exams[0]?.result
-                                      ? (item.exams[0].result.result
-                                          ? `${item.exams[0].result.result}`
-                                          : "") +
-                                        (item.exams[0].result.result &&
-                                        item.exams[0].result.value
-                                          ? " / "
-                                          : "") +
-                                        (item.exams[0].result.value
-                                          ? `${item.exams[0].result.value}`
-                                          : "")
-                                      : ""}
+                                  <div className="font-extrabold text-lg">
+                                    {item.exams[0]?.result ? (
+                                      (item.exams[0].result.result
+                                        ? `${item.exams[0].result.result}`
+                                        : "") +
+                                      (item.exams[0].result.result &&
+                                      item.exams[0].result.value
+                                        ? " / "
+                                        : "") +
+                                      (item.exams[0].result.value
+                                        ? `${item.exams[0].result.value}`
+                                        : "")
+                                    ) : (
+                                      <div className="font-bold text-blue-700 -my-[3px]">
+                                        Тест дуусгаагүй
+                                      </div>
+                                    )}
                                   </div>
                                 )
                               ) : (
@@ -883,7 +861,9 @@ export default function Test() {
                                 </div>
                               )
                             ) : (
-                              <div></div>
+                              <div className="font-bold text-amber-600">
+                                Тест өгөөгүй
+                              </div>
                             )}
                           </div>
                           {item.price > 0 && (
@@ -891,22 +871,39 @@ export default function Test() {
                               <Divider />
                               <div className="text-sm flex justify-between">
                                 <div className="flex items-center gap-2 justify-center">
-                                  <img src="/qpay.png" width={40}></img>•
+                                  QPay /{" "}
                                   <div>{item.price.toLocaleString()}₮</div>
                                 </div>
-                                <Button
-                                  className="link-btn-2 border-none"
-                                  onClick={() => getBarimt(item.id)}
-                                >
-                                  <>
-                                    <img
-                                      src="/ebarimt.png"
-                                      width={20}
-                                      alt="E-Barimt"
-                                    ></img>
-                                  </>
-                                  ebarimt
-                                </Button>
+                                <div className="flex items-center gap-2 justify-center">
+                                  <Button
+                                    className="grd-btn-3"
+                                    onClick={() => getBarimt(item.id)}
+                                  >
+                                    <>
+                                      <img
+                                        src="/ebarimt.png"
+                                        width={20}
+                                        alt="E-Barimt"
+                                      ></img>
+                                    </>
+                                  </Button>
+                                  <Button
+                                    className="grd-btn-3"
+                                    onClick={() =>
+                                      shareToFacebookWithMeta(
+                                        item.exams[0].code
+                                      )
+                                    }
+                                    title="Фэйсбүүкт хуваалцах"
+                                  >
+                                    <Image
+                                      src="/facebook.png"
+                                      width={18}
+                                      height={18}
+                                      alt="facebook"
+                                    />
+                                  </Button>
+                                </div>
                               </div>
                             </>
                           )}
@@ -917,23 +914,25 @@ export default function Test() {
                               <Link
                                 href={`/test/details/${assessmentData.data?.id}`}
                               >
-                                <Button className="link-btn-2 border-none">
-                                  <CursorLineDuotone width={18} />
+                                <Button className="grd-btn-4 border-none">
+                                  <StarFallMinimalistic2BoldDuotone
+                                    width={18}
+                                  />
                                   Тест өгөх
                                 </Button>
                               </Link>
                             ) : item.exams[0]?.userStartDate != null &&
                               item.exams[0]?.userEndDate == null ? (
                               <Link href={`/exam/${item.exams[0].code}`}>
-                                <Button className="link-btn-2 border-none">
-                                  <MouseBoldDuotone width={18} />
+                                <Button className="grd-btn-5 border-none">
+                                  <PlayCircleBoldDuotone width={18} />
                                   Үргэлжлүүлэх
                                 </Button>
                               </Link>
                             ) : (
                               <>
                                 <Button
-                                  className="link-btn-2 border-none"
+                                  className="grd-btn"
                                   onClick={() =>
                                     downloadReport(item.exams[0].code)
                                   }
@@ -941,9 +940,13 @@ export default function Test() {
                                   <ClipboardTextBoldDuotone width={18} />
                                   Тайлан татах
                                 </Button>
-
-                                <button
-                                  className="flex items-center gap-2"
+                              </>
+                            )}
+                            {item.exams[0]?.userStartDate != null &&
+                              item.exams[0]?.userEndDate != null &&
+                              item.price === 0 && (
+                                <Button
+                                  className="grd-btn-3"
                                   onClick={() =>
                                     shareToFacebookWithMeta(item.exams[0].code)
                                   }
@@ -955,12 +958,8 @@ export default function Test() {
                                     height={18}
                                     alt="facebook"
                                   />
-                                  <div className="font-bold text-blue-700">
-                                    Хуваалцах
-                                  </div>
-                                </button>
-                              </>
-                            )}
+                                </Button>
+                              )}
                           </div>
                         </div>
                       ))}
@@ -1001,10 +1000,6 @@ export default function Test() {
                                     minute: "2-digit",
                                     hour12: false,
                                   })}
-                                  <div className="flex items-center gap-1 text-red-500 text-xs font-bold mt-1">
-                                    <AlarmBoldDuotone width={16} />
-                                    Дууссан
-                                  </div>
                                 </div>
                               ) : (
                                 date.toLocaleString("en-US", {
@@ -1021,39 +1016,29 @@ export default function Test() {
                               status:
                                 item.userStartDate == null &&
                                 item.userEndDate == null ? (
-                                  <div className="relative group w-fit">
-                                    <div className="absolute -inset-0.5 bg-gradient-to-br from-yellow-600/50 to-orange-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-                                    <div className="relative bg-gradient-to-br from-yellow-400/30 to-yellow-300/20 rounded-full flex items-center justify-center border border-yellow-900/10">
-                                      <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-1 px-3.5">
-                                        <div className="w-2 h-2 bg-yellow-500 rounded-full -mt-0.5"></div>
-                                        Өгөөгүй
-                                      </div>
-                                    </div>
-                                  </div>
+                                  <Button className="shadow-md shadow-slate-200 grd-div-4">
+                                    <div className="w-1.5 h-1.5 bg-amber-500 rounded-full"></div>
+                                    Өгөөгүй
+                                  </Button>
                                 ) : item.userStartDate != null &&
                                   item.userEndDate == null ? (
-                                  <div className="relative group w-fit">
-                                    <div className="absolute -inset-0.5 bg-gradient-to-br from-blue-600/50 to-blue-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-                                    <div className="relative bg-gradient-to-br from-blue-400/30 to-blue-300/20 rounded-full flex items-center justify-center border border-blue-900/10">
-                                      <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-1 px-3.5">
-                                        <div className="w-2 h-2 bg-blue-500 rounded-full -mt-0.5"></div>
-                                        Дуусгаагүй
-                                      </div>
-                                    </div>
-                                  </div>
+                                  <Button className="grd-div-5 cursor-default shadow-md shadow-slate-200">
+                                    <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
+                                    Дуусгаагүй
+                                  </Button>
                                 ) : (
-                                  <div className="relative group w-fit">
-                                    <div className="absolute -inset-0.5 bg-gradient-to-br from-lime-800/50 to-green-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-                                    <div className="relative bg-gradient-to-br from-lime-600/20 to-green-600/30 rounded-full flex items-center justify-center border border-yellow-900/10">
-                                      <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-black/60 to-black/70 bg-clip-text text-transparent py-1 px-3.5">
-                                        <div className="w-2 h-2 bg-lime-600 rounded-full -mt-0.5"></div>
-                                        Дуусгасан
-                                      </div>
-                                    </div>
-                                  </div>
+                                  <Button className="grd-div-6 cursor-default shadow-md shadow-slate-200">
+                                    <div className="w-1.5 h-1.5 bg-emerald-600 rounded-full"></div>
+                                    Дуусгасан
+                                  </Button>
                                 ),
 
-                              result: item.visible ? (
+                              result: isExpired ? (
+                                <div className="flex items-center gap-1 text-red-500 font-bold mt-1">
+                                  <AlarmBoldDuotone width={16} />
+                                  Хугацаа дууссан
+                                </div>
+                              ) : item.visible ? (
                                 item.assessment.report === 10 && item.result ? (
                                   <div className="flex items-center gap-2">
                                     <Progress
@@ -1074,7 +1059,7 @@ export default function Test() {
                                     </span>
                                   </div>
                                 ) : (
-                                  <div>
+                                  <div className="font-extrabold">
                                     {item.result
                                       ? item.result.result +
                                         " / " +
@@ -1083,7 +1068,7 @@ export default function Test() {
                                   </div>
                                 )
                               ) : item.userEndDate ? (
-                                <div className="items-center gap-2 flex">
+                                <div className="flex items-center gap-1 text-main font-bold mt-1">
                                   <EyeClosedLineDuotone
                                     width={18}
                                     className="text-main"
@@ -1116,8 +1101,8 @@ export default function Test() {
                               ) : item.userStartDate && !item.userEndDate ? (
                                 <div className="flex justify-center">
                                   <Link href={`/exam/${item.code}`}>
-                                    <Button className="link-btn-2 border-none">
-                                      <MouseBoldDuotone width={18} />
+                                    <Button className="grd-btn-5 border-none">
+                                      <PlayCircleBoldDuotone width={18} />
                                       Үргэлжлүүлэх
                                     </Button>
                                   </Link>
@@ -1125,27 +1110,28 @@ export default function Test() {
                               ) : item.userEndDate == null ? (
                                 <div className="flex justify-center">
                                   <Link href={`/exam/${item.code}`}>
-                                    <Button className="link-btn-2 border-none">
-                                      <CursorLineDuotone width={18} />
+                                    <Button className="grd-btn-4 border-none">
+                                      <StarFallMinimalistic2BoldDuotone
+                                        width={18}
+                                      />
                                       Тест өгөх
                                     </Button>
                                   </Link>
                                 </div>
                               ) : item.visible ? (
                                 <div className="flex justify-center items-center gap-2">
-                                  <button
-                                    className="text-main hover:text-secondary flex items-center gap-2 font-semibold"
+                                  <Button
+                                    className="grd-btn"
                                     onClick={() => downloadReport(item.code)}
                                   >
                                     <ClipboardTextBoldDuotone width={18} />
                                     Татах
-                                  </button>
-                                  <span>•</span>
-                                  <button
+                                  </Button>
+                                  <Button
                                     onClick={() =>
                                       shareToFacebookWithMeta(item.code)
                                     }
-                                    className="flex items-center justify-center transition-opacity hover:opacity-70"
+                                    className="grd-btn-3"
                                     title="Фэйсбүүкт хуваалцах"
                                   >
                                     <Image
@@ -1155,7 +1141,7 @@ export default function Test() {
                                       height={18}
                                       priority
                                     />
-                                  </button>
+                                  </Button>
                                 </div>
                               ) : (
                                 <div className="flex justify-center">
@@ -1188,53 +1174,6 @@ export default function Test() {
                               className={`rounded-3xl shadow shadow-slate-200 bg-white p-4 px-6 space-y-2 ${disabledClass}`}
                             >
                               <div className="flex pt-1 gap-2 justify-between">
-                                {item.service?.user?.organizationName && (
-                                  <div className="pt-1 flex items-center gap-2 text-blue-700 font-bold text-sm leading-4">
-                                    <Buildings2BoldDuotone
-                                      width={18}
-                                      className="min-w-[18px]"
-                                    />
-                                    {item.service.user.organizationName}
-                                  </div>
-                                )}
-                                <div>
-                                  {item.userStartDate == null &&
-                                  item.userEndDate == null ? (
-                                    <div className="relative group w-fit">
-                                      <div className="absolute -inset-0.5 bg-gradient-to-br from-yellow-600/50 to-orange-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-                                      <div className="relative bg-gradient-to-br from-yellow-400/30 to-yellow-300/20 rounded-full flex items-center justify-center border border-yellow-900/10">
-                                        <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-1 px-3.5">
-                                          <div className="w-2 h-2 bg-yellow-500 rounded-full -mt-0.5"></div>
-                                          Өгөөгүй
-                                        </div>
-                                      </div>
-                                    </div>
-                                  ) : item.userStartDate != null &&
-                                    item.userEndDate == null ? (
-                                    <div className="relative group w-fit">
-                                      <div className="absolute -inset-0.5 bg-gradient-to-br from-blue-600/50 to-blue-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-                                      <div className="relative bg-gradient-to-br from-blue-400/30 to-blue-300/20 rounded-full flex items-center justify-center border border-blue-900/10">
-                                        <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-1 px-3.5">
-                                          <div className="w-2 h-2 bg-blue-500 rounded-full -mt-0.5"></div>
-                                          Дуусгаагүй
-                                        </div>
-                                      </div>
-                                    </div>
-                                  ) : (
-                                    <div className="relative group w-fit">
-                                      <div className="absolute -inset-0.5 bg-gradient-to-br from-lime-800/50 to-green-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-                                      <div className="relative bg-gradient-to-br from-lime-600/20 to-green-600/30 rounded-full flex items-center justify-center border border-yellow-900/10">
-                                        <div className="flex items-center gap-1.5 font-bold bg-gradient-to-br from-black/60 to-black/70 bg-clip-text text-transparent py-1 px-3.5">
-                                          <div className="w-2 h-2 bg-lime-600 rounded-full -mt-0.5"></div>
-                                          Дуусгасан
-                                        </div>
-                                      </div>
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                              <Divider />
-                              <div className="text-sm flex items-center justify-between">
                                 <div className="text-sm text-gray-500 flex items-center gap-2">
                                   <CalendarBoldDuotone
                                     width={18}
@@ -1244,8 +1183,103 @@ export default function Test() {
                                     item.createdAt
                                   ).toLocaleDateString()}
                                 </div>
+                                <div>
+                                  {item.userStartDate == null &&
+                                  item.userEndDate == null ? (
+                                    <Button className="shadow-md shadow-slate-200 grd-div-4">
+                                      <div className="w-1.5 h-1.5 bg-amber-500 rounded-full"></div>
+                                      Өгөөгүй
+                                    </Button>
+                                  ) : item.userStartDate != null &&
+                                    item.userEndDate == null ? (
+                                    <Button className="grd-div-5 cursor-default shadow-md shadow-slate-200">
+                                      <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
+                                      Дуусгаагүй
+                                    </Button>
+                                  ) : (
+                                    <Button className="grd-div-6 cursor-default shadow-md shadow-slate-200">
+                                      <div className="w-1.5 h-1.5 bg-emerald-600 rounded-full"></div>
+                                      Дуусгасан
+                                    </Button>
+                                  )}
+                                </div>
+                              </div>
+                              <div>
+                                <div>Үр дүн:</div>
+
+                                {isExpired ? (
+                                  <div className="flex items-center gap-2 text-red-400 font-bold">
+                                    <AlarmBoldDuotone width={16} />
+                                    Хугацаа хэтэрсэн
+                                  </div>
+                                ) : item.visible ? (
+                                  item.assessment.report === 10 &&
+                                  item.result ? (
+                                    <>
+                                      <div className="flex items-center gap-2">
+                                        <Progress
+                                          size="small"
+                                          percent={Math.round(
+                                            (item.result.point /
+                                              item.result.total) *
+                                              100
+                                          )}
+                                          format={(percent) => `${percent}%`}
+                                          strokeColor={{
+                                            "0%": "#FF8400",
+                                            "100%": "#FF5C00",
+                                          }}
+                                        />
+                                        <span>
+                                          ({item.result.point}/
+                                          {item.result.total})
+                                        </span>
+                                      </div>
+                                    </>
+                                  ) : (
+                                    <div className="font-extrabold text-lg">
+                                      {item.result?.result ? (
+                                        (item.result?.result
+                                          ? `${item.result?.result}`
+                                          : "") +
+                                        (item.result?.result &&
+                                        item.result?.value
+                                          ? " / "
+                                          : "") +
+                                        (item.result?.value
+                                          ? `${item.result?.value}`
+                                          : "")
+                                      ) : (
+                                        <div className="font-bold text-blue-700 -my-[3px]">
+                                          Тест дуусгаагүй
+                                        </div>
+                                      )}
+                                    </div>
+                                  )
+                                ) : item.userEndDate ? (
+                                  <div className="flex items-center gap-2 text-main font-bold">
+                                    <EyeClosedLineDuotone width={14} />
+                                    Байгууллагад илгээсэн
+                                  </div>
+                                ) : (
+                                  <div className="font-bold text-amber-600">
+                                    Тест өгөөгүй
+                                  </div>
+                                )}
+                              </div>
+                              <Divider />
+                              <div className="text-sm flex flex-col">
+                                {item.service?.user?.organizationName && (
+                                  <div className="flex items-center gap-2 text-blue-700 font-bold text-sm leading-4">
+                                    <Buildings2BoldDuotone
+                                      width={18}
+                                      className="min-w-[18px]"
+                                    />
+                                    {item.service.user.organizationName}
+                                  </div>
+                                )}
                                 <div className="flex items-center gap-1">
-                                  <strong>Дуусах: </strong>{" "}
+                                  <strong>Дуусах огноо: </strong>{" "}
                                   {endDateObj.toLocaleString("en-US", {
                                     month: "numeric",
                                     day: "numeric",
@@ -1257,64 +1291,6 @@ export default function Test() {
                                 </div>
                               </div>
 
-                              <Divider />
-                              {isExpired ? (
-                                <div className="rounded-full bg-red-400 text-white text-xs font-bold flex items-center gap-1 px-2 w-fit">
-                                  <AlarmBoldDuotone width={16} />
-                                  Хугацаа хэтэрсэн
-                                </div>
-                              ) : (
-                                <div>
-                                  <div>Үр дүн:</div>
-
-                                  {item.visible ? (
-                                    item.assessment.report === 10 &&
-                                    item.result ? (
-                                      <>
-                                        <div className="flex items-center gap-2">
-                                          <Progress
-                                            size="small"
-                                            percent={Math.round(
-                                              (item.result.point /
-                                                item.result.total) *
-                                                100
-                                            )}
-                                            format={(percent) => `${percent}%`}
-                                            strokeColor={{
-                                              "0%": "#FF8400",
-                                              "100%": "#FF5C00",
-                                            }}
-                                          />
-                                          <span>
-                                            ({item.result.point}/
-                                            {item.result.total})
-                                          </span>
-                                        </div>
-                                      </>
-                                    ) : (
-                                      <div className="font-bold text-lg">
-                                        {item.result.result
-                                          ? (item.result.result
-                                              ? `${item.result.result}`
-                                              : "") +
-                                            (item.result.result &&
-                                            item.result.value
-                                              ? " / "
-                                              : "") +
-                                            (item.result.value
-                                              ? `${item.result.value}`
-                                              : "")
-                                          : ""}
-                                      </div>
-                                    )
-                                  ) : item.userEndDate ? (
-                                    <div className="flex items-center gap-2 text-main text-lg font-bold">
-                                      <EyeClosedLineDuotone width={18} />
-                                      Байгууллагад илгээсэн
-                                    </div>
-                                  ) : null}
-                                </div>
-                              )}
                               {!isExpired && <Divider />}
 
                               {!isExpired && (
@@ -1328,22 +1304,24 @@ export default function Test() {
                                   ) : item.userStartDate &&
                                     !item.userEndDate ? (
                                     <Link href={`/exam/${item.code}`}>
-                                      <Button className="link-btn-2 border-none">
-                                        <MouseBoldDuotone width={18} />
+                                      <Button className="grd-btn-5 border-none">
+                                        <PlayCircleBoldDuotone width={18} />
                                         Үргэлжлүүлэх
                                       </Button>
                                     </Link>
                                   ) : item.userEndDate == null ? (
                                     <Link href={`/exam/${item.code}`}>
-                                      <Button className="link-btn-2 border-none">
-                                        <CursorLineDuotone width={18} />
+                                      <Button className="grd-btn-4 border-none">
+                                        <StarFallMinimalistic2BoldDuotone
+                                          width={18}
+                                        />
                                         Тест өгөх
                                       </Button>
                                     </Link>
                                   ) : item.visible ? (
                                     <>
                                       <Button
-                                        className="link-btn-2 border-none"
+                                        className="grd-btn"
                                         onClick={() =>
                                           downloadReport(item.exams[0].code)
                                         }
@@ -1352,8 +1330,8 @@ export default function Test() {
                                         Тайлан татах
                                       </Button>
 
-                                      <button
-                                        className="flex items-center gap-2"
+                                      <Button
+                                        className="grd-btn-3"
                                         onClick={() =>
                                           shareToFacebookWithMeta(item.code)
                                         }
@@ -1365,10 +1343,7 @@ export default function Test() {
                                           height={18}
                                           alt="facebook"
                                         />
-                                        <div className="font-bold text-blue-700">
-                                          Хуваалцах
-                                        </div>
-                                      </button>
+                                      </Button>
                                     </>
                                   ) : (
                                     <button className="text-main flex text-center">

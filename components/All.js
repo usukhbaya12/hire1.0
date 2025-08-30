@@ -9,6 +9,7 @@ import {
   message,
   DatePicker,
   Space,
+  Progress,
 } from "antd";
 import {
   MagniferBoldDuotone,
@@ -303,39 +304,24 @@ const ApplicantsTable = ({ data, loading }) => {
   const getStatusTag = (record) => {
     if (!record.startDate && !record.endDate) {
       return (
-        <div className="relative group w-fit">
-          <div className="absolute -inset-0.5 bg-gradient-to-br from-yellow-600/50 to-orange-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-          <div className="relative bg-gradient-to-br from-yellow-400/30 to-yellow-300/20 rounded-full flex items-center justify-center border border-yellow-900/10">
-            <div className="text-xs flex items-center gap-1.5 font-bold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-1 px-3.5">
-              <div className="min-w-2 min-h-2 w-2 h-2 bg-yellow-500 rounded-full -mt-0.5"></div>
-              Мэйл илгээсэн
-            </div>
-          </div>
-        </div>
+        <Button className="shadow-md shadow-slate-200 grd-div-4">
+          <div className="w-1.5 h-1.5 bg-amber-500 rounded-full"></div>
+          Мэйл илгээсэн
+        </Button>
       );
     } else if (record.startDate && !record.endDate) {
       return (
-        <div className="relative group w-fit">
-          <div className="absolute -inset-0.5 bg-gradient-to-br from-blue-600/50 to-blue-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-          <div className="relative bg-gradient-to-br from-blue-400/30 to-blue-300/20 rounded-full flex items-center justify-center border border-blue-900/10">
-            <div className="text-xs flex items-center gap-1.5 font-bold bg-gradient-to-br from-gray-600 to-gray-700 bg-clip-text text-transparent py-1 px-3.5">
-              <div className="w-2 h-2 bg-blue-500 rounded-full -mt-0.5"></div>
-              Эхэлсэн
-            </div>
-          </div>
-        </div>
+        <Button className="grd-div-5 cursor-default shadow-md shadow-slate-200">
+          <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
+          Эхэлсэн
+        </Button>
       );
     } else if (record.endDate) {
       return (
-        <div className="relative group w-fit">
-          <div className="absolute -inset-0.5 bg-gradient-to-br from-lime-800/50 to-green-700/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-          <div className="relative bg-gradient-to-br from-lime-600/20 to-green-600/30 rounded-full flex items-center justify-center border border-yellow-900/10">
-            <div className="text-xs flex items-center gap-1.5 font-bold bg-gradient-to-br from-black/60 to-black/70 bg-clip-text text-transparent py-1 px-3.5">
-              <div className="w-2 h-2 bg-lime-600 rounded-full -mt-0.5"></div>
-              Дуусгасан
-            </div>
-          </div>
-        </div>
+        <Button className="grd-div-6 cursor-default shadow-md shadow-slate-200">
+          <div className="w-1.5 h-1.5 bg-emerald-600 rounded-full"></div>
+          Дуусгасан
+        </Button>
       );
     }
     return <Tag color="default">-</Tag>;
@@ -351,24 +337,30 @@ const ApplicantsTable = ({ data, loading }) => {
       const value = record.result.value;
 
       return (
-        <div className="flex items-center">
+        <div className="flex items-center font-extrabold">
           <div className="">{result || ""}</div> <span className="px-1">/</span>
           <div>{value || ""}</div>
         </div>
       );
     } else {
-      const point = record.result.point || 0;
-      const total = record.result.total || 1;
-      const percentage = Math.round((point / total) * 100);
-
-      let color = "text-red-500";
-      if (percentage >= 70) {
-        color = "text-green-500";
-      } else if (percentage >= 40) {
-        color = "text-orange-500";
-      }
-
-      return <div className={`font-bold ${color}`}>{percentage}%</div>;
+      return (
+        <div className="flex items-center gap-2">
+          <Progress
+            className="min-w-4"
+            size="small"
+            percent={Math.round(
+              (record.result.point / record.result.total) * 100
+            )}
+            strokeColor={{
+              "0%": "#FF8400",
+              "100%": "#FF5C00",
+            }}
+          />
+          <span>
+            ({record.result.point}/{record.result.total})
+          </span>
+        </div>
+      );
     }
   };
 
@@ -509,7 +501,7 @@ const ApplicantsTable = ({ data, loading }) => {
       render: (_, record) =>
         record.endDate && record.result ? (
           <Button
-            className="link-btn-2 border-none"
+            className="grd-btn"
             loading={loadingReportId === record.code}
             onClick={() => downloadReport(record.code)}
           >

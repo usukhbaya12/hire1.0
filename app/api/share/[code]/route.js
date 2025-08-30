@@ -76,11 +76,11 @@ function generateFallbackImageBuffer() {
   const ctx = fallbackCanvas.getContext("2d");
   ctx.fillStyle = "#000000";
   ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-  ctx.font = `${48 * SCALE}px Gilroy, Arial, sans-serif`;
+  ctx.font = `${48 * SCALE}px Gilroy`;
   ctx.fillStyle = "#f36421";
   ctx.textAlign = "center";
   ctx.fillText("Тестийн үр дүн / Hire.mn", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
-  ctx.font = `${24 * SCALE}px Gilroy, Arial, sans-serif`;
+  ctx.font = `${24 * SCALE}px Gilroy`;
   ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
   ctx.textAlign = "left";
   ctx.fillText("© Hire.mn", 1430 * SCALE, 770 * SCALE);
@@ -119,7 +119,7 @@ export async function GET(request, { params }) {
 
       const assessmentName = examDetails.assessmentName || "Assessment Results";
       ctx.font = `${86 * SCALE}px Gilroy2, sans-serif`;
-      ctx.fillStyle = "#FFFFFF";
+      ctx.fillStyle = "#221e1d";
       ctx.textAlign = "right";
 
       const maxWidth = 835 * SCALE;
@@ -161,7 +161,7 @@ export async function GET(request, { params }) {
         console.error("Error loading name icon (non-critical):", e);
       }
 
-      ctx.font = `bold ${47 * SCALE}px Gilroy2, Arial, sans-serif`;
+      ctx.font = `bold ${47 * SCALE}px Gilroy2`;
       ctx.fillStyle = "#FFFFFF";
       ctx.fillText(
         `${(examDetails.firstname || "").toUpperCase()}`,
@@ -178,15 +178,16 @@ export async function GET(request, { params }) {
 
       const examType = examDetails.type;
       if (examType === 11 || examType === 10) {
+        console.log("ss", examDetails);
         const score = examDetails.score ?? 0;
         const total = examDetails.total ?? 100;
 
-        ctx.font = `${60 * SCALE}px Gilroy2, Arial, sans-serif`;
+        ctx.font = `${60 * SCALE}px Gilroy2`;
         ctx.fillStyle = "#002B5B";
         ctx.fillText(`${score}`, 78 * SCALE, 648 * SCALE + 8 * SCALE);
 
         const scoreWidth = ctx.measureText(`${score}`).width;
-        ctx.font = `${40 * SCALE}px Gilroy2, Arial, sans-serif`;
+        ctx.font = `${40 * SCALE}px Gilroy2`;
         ctx.fillStyle = "#FFFFFF";
         ctx.fillText(
           `/ ${total}`,
@@ -194,7 +195,7 @@ export async function GET(request, { params }) {
           648 * SCALE + 6 * SCALE
         );
       } else {
-        ctx.font = `${42 * SCALE}px Gilroy2, Arial, sans-serif`;
+        ctx.font = `${42 * SCALE}px Gilroy2`;
         ctx.fillStyle = "#002B5B";
 
         let resultText = examDetails.result || "";
@@ -207,7 +208,7 @@ export async function GET(request, { params }) {
         ctx.fillText(resultText, 78 * SCALE, 648 * SCALE);
       }
 
-      ctx.font = `${24 * SCALE}px Gilroy, Arial, sans-serif`;
+      ctx.font = `${24 * SCALE}px Gilroy`;
       ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
       const today = new Date();
       const formattedDate = `${today.getFullYear()}.${String(
