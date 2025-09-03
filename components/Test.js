@@ -933,6 +933,7 @@ export default function Test() {
                               <>
                                 <Button
                                   className="grd-btn"
+                                  loading={loadingBtn === item.exams[0].code}
                                   onClick={() =>
                                     downloadReport(item.exams[0].code)
                                   }
@@ -992,7 +993,7 @@ export default function Test() {
                               ).toLocaleDateString(),
                               endDate: isExpired ? (
                                 <div>
-                                  {date.toLocaleString("en-US", {
+                                  {date.toLocaleString("mn-MN", {
                                     month: "numeric",
                                     day: "numeric",
                                     year: "numeric",
@@ -1002,7 +1003,7 @@ export default function Test() {
                                   })}
                                 </div>
                               ) : (
-                                date.toLocaleString("en-US", {
+                                date.toLocaleString("mn-MN", {
                                   month: "numeric",
                                   day: "numeric",
                                   year: "numeric",
@@ -1121,6 +1122,7 @@ export default function Test() {
                               ) : item.visible ? (
                                 <div className="flex justify-center items-center gap-2">
                                   <Button
+                                    loading={loadingBtn === item.exams[0].code}
                                     className="grd-btn"
                                     onClick={() => downloadReport(item.code)}
                                   >
@@ -1280,7 +1282,7 @@ export default function Test() {
                                 )}
                                 <div className="flex items-center gap-1">
                                   <strong>Дуусах огноо: </strong>{" "}
-                                  {endDateObj.toLocaleString("en-US", {
+                                  {endDateObj.toLocaleString("mn-MN", {
                                     month: "numeric",
                                     day: "numeric",
                                     year: "numeric",
@@ -1322,6 +1324,9 @@ export default function Test() {
                                     <>
                                       <Button
                                         className="grd-btn"
+                                        loading={
+                                          loadingBtn === item.exams[0].code
+                                        }
                                         onClick={() =>
                                           downloadReport(item.exams[0].code)
                                         }
