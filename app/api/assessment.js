@@ -4,7 +4,7 @@ import { api } from "../utils/routes";
 
 export const getAssessments = async () => {
   try {
-    const res = await axios.get(`${api}assessment`);
+    const res = await axios.get(`${api}assessment/all`);
     return {
       data: res.data.payload,
       token: true,
