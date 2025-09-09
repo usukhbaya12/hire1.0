@@ -491,7 +491,7 @@ export const getPaymentHistory = async (
     const token = await getAuthToken();
     if (!token) return { token: false };
     const response = await axios.get(
-      `${api}payment/view/${role}/${id}/${page}/${limit}`,
+      `${api}payment/view?limit=${limit}&page=${page}&role=${role}&id=${id}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
