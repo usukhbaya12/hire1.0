@@ -9,11 +9,13 @@ import {
   RestartLineDuotone,
   FilterLineDuotone,
   AlarmBoldDuotone,
+  ClipboardBoldDuotone,
 } from "solar-icons";
 import * as XLSX from "xlsx";
 import { customLocale } from "@/app/utils/values";
 import RenewModal from "./modals/Renew";
 import Link from "next/link";
+import { api } from "@/app/utils/routes";
 
 const EmployeeTable = ({ testData, onRefresh }) => {
   const [transformedData, setTransformedData] = useState([]);
@@ -447,7 +449,10 @@ const EmployeeTable = ({ testData, onRefresh }) => {
                 target="_blank"
                 passHref
               >
-                <Button className="link-btn-2 h-10 w-36">Тайлан татах</Button>
+                <Button className="link-btn-2 border-none">
+                  <ClipboardBoldDuotone width={18} />
+                  Тайлан татах
+                </Button>
               </Link>
             )}
 

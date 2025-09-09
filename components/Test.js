@@ -536,7 +536,7 @@ export default function Test() {
               </Button>
               {assessmentData?.data?.exampleReport && (
                 <Button
-                  className="grd-btn-2 h-10 w-full"
+                  className="grd-btn-2 h-10 w-[202px]"
                   onClick={() => {
                     window.open(
                       `${api}file/${assessmentData.data.exampleReport}`,
