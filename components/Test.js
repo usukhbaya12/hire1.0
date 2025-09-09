@@ -471,7 +471,10 @@ export default function Test() {
                 <Button
                   className="grd-btn-2 h-10 w-full"
                   onClick={() => {
-                    window.location.href = `${api}file/${assessmentData.data.exampleReport}`;
+                    window.open(
+                      `${api}file/${assessmentData.data.exampleReport}`,
+                      "_blank"
+                    );
                   }}
                 >
                   Жишиг тайлан харах
@@ -533,9 +536,12 @@ export default function Test() {
               </Button>
               {assessmentData?.data?.exampleReport && (
                 <Button
-                  className="grd-btn-2 h-10 w-[212px]"
+                  className="grd-btn-2 h-10 w-full"
                   onClick={() => {
-                    window.location.href = `${api}file/${assessmentData.data.exampleReport}`;
+                    window.open(
+                      `${api}file/${assessmentData.data.exampleReport}`,
+                      "_blank"
+                    );
                   }}
                 >
                   Жишиг тайлан харах
