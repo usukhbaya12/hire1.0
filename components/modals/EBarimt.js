@@ -3,7 +3,6 @@ import { Modal, Input, Button, message, Divider, Empty } from "antd";
 import { QrCodeBoldDuotone } from "solar-icons";
 
 const EBarimtModal = ({ open, onClose, barimtData, assessment }) => {
-  console.log(barimtData);
   return (
     <>
       <Modal
