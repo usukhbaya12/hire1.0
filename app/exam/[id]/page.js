@@ -411,7 +411,7 @@ export default function Exam() {
           {renderHeader()}
           <div className="fixed inset-0 bg-gray-100 z-10 pt-[200px]">
             <Completion
-              examId={params.id}
+              code={params.id}
               onClose={() => {
                 router.push("/");
               }}

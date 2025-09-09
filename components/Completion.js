@@ -1,66 +1,119 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import { Button, Progress } from "antd";
-import { getReport } from "@/app/api/exam";
-import { message } from "antd";
+import { Button, Progress, message } from "antd";
 import Link from "next/link";
-import {
-  ArchiveCheckBoldDuotone,
-  ArchiveDownMinimlisticBoldDuotone,
-  CheckCircle,
-  CheckCircleBoldDuotone,
-  DocumentAddBoldDuotone,
-  DocumentsBoldDuotone,
-} from "solar-icons";
+import { getReport } from "@/app/api/exam";
+import { ArchiveCheckBoldDuotone, DocumentAddBoldDuotone } from "solar-icons";
+import { api } from "@/app/utils/routes";
 
-const Completion = ({ examId, onClose, questionData, showReport }) => {
+const Completion = ({ code, showReport }) => {
+  console.log("init code", code);
+  console.log("init showreport", showReport);
+
   const [messageApi, contextHolder] = message.useMessage();
   const [progress, setProgress] = useState(0);
   const [svgStage, setSvgStage] = useState("doc");
   const [downloading, setDownloading] = useState(false);
   const [stage, setStage] = useState("processing");
+  const [jobId, setJobId] = useState(null);
+
   const messageShownRef = useRef({
     submitted: false,
     report: false,
   });
+
   useEffect(() => {
     if (!messageShownRef.current.submitted) {
       messageApi.success("Таны хариулт амжилттай илгээгдлээ.", 10);
       messageShownRef.current.submitted = true;
     }
+  }, []);
 
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        const next = prev + 1;
-        if (next >= 100) {
+  useEffect(() => {
+    if (!code) return;
+
+    let interval;
+
+    const fetchStatus = async (id) => {
+      try {
+        const endpoint = `${api}report/${id}/status`;
+        const res = await fetch(endpoint);
+        console.log("init res", res);
+
+        const data = await res.json();
+        console.log("init data", data);
+
+        const { status, progress, jobId: newJobId } = data.payload;
+
+        // First call: save jobId
+        if (!jobId && newJobId) {
+          setJobId(newJobId);
+        }
+
+        console.log("init jobid", jobId);
+
+        setProgress(progress || 0);
+
+        if (status === "COMPLETED" && progress === 100) {
           clearInterval(interval);
           setStage("ready");
           setSvgStage("done");
+
           if (!messageShownRef.current.report) {
             messageApi.success("Таны тайлан бэлэн боллоо.");
             messageShownRef.current.report = true;
           }
+        } else if (status === "FAILED") {
+          clearInterval(interval);
+          setStage("failed");
+          messageApi.error("Тайлан боловсруулахад алдаа гарлаа.");
         }
-        return next;
-      });
-    }, 300); // 30s
-
-    return () => {
-      clearInterval(interval);
+      } catch (err) {
+        console.error("❌ Status fetch error:", err);
+        clearInterval(interval);
+        setStage("failed");
+      }
     };
-  }, []);
+
+    // 1️⃣ First fetch with code to get jobId
+    const init = async () => {
+      try {
+        const endpoint = `${api}report/${code}/status`;
+        const res = await fetch(endpoint);
+        const data = await res.json();
+        const { status, progress, jobId: newJobId } = data.payload;
+
+        if (!newJobId) throw new Error("No jobId returned from server");
+
+        setJobId(newJobId);
+        setProgress(progress || 0);
+
+        // Start interval polling with jobId
+        interval = setInterval(() => {
+          fetchStatus(newJobId);
+        }, 1000);
+      } catch (err) {
+        console.error("❌ Initial status fetch error:", err);
+        setStage("failed");
+      }
+    };
+
+    init();
+
+    return () => clearInterval(interval);
+  }, [code]);
 
   const downloadReport = async () => {
     setDownloading(true);
     try {
-      const res = await getReport(examId);
+      const res = await getReport(code);
       if (res.success && res.data) {
         const blob = new Blob([res.data], { type: "application/pdf" });
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
-        link.setAttribute("download", `report_${examId}.pdf`);
+        link.setAttribute("download", `report_${code}.pdf`);
         document.body.appendChild(link);
         link.click();
         link.remove();
@@ -69,7 +122,7 @@ const Completion = ({ examId, onClose, questionData, showReport }) => {
         messageApi.error("Тайлан татахад алдаа гарлаа.");
       }
     } catch (error) {
-      console.error("GET / Aлдаа гарлаа.", error);
+      console.error("📂 Report татахад алдаа:", error);
       messageApi.error("Сервертэй холбогдоход алдаа гарлаа.");
     } finally {
       setDownloading(false);
@@ -90,50 +143,14 @@ const Completion = ({ examId, onClose, questionData, showReport }) => {
           viewBox="0 0 200 200"
           className="absolute"
         >
-          <defs>
-            <linearGradient
-              id="sharedGradient"
-              x1="0%"
-              y1="0%"
-              x2="100%"
-              y2="100%"
-            >
-              <stop offset="0%" stopColor="#4BB543" stopOpacity="0.1" />
-              <stop offset="100%" stopColor="#3C9B35" stopOpacity="0.3" />
-            </linearGradient>
-            <pattern
-              id="sharedPattern"
-              x="0"
-              y="0"
-              width="20"
-              height="20"
-              patternUnits="userSpaceOnUse"
-            >
-              <path
-                d="M0 10 L20 10"
-                stroke="#4BB543"
-                strokeWidth="0.5"
-                strokeOpacity="0.2"
-              />
-            </pattern>
-          </defs>
-
-          <circle cx="100" cy="100" r="90" fill="url(#sharedGradient)" />
-          <circle
-            cx="100"
-            cy="100"
-            r="88"
-            fill="none"
-            stroke="url(#sharedPattern)"
-            strokeWidth="4"
-          />
+          <circle cx="100" cy="100" r="90" fill="#f0fdf4" />
           <circle
             cx="100"
             cy="100"
             r="85"
             fill="none"
             stroke="#4BB543"
-            strokeWidth="1"
+            strokeWidth="2"
             strokeDasharray="4,6"
           >
             <animateTransform
@@ -147,10 +164,7 @@ const Completion = ({ examId, onClose, questionData, showReport }) => {
           </circle>
         </svg>
 
-        <div
-          className="absolute inset-0 flex items-center justify-center text-[64px] animate-pulse-slow text-green-700"
-          style={{ animationDuration: "2s" }}
-        >
+        <div className="absolute inset-0 flex items-center justify-center text-[64px] animate-pulse-slow text-green-700">
           {icon}
         </div>
       </div>
@@ -170,6 +184,8 @@ const Completion = ({ examId, onClose, questionData, showReport }) => {
             <h1 className="text-xl font-extrabold text-gray-900 text-center leading-5">
               {stage === "ready"
                 ? "Таны тайлан бэлэн боллоо!"
+                : stage === "failed"
+                ? "Алдаа гарлаа."
                 : "Тайлан боловсруулж байна..."}
             </h1>
 
@@ -177,24 +193,22 @@ const Completion = ({ examId, onClose, questionData, showReport }) => {
               {showReport ? (
                 stage === "ready" ? (
                   <>
-                    Та тестийнхээ үр дүнг багтаасан тайлангаа
-                    <span className="font-bold"> Тайлан татах</span> товч дээр
-                    дарж харна уу. Тайлангийн PDF хувилбар таны бүртгэлтэй
-                    и-мэйл хаяг руу илгээгдсэн.
+                    Та тайлангаа <span className="font-bold">Тайлан татах</span>{" "}
+                    товч дээр дарж эсвэл{" "}
+                    <span className="font-bold">Өгсөн тестүүд</span> цэсээс
+                    харах боломжтой.
                   </>
+                ) : stage === "failed" ? (
+                  "Тайлан боловсруулахад алдаа гарлаа. Дахин оролдоно уу."
                 ) : (
-                  <>
-                    Таны тестийн үр дүнг багтаасан тайланг боловсруулж дууссаны
-                    дараа татаж авах боломжтой ба тайлангийн PDF хувилбар таны
-                    бүртгэлтэй и-мэйл хаяг руу илгээгдэнэ.
-                  </>
+                  "Тайланг боловсруулж дууссаны дараа татаж авах боломжтой ба тайлангийн PDF хувилбар таны бүртгэлтэй и-мэйл хаяг руу илгээгдэнэ."
                 )
               ) : (
                 "Таны тестийн үр дүн, түүнийг багтаасан тайлан захиалагч байгууллага руу илгээгдсэн."
               )}
             </p>
 
-            {stage !== "ready" && (
+            {stage === "processing" && (
               <div className="px-8 scale-95">
                 <Progress percent={progress} strokeColor="#4BB543" />
               </div>
@@ -209,6 +223,11 @@ const Completion = ({ examId, onClose, questionData, showReport }) => {
                 >
                   Тайлан татах
                 </Button>
+              )}
+              {stage === "ready" && showReport && (
+                <Link href="/me">
+                  <Button className="grd-btn-9 h-10 w-36">Өгсөн тестүүд</Button>
+                </Link>
               )}
               <Link href="/">
                 <Button className="grd-btn h-10 w-36">Нүүр хуудас</Button>

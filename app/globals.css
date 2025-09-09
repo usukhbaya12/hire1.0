@@ -769,6 +769,62 @@ textarea.ant-input {
   margin-right: 6px;
 }
 
+.grd-btn-9.ant-btn {
+  font-weight: 800 !important;
+  color: #e07e0d !important; /* amber-500 */
+  position: relative !important;
+  background: linear-gradient(
+    to bottom right,
+    rgba(234, 179, 8, 0.2),
+    rgba(234, 179, 8, 0.2)
+  ) !important;
+  border-radius: 9999px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 1px solid rgba(234, 179, 8, 0.1) !important;
+  padding: 8px 16px;
+  transition: all 0.3s !important;
+}
+
+.grd-btn-9.ant-btn:hover,
+.grd-btn-9.ant-btn-variant-outlined:not(:disabled):not(
+    .ant-btn-disabled
+  ):hover {
+  background: linear-gradient(
+    to bottom right,
+    rgba(234, 179, 8, 0.3),
+    rgba(234, 179, 8, 0.3)
+  ) !important;
+  color: #e07e0d !important;
+  border-color: transparent !important;
+  border: 1px solid rgba(234, 179, 8, 0.1) !important;
+}
+
+.grd-btn-9.ant-btn::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(
+    to bottom right,
+    rgba(234, 179, 8, 0.5),
+    rgba(234, 179, 8, 0.5)
+  );
+  border-radius: 9999px;
+  filter: blur(4px);
+  opacity: 0.3;
+  z-index: -1;
+  transition: opacity 0.3s;
+}
+
+.grd-btn-9.ant-btn:hover::before {
+  opacity: 0.4;
+}
+
+.grd-btn-9.ant-btn .btn-icon {
+  margin-right: 6px;
+}
+
 /* 🔶 Yellow-ish version */
 .grd-div-4.ant-btn {
   font-weight: 800 !important;
