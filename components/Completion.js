@@ -8,9 +8,6 @@ import { ArchiveCheckBoldDuotone, DocumentAddBoldDuotone } from "solar-icons";
 import { api } from "@/app/utils/routes";
 
 const Completion = ({ code, showReport }) => {
-  console.log("init code", code);
-  console.log("init showreport", showReport);
-
   const [messageApi, contextHolder] = message.useMessage();
   const [progress, setProgress] = useState(0);
   const [svgStage, setSvgStage] = useState("doc");
@@ -39,19 +36,14 @@ const Completion = ({ code, showReport }) => {
       try {
         const endpoint = `${api}report/${id}/status`;
         const res = await fetch(endpoint);
-        console.log("init res", res);
 
         const data = await res.json();
-        console.log("init data", data);
 
         const { status, progress, jobId: newJobId } = data.payload;
 
-        // First call: save jobId
         if (!jobId && newJobId) {
           setJobId(newJobId);
         }
-
-        console.log("init jobid", jobId);
 
         setProgress(progress || 0);
 

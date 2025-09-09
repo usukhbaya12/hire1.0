@@ -119,7 +119,7 @@ export async function GET(request, { params }) {
 
       const assessmentName = examDetails.assessmentName || "Assessment Results";
       ctx.font = `${86 * SCALE}px Gilroy2, sans-serif`;
-      ctx.fillStyle = "#231e20";
+      ctx.fillStyle = "#ffffff";
       ctx.textAlign = "right";
 
       const maxWidth = 835 * SCALE;
@@ -183,7 +183,7 @@ export async function GET(request, { params }) {
         const total = examDetails.total ?? 100;
 
         ctx.font = `${60 * SCALE}px Gilroy2, Arial, sans-serif`;
-        ctx.fillStyle = "#002B5B";
+        ctx.fillStyle = "#231e20";
         ctx.fillText(`${score}`, 78 * SCALE, 648 * SCALE + 8 * SCALE);
 
         const scoreWidth = ctx.measureText(`${score}`).width;
@@ -196,7 +196,7 @@ export async function GET(request, { params }) {
         );
       } else {
         ctx.font = `${42 * SCALE}px Gilroy2, Arial, sans-serif`;
-        ctx.fillStyle = "#002B5B";
+        ctx.fillStyle = "#231e20";
 
         let resultText = examDetails.result || "";
         if (examDetails.value && resultText) {
