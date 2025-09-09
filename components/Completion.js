@@ -3,7 +3,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Button, Progress, message } from "antd";
 import Link from "next/link";
-import { getReport } from "@/app/api/exam";
 import { ArchiveCheckBoldDuotone, DocumentAddBoldDuotone } from "solar-icons";
 import { api } from "@/app/utils/routes";
 
@@ -11,7 +10,6 @@ const Completion = ({ code, showReport }) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [progress, setProgress] = useState(0);
   const [svgStage, setSvgStage] = useState("doc");
-  const [downloading, setDownloading] = useState(false);
   const [stage, setStage] = useState("processing");
   const [jobId, setJobId] = useState(null);
 
@@ -95,31 +93,6 @@ const Completion = ({ code, showReport }) => {
 
     return () => clearInterval(interval);
   }, [code]);
-
-  const downloadReport = async () => {
-    setDownloading(true);
-    try {
-      const res = await getReport(code);
-      if (res.success && res.data) {
-        const blob = new Blob([res.data], { type: "application/pdf" });
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", `report_${code}.pdf`);
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-        window.URL.revokeObjectURL(url);
-      } else {
-        messageApi.error("Тайлан татахад алдаа гарлаа.");
-      }
-    } catch (error) {
-      console.error("📂 Report татахад алдаа:", error);
-      messageApi.error("Сервертэй холбогдоход алдаа гарлаа.");
-    } finally {
-      setDownloading(false);
-    }
-  };
 
   const renderSVG = () => {
     const icon = {
@@ -208,13 +181,13 @@ const Completion = ({ code, showReport }) => {
 
             <div className="flex flex-col gap-4 items-center pt-4">
               {stage === "ready" && showReport && (
-                <Button
-                  className="grd-btn-2 h-10 w-36"
-                  onClick={downloadReport}
-                  loading={downloading}
+                <Link
+                  href={`${api}file/report-${code}.pdf`}
+                  target="_blank"
+                  passHref
                 >
-                  Тайлан татах
-                </Button>
+                  <Button className="grd-btn-2 h-10 w-36">Тайлан татах</Button>
+                </Link>
               )}
               {stage === "ready" && showReport && (
                 <Link href="/me">

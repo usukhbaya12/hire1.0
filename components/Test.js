@@ -4,15 +4,7 @@ import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { getAssessmentById, getUserTestHistory } from "@/app/api/assessment";
-import {
-  Breadcrumb,
-  Button,
-  Divider,
-  message,
-  Progress,
-  Spin,
-  Table,
-} from "antd";
+import { Breadcrumb, Button, Divider, message, Progress, Table } from "antd";
 import {
   AlarmBoldDuotone,
   BookBookmarkBoldDuotone,
@@ -20,16 +12,12 @@ import {
   CalendarBoldDuotone,
   CaseRoundMinimalisticBoldDuotone,
   ClipboardTextBoldDuotone,
-  CursorLineDuotone,
   EyeBoldDuotone,
   EyeClosedLineDuotone,
-  Flag2BoldDuotone,
   FolderCloudBoldDuotone,
   HistoryBoldDuotone,
-  MouseBoldDuotone,
   NotificationLinesRemoveBoldDuotone,
   PlayCircleBoldDuotone,
-  QrCodeBoldDuotone,
   QuestionCircleBoldDuotone,
   SquareArrowRightDownBoldDuotone,
   StarFall2BoldDuotone,
@@ -41,16 +29,8 @@ import {
 import Image from "next/image";
 import { api } from "@/app/utils/routes";
 import PurchaseModal from "@/components/modals/Purchase";
-import {
-  checkPayment,
-  ebarimt,
-  purchaseTest,
-  userService,
-} from "@/app/api/main";
+import { ebarimt, purchaseTest, userService } from "@/app/api/main";
 import QPay from "@/components/modals/QPay";
-import { getReport } from "@/app/api/exam";
-import { motion } from "framer-motion";
-import { LoadingOutlined } from "@ant-design/icons";
 import { customLocale } from "@/app/utils/values";
 import NotFoundPage from "@/app/not-found";
 import Link from "next/link";
@@ -64,7 +44,6 @@ export default function Test() {
   const params = useParams();
   const testId = params.id;
   const [loading, setLoading] = useState(false);
-  const [loadingBtn, setLoadingBtn] = useState(false);
   const [loadingTakeTest, setLoadingTakeTest] = useState(false);
   const [assessmentData, setAssessmentData] = useState([]);
   const { data: session } = useSession();
@@ -351,34 +330,6 @@ export default function Test() {
       messageApi.error("Сервертэй холбогдоход алдаа гарлаа.");
     } finally {
       setConfirmLoading(false);
-    }
-  };
-
-  const downloadReport = async (code) => {
-    try {
-      setLoadingBtn(code);
-      const res = await getReport(code);
-
-      if (res.success && res.data) {
-        const blob = new Blob([res.data], { type: "application/pdf" });
-        const url = window.URL.createObjectURL(blob);
-
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", `report_${code}.pdf`);
-        document.body.appendChild(link);
-        link.click();
-
-        link.parentNode.removeChild(link);
-        window.URL.revokeObjectURL(url);
-      } else {
-        messageApi.error("Тайлан татахад алдаа гарлаа.");
-      }
-    } catch (error) {
-      console.error("GET / Aлдаа гарлаа.", error);
-      messageApi.error("Сервертэй холбогдоход алдаа гарлаа.");
-    } finally {
-      setLoadingBtn(null);
     }
   };
 
@@ -748,19 +699,35 @@ export default function Test() {
                               </div>
                             ) : (
                               <div className="flex justify-center items-center gap-2">
-                                <Button
-                                  type="link"
-                                  loading={loadingBtn === item.exams[0].code}
-                                  className="grd-btn"
-                                  onClick={() =>
-                                    item.exams &&
-                                    item.exams.length > 0 &&
-                                    downloadReport(item.exams[0].code)
-                                  }
+                                <Link
+                                  href={`${api}file/report-${item.exams[0].code}.pdf`}
+                                  target="_blank"
+                                  passHref
                                 >
-                                  <ClipboardTextBoldDuotone width={18} />
-                                  Татах
-                                </Button>
+                                  <Button className="grd-btn">
+                                    <ClipboardTextBoldDuotone width={18} />
+                                    Татах
+                                  </Button>
+                                </Link>
+                                {item.price === 0 && (
+                                  <Button
+                                    onClick={() =>
+                                      shareToFacebookWithMeta(
+                                        item.exams[0].code
+                                      )
+                                    }
+                                    className="grd-btn-3"
+                                    title="Фэйсбүүкт хуваалцах"
+                                  >
+                                    <Image
+                                      src="/facebook.png"
+                                      alt="Facebook icon"
+                                      width={18}
+                                      height={18}
+                                      priority
+                                    />
+                                  </Button>
+                                )}
                               </div>
                             ),
                         }))}
@@ -931,16 +898,16 @@ export default function Test() {
                               </Link>
                             ) : (
                               <>
-                                <Button
-                                  className="grd-btn"
-                                  loading={loadingBtn === item.exams[0].code}
-                                  onClick={() =>
-                                    downloadReport(item.exams[0].code)
-                                  }
+                                <Link
+                                  href={`${api}file/report-${item.exams[0].code}.pdf`}
+                                  target="_blank"
+                                  passHref
                                 >
-                                  <ClipboardTextBoldDuotone width={18} />
-                                  Тайлан татах
-                                </Button>
+                                  <Button className="grd-btn">
+                                    <ClipboardTextBoldDuotone width={18} />
+                                    Тайлан татах
+                                  </Button>
+                                </Link>
                               </>
                             )}
                             {item.exams[0]?.userStartDate != null &&
@@ -1121,14 +1088,17 @@ export default function Test() {
                                 </div>
                               ) : item.visible ? (
                                 <div className="flex justify-center items-center gap-2">
-                                  <Button
-                                    loading={loadingBtn === item.exams[0].code}
-                                    className="grd-btn"
-                                    onClick={() => downloadReport(item.code)}
+                                  <Link
+                                    href={`${api}file/report-${item.code}.pdf`}
+                                    target="_blank"
+                                    passHref
                                   >
-                                    <ClipboardTextBoldDuotone width={18} />
-                                    Татах
-                                  </Button>
+                                    <Button className="grd-btn">
+                                      <ClipboardTextBoldDuotone width={18} />
+                                      Татах
+                                    </Button>
+                                  </Link>
+
                                   <Button
                                     onClick={() =>
                                       shareToFacebookWithMeta(item.code)
@@ -1322,19 +1292,18 @@ export default function Test() {
                                     </Link>
                                   ) : item.visible ? (
                                     <>
-                                      <Button
-                                        className="grd-btn"
-                                        loading={
-                                          loadingBtn === item.exams[0].code
-                                        }
-                                        onClick={() =>
-                                          downloadReport(item.exams[0].code)
-                                        }
+                                      <Link
+                                        href={`${api}file/report-${item.code}.pdf`}
+                                        target="_blank"
+                                        passHref
                                       >
-                                        <ClipboardTextBoldDuotone width={18} />
-                                        Тайлан татах
-                                      </Button>
-
+                                        <Button className="grd-btn">
+                                          <ClipboardTextBoldDuotone
+                                            width={18}
+                                          />
+                                          Тайлан татах
+                                        </Button>
+                                      </Link>
                                       <Button
                                         className="grd-btn-3"
                                         onClick={() =>

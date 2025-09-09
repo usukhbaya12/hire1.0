@@ -178,7 +178,6 @@ export async function GET(request, { params }) {
 
       const examType = examDetails.type;
       if (examType === 11 || examType === 10) {
-        console.log("ss", examDetails);
         const score = examDetails.point ?? 0;
         const total = examDetails.total ?? 100;
 

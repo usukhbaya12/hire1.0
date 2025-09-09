@@ -3,8 +3,6 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Button, Collapse, Divider, Progress, Timeline } from "antd";
 import {
-  CursorLineDuotone,
-  MouseBoldDuotone,
   NotesBoldDuotone,
   RoundArrowRightDownLineDuotone,
   UserPlusBoldDuotone,
@@ -20,7 +18,6 @@ import {
   PlayCircleBoldDuotone,
   StarFallMinimalistic2BoldDuotone,
 } from "solar-icons";
-import { getReport } from "@/app/api/exam";
 import { DropdownIcon } from "./Icons";
 import Link from "next/link";
 import Image from "next/image";
@@ -29,8 +26,6 @@ import { api } from "@/app/utils/routes";
 const AssessmentCard = ({ assessment, isInvited = false }) => {
   const router = useRouter();
   const { data: session } = useSession();
-  const [loadingCodes, setLoadingCodes] = useState({});
-  const [messageApi, setMessageApi] = useState(null);
 
   const histories = assessment.histories.sort(
     (a, b) => new Date(b.examStarted) - new Date(a.examStarted)
@@ -49,41 +44,11 @@ const AssessmentCard = ({ assessment, isInvited = false }) => {
     (sum, history) => sum + (history.price || 0),
     0
   );
-  const downloadReport = async (code) => {
-    try {
-      setLoadingCodes((prev) => ({ ...prev, [code]: true }));
-      const res = await getReport(code);
-
-      if (res.success && res.data) {
-        const blob = new Blob([res.data], { type: "application/pdf" });
-        const url = window.URL.createObjectURL(blob);
-
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", `report_${code}.pdf`);
-        document.body.appendChild(link);
-        link.click();
-
-        link.parentNode.removeChild(link);
-        window.URL.revokeObjectURL(url);
-      } else {
-        if (messageApi) {
-          messageApi.error("Тайлан татахад алдаа гарлаа.");
-        }
-      }
-    } catch (error) {
-      console.error("GET / Aлдаа гарлаа.", error);
-      if (messageApi) {
-        messageApi.error("Сервертэй холбогдоход алдаа гарлаа.");
-      }
-    } finally {
-      setLoadingCodes((prev) => ({ ...prev, [code]: false }));
-    }
-  };
 
   const handleButtonClick = (history) => {
     if (history.completed) {
-      downloadReport(history.exams.code);
+      const reportUrl = `${api}file/report-${history.exams.code}.pdf`;
+      window.open(reportUrl, "_blank");
     } else if (!history.completed && history.examStarted) {
       router.push(`/exam/${history.exams.code}`);
     } else if (!history.completed && isInvited) {
@@ -104,8 +69,6 @@ const AssessmentCard = ({ assessment, isInvited = false }) => {
 
     window.open(facebookShareUrl, "_blank", "width=600,height=400");
   };
-
-  console.log(histories);
 
   const AssessmentTimeline = ({ histories }) => {
     return (
@@ -134,9 +97,7 @@ const AssessmentCard = ({ assessment, isInvited = false }) => {
             !history.exams.visible;
 
           const code = history.exams?.code;
-          const isLoading = code ? loadingCodes[code] : false;
-
-          console.log("k", histories);
+          const isLoading = false;
 
           return {
             dot: (
@@ -284,15 +245,20 @@ const AssessmentCard = ({ assessment, isInvited = false }) => {
                         <NotificationLinesRemoveBoldDuotone width={18} />
                       </button>
                     ) : userEndDate ? (
-                      <Button
-                        loading={isLoading}
-                        className="grd-btn"
-                        onClick={() => handleButtonClick(history)}
-                        disabled={isExpired || isCompletedButNotVisible}
+                      <Link
+                        href={`${api}file/report-${code}.pdf`}
+                        target="_blank"
+                        passHref
                       >
-                        <ClipboardTextBoldDuotone width={18} height={18} />
-                        Тайлан татах
-                      </Button>
+                        <Button
+                          loading={isLoading}
+                          className="grd-btn"
+                          disabled={isExpired || isCompletedButNotVisible}
+                        >
+                          <ClipboardTextBoldDuotone width={18} height={18} />
+                          Тайлан харах
+                        </Button>
+                      </Link>
                     ) : examStartDate && !userEndDate ? (
                       <Button
                         loading={isLoading}

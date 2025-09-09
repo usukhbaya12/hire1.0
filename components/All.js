@@ -30,11 +30,11 @@ import { getReport } from "@/app/api/exam";
 import * as XLSX from "xlsx";
 import dayjs from "dayjs";
 import { customLocale } from "@/app/utils/values";
+import Link from "next/link";
 
 const ApplicantsTable = ({ data, loading }) => {
   const [applicants, setApplicants] = useState([]);
   const [filteredApplicants, setFilteredApplicants] = useState([]);
-  const [loadingReportId, setLoadingReportId] = useState(null);
   const [messageApi, contextHolder] = message.useMessage();
   const [exporting, setExporting] = useState(false);
   const [searchText, setSearchText] = useState("");
@@ -191,34 +191,6 @@ const ApplicantsTable = ({ data, loading }) => {
 
     // Apply default filters
     applyFilters(applicants, "", dayjs().subtract(1, "month"), dayjs());
-  };
-
-  const downloadReport = async (code) => {
-    try {
-      setLoadingReportId(code);
-      const res = await getReport(code);
-
-      if (res.success && res.data) {
-        const blob = new Blob([res.data], { type: "application/pdf" });
-        const url = window.URL.createObjectURL(blob);
-
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", `report_${code}.pdf`);
-        document.body.appendChild(link);
-        link.click();
-
-        link.parentNode.removeChild(link);
-        window.URL.revokeObjectURL(url);
-      } else {
-        messageApi.error("Тайлан татахад алдаа гарлаа.");
-      }
-    } catch (error) {
-      console.error("GET / Aлдаа гарлаа.", error);
-      messageApi.error("Сервертэй холбогдоход алдаа гарлаа.");
-    } finally {
-      setLoadingReportId(null);
-    }
   };
 
   const exportToExcel = () => {
@@ -500,16 +472,13 @@ const ApplicantsTable = ({ data, loading }) => {
       align: "right",
       render: (_, record) =>
         record.endDate && record.result ? (
-          <Button
-            className="grd-btn"
-            loading={loadingReportId === record.code}
-            onClick={() => downloadReport(record.code)}
+          <Link
+            href={`${api}file/report-${record.code}.pdf`}
+            target="_blank"
+            passHref
           >
-            {loadingReportId !== record.code && (
-              <ClipboardBoldDuotone width={18} />
-            )}
-            Татах
-          </Button>
+            <Button className="grd-btn h-10 w-36">Тайлан татах</Button>
+          </Link>
         ) : null,
     },
   ];

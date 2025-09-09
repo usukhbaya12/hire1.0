@@ -1,35 +1,23 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  Table,
-  Progress,
-  Button,
-  message,
-  Input,
-  Space,
-  Dropdown,
-  Menu,
-} from "antd";
-import { getReport } from "@/app/api/exam";
+import { Table, Progress, Button, message, Input } from "antd";
 import dayjs from "dayjs";
 import {
-  ClipboardBoldDuotone,
   EyeBoldDuotone,
   EyeClosedBold,
   MagniferBoldDuotone,
   DownloadMinimalisticBoldDuotone,
   RestartLineDuotone,
   FilterLineDuotone,
-  ClockCircleBoldDuotone,
   AlarmBoldDuotone,
 } from "solar-icons";
 import * as XLSX from "xlsx";
 import { customLocale } from "@/app/utils/values";
 import RenewModal from "./modals/Renew";
+import Link from "next/link";
 
 const EmployeeTable = ({ testData, onRefresh }) => {
   const [transformedData, setTransformedData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [loadingReportId, setLoadingReportId] = useState(null);
   const [filteredInfo, setFilteredInfo] = useState({});
   const [sortedInfo, setSortedInfo] = useState({});
   const [searchText, setSearchText] = useState("");
@@ -163,34 +151,6 @@ const EmployeeTable = ({ testData, onRefresh }) => {
             Хүлээгдэж буй
           </Button>
         );
-    }
-  };
-
-  const downloadReport = async (code) => {
-    try {
-      setLoadingReportId(code);
-      const res = await getReport(code);
-
-      if (res.success && res.data) {
-        const blob = new Blob([res.data], { type: "application/pdf" });
-        const url = window.URL.createObjectURL(blob);
-
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", `report_${code}.pdf`);
-        document.body.appendChild(link);
-        link.click();
-
-        link.parentNode.removeChild(link);
-        window.URL.revokeObjectURL(url);
-      } else {
-        messageApi.error("Тайлан татахад алдаа гарлаа.");
-      }
-    } catch (error) {
-      console.error("GET / Aлдаа гарлаа.", error);
-      messageApi.error("Сервертэй холбогдоход алдаа гарлаа.");
-    } finally {
-      setLoadingReportId(null);
     }
   };
 
@@ -482,16 +442,13 @@ const EmployeeTable = ({ testData, onRefresh }) => {
         return (
           <>
             {isReportAvailable && (
-              <Button
-                className="link-btn-2 border-none"
-                loading={loadingReportId === record.code}
-                onClick={() => downloadReport(record.code)}
+              <Link
+                href={`${api}file/report-${record.code}.pdf`}
+                target="_blank"
+                passHref
               >
-                {loadingReportId !== record.code && (
-                  <ClipboardBoldDuotone width={18} />
-                )}
-                Татах
-              </Button>
+                <Button className="link-btn-2 h-10 w-36">Тайлан татах</Button>
+              </Link>
             )}
 
             {isExpired && (
@@ -499,9 +456,7 @@ const EmployeeTable = ({ testData, onRefresh }) => {
                 className="link-btn-3 border-none"
                 onClick={() => showExtendModal(record)}
               >
-                {loadingReportId !== record.code && (
-                  <AlarmBoldDuotone width={18} />
-                )}
+                <AlarmBoldDuotone width={18} />
                 Сунгах
               </Button>
             )}
