@@ -2,12 +2,13 @@ import { NextResponse } from "next/server";
 import axios from "axios";
 import { api } from "@/app/utils/routes";
 
-export async function GET({ params }) {
+export async function GET(req, context) {
+  const params = await context.params;
   const { id } = params;
 
   try {
+    // 🟢 Чиний backend PDF URL
     const backendUrl = `${api}exam/pdf/${id}`;
-
     // Backend руу request явуулж PDF-ийг татаж авна
     const response = await axios.get(backendUrl, {
       responseType: "arraybuffer", // PDF-г binary татна
