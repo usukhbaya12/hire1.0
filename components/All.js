@@ -473,7 +473,7 @@ const ApplicantsTable = ({ data, loading }) => {
       render: (_, record) =>
         record.endDate && record.result ? (
           <Link
-            href={`${api}file/report-${record.code}.pdf`}
+            href={`/api/report/${record.code}`}
             target="_blank"
             passHref
           >

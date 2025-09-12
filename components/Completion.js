@@ -182,7 +182,7 @@ const Completion = ({ code, showReport }) => {
             <div className="flex flex-col gap-4 items-center pt-4">
               {stage === "ready" && showReport && (
                 <Link
-                  href={`${api}file/report-${code}.pdf`}
+                  href={`/api/report/${code}`}
                   target="_blank"
                   passHref
                 >
