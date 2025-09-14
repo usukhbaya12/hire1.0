@@ -37,7 +37,7 @@ export const AssessmentProvider = ({ children }) => {
       }
 
       if (assessmentsResponse.success) {
-        const filteredData = assessmentsResponse.data.res.filter((item) =>
+        const filteredData = assessmentsResponse.data.data.filter((item) =>
           [10, 30].includes(item.data.status)
         );
         setAssessments(filteredData);
