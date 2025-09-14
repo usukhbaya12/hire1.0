@@ -95,7 +95,7 @@ export const getUserTestHistory = async (id) => {
   if (!token) return { token: false };
 
   try {
-    const res = await axios.get(`${api}userService/user/${id}/200/1`, {
+    const res = await axios.get(`${api}userService/user/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",

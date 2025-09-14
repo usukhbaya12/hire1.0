@@ -39,6 +39,7 @@ import LoadingSpinner from "./Spin";
 import { useAssessments } from "@/app/utils/providers";
 import Assessment from "./Assessment";
 import Footer from "./Footer";
+import dayjs from "dayjs";
 
 export default function Test() {
   const params = useParams();
@@ -564,7 +565,9 @@ export default function Test() {
                         ?.filter((item) => item.status === 20)
                         .map((item) => ({
                           key: item.id,
-                          date: new Date(item.createdAt).toLocaleDateString(),
+                          date: item.createdAt
+                            ? dayjs(item.createdAt).format("YYYY-MM-DD")
+                            : null,
                           status:
                             item.exams[0]?.userStartDate == null &&
                             item.exams[0]?.userEndDate == null ? (
@@ -755,7 +758,9 @@ export default function Test() {
                                 width={18}
                                 className="-mt-1"
                               />
-                              {new Date(item.createdAt).toLocaleDateString()}
+                              {item.createdAt
+                                ? dayjs(item.createdAt).format("YYYY-MM-DD")
+                                : ""}
                             </div>
                             <div>
                               {item.exams[0]?.userStartDate == null &&
@@ -961,9 +966,10 @@ export default function Test() {
 
                             return {
                               key: item.id,
-                              date: new Date(
-                                item.createdAt
-                              ).toLocaleDateString(),
+                              date: item.createdAt
+                                ? dayjs(item.createdAt).format("YYYY-MM-DD")
+                                : "",
+
                               endDate: isExpired ? (
                                 <div>
                                   {date.toLocaleString("mn-MN", {
@@ -1157,9 +1163,9 @@ export default function Test() {
                                     width={18}
                                     className="-mt-1"
                                   />
-                                  {new Date(
-                                    item.createdAt
-                                  ).toLocaleDateString()}
+                                  {item.createdAt
+                                    ? dayjs(item.createdAt).format("YYYY-MM-DD")
+                                    : ""}
                                 </div>
                                 <div>
                                   {item.userStartDate == null &&
@@ -1419,7 +1425,9 @@ export default function Test() {
                     columns={columns_corp}
                     dataSource={testHistory?.data.map((item) => ({
                       key: item.id,
-                      date: new Date(item.createdAt).toLocaleDateString(),
+                      date: item.createdAt
+                        ? dayjs(item.createdAt).format("YYYY-MM-DD")
+                        : "",
                       testName: item.assessment.name,
                       bought: item.count + " эрх",
                       payment: (

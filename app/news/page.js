@@ -17,6 +17,7 @@ import { motion as m } from "framer-motion";
 import { message, Button, Segmented } from "antd";
 import { getBlogs } from "../api/main";
 import { api } from "../utils/routes";
+import dayjs from "dayjs";
 
 const BlogSkeleton = () => (
   <div className="group relative backdrop-blur-xl bg-gradient-to-br from-white/80 via-white/70 to-white/60 border border-white/30 shadow-lg shadow-black/10 rounded-[28px] overflow-hidden animate-pulse">
@@ -46,11 +47,7 @@ const BlogCard = ({ blog, disablePinnedLayout = false }) => {
     : "/placeholder-blog.jpg";
 
   const formattedDate = blog.createdAt
-    ? new Date(blog.createdAt).toLocaleDateString("mn-MN", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      })
+    ? dayjs(blog.createdAt).format("YYYY-MM-DD")
     : null;
 
   const BlurImage = ({ src, alt }) => {
@@ -72,14 +69,16 @@ const BlogCard = ({ blog, disablePinnedLayout = false }) => {
   const CardContent = () => (
     <div
       className={`relative flex flex-col flex-grow ${
-        isPinned
+        isPinned && !disablePinnedLayout
           ? "justify-between pb-6 px-6 pt-4 lg:p-8 lg:pt-16"
           : "space-y-2 pb-6 px-6 pt-4"
       }`}
     >
       <h3
         className={`font-extrabold transition-colors duration-500 group-hover:text-main leading-tight line-clamp-4 h-[3.75rem] ${
-          isPinned ? "text-xl lg:text-2xl font-black" : "text-lg"
+          isPinned && !disablePinnedLayout
+            ? "text-xl lg:text-2xl font-black"
+            : "text-lg"
         }`}
       >
         {blog.title}
@@ -93,7 +92,11 @@ const BlogCard = ({ blog, disablePinnedLayout = false }) => {
             </span>
           </div>
         </div>
-        <div className={`flex gap-2 ${isPinned ? "flex-col" : "items-center"}`}>
+        <div
+          className={`flex gap-2 ${
+            isPinned && !disablePinnedLayout ? "flex-col" : "items-center"
+          }`}
+        >
           <div className="w-fit flex items-center gap-2 bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 px-3 py-1.5 rounded-full border border-blue-200 text-sm">
             {formattedDate && <CalendarBoldDuotone width={16} />}
             {formattedDate && (
@@ -104,7 +107,8 @@ const BlogCard = ({ blog, disablePinnedLayout = false }) => {
             {blog.minutes && <ClockCircleBoldDuotone width={16} />}
             {blog.minutes && (
               <span className="font-semibold">
-                {blog.minutes} минут {isPinned && "уншина"}
+                {blog.minutes} минут{" "}
+                {isPinned && !disablePinnedLayout && "уншина"}
               </span>
             )}
           </div>
@@ -118,7 +122,9 @@ const BlogCard = ({ blog, disablePinnedLayout = false }) => {
       <BlurImage src={imageUrl} alt={blog.title} />
       <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out">
         <div className="flex items-center gap-1 font-bold text-white text-lg transform transition-transform group-hover:scale-105">
-          <span>{isPinned ? "Дэлгэрэнгүй унших" : "Унших"}</span>
+          <span>
+            {isPinned && !disablePinnedLayout ? "Дэлгэрэнгүй унших" : "Унших"}
+          </span>
           <ArrowRight width={16} />
         </div>
       </div>
@@ -168,41 +174,79 @@ const BlogCard = ({ blog, disablePinnedLayout = false }) => {
 };
 
 export default function News() {
-  const [blogCache, setBlogCache] = useState({ 0: {}, 1: {}, 2: {} });
   const [activeCategory, setActiveCategory] = useState(0);
+  const [blogPages, setBlogPages] = useState({ 0: 1, 1: 1, 2: 1 });
+  const [blogData, setBlogData] = useState({ 0: [], 1: [], 2: [] });
+  const [totalCounts, setTotalCounts] = useState({ 0: 0, 1: 0, 2: 0 });
+  const [featuredBlog, setFeaturedBlog] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+
   const [messageApi, contextHolder] = message.useMessage();
 
-  useEffect(() => {
-    const fetchAll = async () => {
-      setLoading(true);
-      try {
-        const [all, blog, tip] = await Promise.all([
-          getBlogs(0, 100, 1),
-          getBlogs(1, 100, 1),
-          getBlogs(2, 100, 1),
-        ]);
+  const fetchBlogs = async (category, page = 1) => {
+    setLoading(true);
+    try {
+      const res = await getBlogs(10, page, category);
+      if (res.success) {
+        let blogs = res.data || [];
 
-        setBlogCache({
-          0: {
-            blogs: all.data.data.filter((b) => !b.pinned),
-            featured: all.data.data.find((b) => b.pinned),
-          },
-          1: { blogs: blog.data.data },
-          2: { blogs: tip.data.data },
-        });
-      } catch (err) {
-        messageApi.error("Мэдээлэл татаж чадсангүй.");
-      } finally {
-        setLoading(false);
+        if (category === 0 && page === 1) {
+          const pinned = blogs.find((b) => b.pinned);
+          setFeaturedBlog(pinned || null);
+          blogs = blogs.filter((b) => !b.pinned);
+        }
+
+        setBlogData((prev) => ({
+          ...prev,
+          [category]: page === 1 ? blogs : [...prev[category], ...blogs],
+        }));
+        setTotalCounts((prev) => ({
+          ...prev,
+          [category]: res.count || 0,
+        }));
+        setBlogPages((prev) => ({ ...prev, [category]: page }));
+      } else {
+        messageApi.error(res.message || "Мэдээлэл татаж чадсангүй.");
       }
-    };
+    } catch (err) {
+      console.error(err);
+      messageApi.error("Мэдээлэл татаж чадсангүй.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchAll();
-  }, []);
+  useEffect(() => {
+    fetchBlogs(activeCategory, 1);
+  }, [activeCategory]);
 
-  const featuredBlog = blogCache[0]?.featured;
-  const blogs = blogCache[activeCategory]?.blogs || [];
+  const blogs = blogData[activeCategory] || [];
+  const total = totalCounts[activeCategory] || 0;
+  const currentPage = blogPages[activeCategory] || 1;
+
+  const handleLoadMore = async () => {
+    if (loadingMore) return;
+    setLoadingMore(true);
+    try {
+      const nextPage = (currentPage || 1) + 1;
+      const res = await getBlogs(10, nextPage, activeCategory);
+
+      setBlogData((prev) => ({
+        ...prev,
+        [activeCategory]: [
+          ...(prev[activeCategory] || []),
+          ...(res?.data || []),
+        ],
+      }));
+      setBlogPages((prev) => ({ ...prev, [activeCategory]: nextPage }));
+    } catch (err) {
+      messageApi.error("Дараагийн мэдээллийг татаж чадсангүй.");
+      console.log(err);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
 
   return (
     <div>
@@ -288,6 +332,21 @@ export default function News() {
             ))}
           </div>
         )}
+
+        {!loading &&
+          blogs.length > 0 &&
+          blogs.length + (activeCategory === 0 && featuredBlog ? 1 : 0) <
+            total && (
+            <div className="flex justify-center mt-8">
+              <Button
+                className="grd-btn h-10 w-[172px]"
+                onClick={handleLoadMore}
+                loading={loadingMore}
+              >
+                Цааш үзэх
+              </Button>
+            </div>
+          )}
       </div>
       <div className="pb-16"></div>
       <Footer />

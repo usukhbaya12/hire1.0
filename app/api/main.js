@@ -456,24 +456,37 @@ export const getBlogById = async (id) => {
   }
 };
 
-export const getBlogs = async (type = 0, limit = 10, page = 1) => {
+export const getBlogs = async (limit = 10, page = 1, type = 0) => {
+  const token = await getAuthToken();
+  if (!token) return { token: false };
+
   try {
-    const res = await fetch(`${api}blog/all/${type}/${limit}/${page}`, {
-      method: "GET",
+    const params = {};
+    params.limit = limit;
+    params.page = page;
+    if (type && type !== 0) {
+      params.type = type;
+    }
+
+    const res = await axios.get(`${api}blog/all`, {
       headers: {
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-    }).then((d) => d.json());
+      params,
+    });
 
     return {
-      data: res.payload,
+      data: res.data.payload?.data,
+      count: res.data.payload?.count,
+      total: res.data.payload?.total,
       token: true,
-      message: res?.message,
-      status: res?.status,
-      success: res.succeed,
+      message: res.data?.message,
+      status: res.data?.status,
+      success: res.data.succeed,
     };
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching blogs:", error);
     return {
       success: false,
       message: "Сервертэй холбогдоход алдаа гарлаа.",

@@ -86,7 +86,7 @@ const EmployeeTable = ({ testData, onRefresh }) => {
       }
 
       const formatDate = (date) => {
-        return date ? dayjs(date).format("YYYY/MM/DD HH:mm") : "-";
+        return date ? dayjs(date).format("YYYY-MM-DD HH:mm") : "-";
       };
 
       return {

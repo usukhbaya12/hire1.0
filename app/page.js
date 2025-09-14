@@ -47,11 +47,9 @@ const PriceRangeSlider = ({
       .map((a) => a.data.price)
       .filter((price) => typeof price === "number" && price >= 0);
 
-    // Always start from 0 to include free tests
     const min = 0;
     const max = Math.max(...prices);
 
-    // Round max up to nearest 1000
     const roundedMax = Math.ceil(max / 1000) * 1000;
 
     return {
@@ -383,13 +381,12 @@ export default function Home() {
     setSelectedCategory(null);
     setSelectedPrice(null);
 
-    // Reset price range to full range (0 to max)
     const prices = assessments
       .map((a) => a.data.price)
       .filter((price) => typeof price === "number" && price >= 0);
 
     if (prices.length > 0) {
-      const minPrice = 0; // Always start from 0
+      const minPrice = 0;
       const maxPrice = Math.ceil(Math.max(...prices) / 1000) * 1000;
       setPriceRange([minPrice, maxPrice]);
     } else {
@@ -398,7 +395,7 @@ export default function Home() {
 
     setSearchType("name");
     setFilteredAssessments(assessments);
-    setCurrentPage(1);
+    // setCurrentPage(1);
   };
 
   const renderSkeletonCards = (count = 6) => {
@@ -419,6 +416,7 @@ export default function Home() {
             placeholder="Нэрээр хайх"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            // onPressEnter={(e) => setSearchTerm(e.target.value)}
           />
         );
       case "category":
@@ -701,7 +699,7 @@ export default function Home() {
               </div>
             </div>
           </motion.div>
-          <div ref={testsSectionRef} id="tests">
+          <div>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -716,7 +714,9 @@ export default function Home() {
                 <Buildings2BoldDuotone />
                 Тест хамтран хөгжүүлэгч байгууллагууд
               </motion.div>
-              <Marquee />
+              <div ref={testsSectionRef} id="tests">
+                <Marquee />
+              </div>
             </motion.div>
             <div className="bg-gray-50 relative 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6 pb-14">
               <motion.div
@@ -865,13 +865,11 @@ export default function Home() {
                 transition={{ duration: 0.3 }}
                 className="md:hidden fixed top-[72px] w-full z-50"
               >
-                {/* Mobile Layout */}
                 <div className="md:hidden bg-white/70 backdrop-blur-md shadow-xl shadow-slate-200 p-3 px-6">
                   <div className="font-black text-xl inline-flex gap-1 text-main mt-2 mb-4">
                     <NotesBoldDuotone />
                     Тестүүд
                   </div>
-                  {/* First Row - Select and Input */}
                   <div className="flex items-center gap-2 mb-3">
                     <Select
                       value={searchType}

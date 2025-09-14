@@ -22,6 +22,7 @@ import { DropdownIcon } from "./Icons";
 import Link from "next/link";
 import Image from "next/image";
 import { api } from "@/app/utils/routes";
+import dayjs from "dayjs";
 
 const AssessmentCard = ({ assessment, isInvited = false }) => {
   const router = useRouter();
@@ -132,15 +133,11 @@ const AssessmentCard = ({ assessment, isInvited = false }) => {
                     <div className="flex items-center gap-2 text-gray-500">
                       <CalendarBoldDuotone width={18} />
                       <span>
-                        {(history.exams?.userEndDate &&
-                          new Date(
-                            history.exams.userEndDate
-                          ).toLocaleDateString()) ||
-                          (history.exams?.userStartDate &&
-                            new Date(
-                              history.exams.userStartDate
-                            ).toLocaleDateString()) ||
-                          new Date(history.createdAt).toLocaleDateString()}
+                        {dayjs(
+                          history.exams?.userEndDate ||
+                            history.exams?.userStartDate ||
+                            history.createdAt
+                        ).format("YYYY-MM-DD")}
                       </span>
                     </div>
                     <div>

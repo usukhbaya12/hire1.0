@@ -20,6 +20,7 @@ import DynamicMetaTags from "./Meta";
 import NotFoundPage from "@/app/not-found";
 import LoadingSpinner from "./Spin";
 import News from "@/app/news/page";
+import dayjs from "dayjs";
 
 const createMarkup = (htmlContent) => {
   if (typeof window !== "undefined") {
@@ -81,12 +82,8 @@ export default function BlogDetailPage() {
     : null;
 
   const formattedDate = blog?.createdAt
-    ? new Date(blog.createdAt).toLocaleDateString("mn-MN", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      })
-    : "-";
+    ? dayjs(blog.createdAt).format("YYYY-MM-DD")
+    : null;
 
   const copyLinkToClipboard = () => {
     if (typeof window !== "undefined") {

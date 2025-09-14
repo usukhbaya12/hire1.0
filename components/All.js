@@ -310,8 +310,13 @@ const ApplicantsTable = ({ data, loading }) => {
 
       return (
         <div className="flex items-center font-extrabold">
-          <div className="">{result || ""}</div> <span className="px-1">/</span>
-          <div>{value || ""}</div>
+          <div>{result || ""}</div>
+          {value && (
+            <>
+              <span className="px-1">/</span>
+              <div>{value}</div>
+            </>
+          )}
         </div>
       );
     } else {
@@ -472,14 +477,11 @@ const ApplicantsTable = ({ data, loading }) => {
       align: "right",
       render: (_, record) =>
         record.endDate && record.result ? (
-          <Link
-            href={`/api/report/${record.code}`}
-            target="_blank"
-            passHref
-          >
-            <Button className="grd-btn h-10 w-36">Тайлан татах</Button>
+          <Link href={`/api/report/${record.code}`} target="_blank" passHref>
+            <Button className="grd-btn">Тайлан татах</Button>
           </Link>
         ) : null,
+      align: "center",
     },
   ];
 

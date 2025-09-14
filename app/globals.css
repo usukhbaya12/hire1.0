@@ -1018,7 +1018,7 @@ textarea.ant-input {
 }
 
 .ant-select-selector {
-  padding: 16px !important;
+  /* padding: 16px !important; */
   border-radius: 99px !important;
 }
 
@@ -1119,7 +1119,7 @@ textarea.ant-input {
 }
 
 .ant-select-selector {
-  padding: 16px !important;
+  /* padding: 16px !important; */
   border-radius: 99px !important;
 }
 
