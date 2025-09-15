@@ -699,7 +699,7 @@ export default function Home() {
               </div>
             </div>
           </motion.div>
-          <div>
+          <div ref={testsSectionRef} id="tests">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -714,9 +714,7 @@ export default function Home() {
                 <Buildings2BoldDuotone />
                 Тест хамтран хөгжүүлэгч байгууллагууд
               </motion.div>
-              <div ref={testsSectionRef} id="tests">
-                <Marquee />
-              </div>
+              <Marquee />
             </motion.div>
             <div className="bg-gray-50 relative 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6 pb-14">
               <motion.div
