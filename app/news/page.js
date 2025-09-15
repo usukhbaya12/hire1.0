@@ -241,8 +241,7 @@ export default function News() {
       }));
       setBlogPages((prev) => ({ ...prev, [activeCategory]: nextPage }));
     } catch (err) {
-      messageApi.error("Дараагийн мэдээллийг татаж чадсангүй.");
-      console.log(err);
+      messageApi.error("Сервертэй холбогдоход алдаа гарлаа.");
     } finally {
       setLoadingMore(false);
     }

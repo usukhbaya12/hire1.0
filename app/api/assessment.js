@@ -1,3 +1,5 @@
+"use server";
+
 import axios from "axios";
 import { getAuthToken } from "../utils/auth";
 import { api } from "../utils/routes";

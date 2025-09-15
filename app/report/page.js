@@ -21,7 +21,6 @@ export default function ReportPage() {
         const res = await fetch(`${api}report/${jobId}/status`);
         const data = await res.json();
 
-        console.log(data.payload);
         const { status, progress, result, visible } = data.payload;
         setStatus(status);
         setProgress(progress || 0);
@@ -51,7 +50,6 @@ export default function ReportPage() {
       // CALCULATING = tootsoolol gargaj bga
       // WRITING = tailan zurj bga
       // COMPLETED = duussan
-      console.log(res.data);
       const blob = new Blob([res.data], { type: "application/pdf" });
       const url = window.URL.createObjectURL(blob);
 
@@ -70,7 +68,6 @@ export default function ReportPage() {
   };
   // Start new job
   const startProcess = async () => {
-    console.log("asdf");
     setStatus("STARTING...");
     setProgress(0);
     setResult(null);

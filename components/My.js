@@ -63,9 +63,6 @@ const HistoryTabContent = ({ session, onBarimtOpen }) => {
     fetchData(page, pageSize);
   };
 
-  console.log("f", paymentData);
-  console.log("gg", totalCount);
-
   return (
     <>
       {contextHolder}
