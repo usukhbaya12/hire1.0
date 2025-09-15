@@ -45,7 +45,7 @@ const Completion = ({ code, showReport }) => {
 
         setProgress(progress || 0);
 
-        if (status === "COMPLETED" && progress === 100) {
+        if (status === "SENT" && progress === 100) {
           clearInterval(interval);
           setStage("ready");
           setSvgStage("done");
@@ -181,11 +181,7 @@ const Completion = ({ code, showReport }) => {
 
             <div className="flex flex-col gap-4 items-center pt-4">
               {stage === "ready" && showReport && (
-                <Link
-                  href={`/api/report/${code}`}
-                  target="_blank"
-                  passHref
-                >
+                <Link href={`/api/report/${code}`} target="_blank" passHref>
                   <Button className="grd-btn-2 h-10 w-36">Тайлан татах</Button>
                 </Link>
               )}

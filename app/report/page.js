@@ -26,12 +26,9 @@ export default function ReportPage() {
         setProgress(progress || 0);
         setResult(result);
 
-        if (
-          (status === "COMPLETED" && progress === 100) ||
-          status === "FAILED"
-        ) {
+        if ((status === "SENT" && progress === 100) || status === "FAILED") {
           clearInterval(interval); // зогсоох
-          if (status === "COMPLETED") {
+          if (status === "SENT") {
             await downloadReport(result.code); // дараа нь татах
           }
         }
