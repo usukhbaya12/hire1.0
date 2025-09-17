@@ -252,7 +252,7 @@ const AnimatedCounter = ({ value, duration = 2, loading = false }) => {
 
 const Marquee = () => {
   const logos = Array.from({ length: 12 }, (_, i) => {
-    const files = ["/mnums.png", "/ufe.png", "/axiom.png"];
+    const files = ["/mnums.png", "/ufe.png", "/axiom.png", "/factcheck.png"];
     return files[i % files.length];
   });
 
