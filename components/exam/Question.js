@@ -20,6 +20,7 @@ const QUESTION_TYPES = {
   CONSTANT_SUM: 50,
   TEXT: 60,
   SLIDER: 70,
+  SLIDERSINGLE: 80,
 };
 
 const QuestionCard = ({
@@ -440,6 +441,80 @@ const QuestionCard = ({
             ))}
           </div>
         );
+
+      case QUESTION_TYPES.SLIDERSINGLE:
+        const minSingle = parseInt(question.question?.minValue) || 0;
+        const maxSingle = parseInt(question.question?.maxValue) || 5;
+
+        const internalMinSingle = minSingle - 1;
+
+        const marksSingle = {};
+
+        if (question.question?.slider) {
+          const labels = question.question.slider
+            .split(",")
+            .map((s) => s.trim());
+
+          labels.forEach((label, idx) => {
+            marksSingle[minSingle + idx] = label;
+          });
+        } else {
+          for (let i = minSingle; i <= maxSingle; i++) {
+            marksSingle[i] = i.toString();
+          }
+        }
+
+        return (
+          <div className="space-y-4 pl-5">
+            {question.answers.map((answer, index) => (
+              <React.Fragment key={index}>
+                <div className="items-center gap-2 md:gap-4 md:justify-between">
+                  <div className="md:flex md:pl-4 md:pr-12">
+                    <Slider
+                      tooltip={{ formatter: null }}
+                      min={internalMinSingle}
+                      max={maxSingle}
+                      value={
+                        answers[question.question.id]?.[answer.id] ??
+                        internalMinSingle
+                      }
+                      onChange={(value) => {
+                        if (value >= minSingle) {
+                          const newAnswer = {
+                            ...(answers[question.question.id] || {}),
+                            [answer.id]: value,
+                          };
+                          handleAnswer(question.question.id, newAnswer);
+
+                          const allAnswered = question.answers.every(
+                            (ans) =>
+                              (newAnswer[ans.id] ?? internalMinSingle) >=
+                              minSingle
+                          );
+
+                          setAnsweredQuestions((prev) => {
+                            const newSet = new Set(prev);
+                            if (allAnswered) {
+                              newSet.add(question.question.id);
+                            } else {
+                              newSet.delete(question.question.id);
+                            }
+                            return newSet;
+                          });
+                        }
+                      }}
+                      marks={marksSingle}
+                      disabled={false}
+                      className="w-full single-slider"
+                    />
+                  </div>
+                </div>
+                <Divider />
+              </React.Fragment>
+            ))}
+          </div>
+        );
+
       default:
         return null;
     }

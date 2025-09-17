@@ -685,6 +685,13 @@ textarea.ant-input {
   width: 70px !important;
 }
 
+.single-slider.ant-slider .ant-slider-mark-text {
+  line-height: 1.2;
+  padding-top: 6px;
+  font-size: 12px;
+  width: 120px !important;
+}
+
 @media (max-width: 767px) {
   .ant-slider .ant-slider-mark-text {
     word-break: break-word;
