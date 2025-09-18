@@ -14,6 +14,7 @@
     "@headlessui/react": "^2.2.0",
     "@react-oauth/google": "^0.12.1",
     "@shadcn/ui": "^0.0.4",
+    "@vercel/analytics": "^1.5.0",
     "antd": "^5.23.4",
     "axios": "^1.7.9",
     "canvas": "^3.1.0",

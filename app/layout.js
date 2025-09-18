@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import ClientLayout from "./layout-client";
 import Script from "next/script";
+import { Analytics } from "@vercel/analytics";
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -95,7 +96,10 @@ export default function RootLayout({ children }) {
         </Script>
       </head>
       <body className={`${gilroy.variable} ${geistMono.variable} antialiased`}>
-        <ClientLayout>{children}</ClientLayout>
+        <ClientLayout>
+          {children}
+          <Analytics />
+        </ClientLayout>
       </body>
     </html>
   );
