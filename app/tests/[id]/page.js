@@ -22,6 +22,7 @@ import { purchaseTest } from "@/app/api/main";
 import { useSession } from "next-auth/react";
 import { LoadingOutlined } from "@ant-design/icons";
 import LoadingSpinner from "@/components/Spin";
+import Link from "next/link";
 
 const MyTests = () => {
   const { data: session } = useSession();
@@ -137,9 +138,11 @@ const MyTests = () => {
                   </div>
                 </div>
               </div>
-              <div className="font-extrabold text-xl bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent">
-                {data?.data?.[0].assessment.name}
-              </div>
+              <Link href={`/test/${data?.data?.[0].assessment.id}`}>
+                <div className="font-extrabold text-xl bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent hover:underline hover:text-secondary">
+                  {data?.data?.[0].assessment.name}
+                </div>
+              </Link>
             </div>
 
             {/* Stats and Button Section */}

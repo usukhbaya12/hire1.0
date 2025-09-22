@@ -93,7 +93,7 @@ export default function TestDetails() {
         const examId = examResponse.data;
         router.push(`/exam/${examId}`, undefined, { shallow: true });
       } else {
-        messageApi.error("Тест эхлүүлэхэд алдаа гарлаа");
+        messageApi.error("Тест эхлүүлэхэд алдаа гарлаа.");
       }
     } catch (error) {
       console.error("Error starting exam:", error);

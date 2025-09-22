@@ -417,6 +417,7 @@ export default function Exam() {
               }}
               questionData={questionData}
               showReport={showReport}
+              id={questionData?.assessment?.id}
             />
           </div>
         </>

@@ -404,6 +404,40 @@ export default function Home() {
       .map((_, index) => <AssessmentSkeleton key={`skeleton-${index}`} />);
   };
 
+  const handleSearch = () => {
+    let result = [...assessments];
+
+    if (searchTerm) {
+      if (searchType === "name") {
+        result = result.filter(
+          (assessment) =>
+            assessment.data.name
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase()) ||
+            assessment.data.description
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase())
+        );
+      }
+    }
+
+    if (searchType === "category" && selectedCategory != null) {
+      result = result.filter(
+        (assessment) => assessment.category.id === selectedCategory
+      );
+    }
+
+    if (searchType === "price" && priceRange && priceRange.length === 2) {
+      result = result.filter((assessment) => {
+        const price = Number(assessment.data.price);
+        return price >= priceRange[0] && price <= priceRange[1];
+      });
+    }
+
+    setFilteredAssessments(result);
+    scrollToTestsTop();
+  };
+
   const renderSearchInput = () => {
     switch (searchType) {
       case "name":
@@ -416,7 +450,8 @@ export default function Home() {
             placeholder="Нэрээр хайх"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            // onPressEnter={(e) => setSearchTerm(e.target.value)}
+            onPressEnter={handleSearch}
+            // allowClear
           />
         );
       case "category":
@@ -781,54 +816,7 @@ export default function Home() {
 
                     {renderSearchInput()}
 
-                    <Button
-                      onClick={() => {
-                        // Apply filters here
-                        let result = [...assessments];
-
-                        if (searchTerm) {
-                          if (searchType === "name") {
-                            result = result.filter(
-                              (assessment) =>
-                                assessment.data.name
-                                  .toLowerCase()
-                                  .includes(searchTerm.toLowerCase()) ||
-                                assessment.data.description
-                                  .toLowerCase()
-                                  .includes(searchTerm.toLowerCase())
-                            );
-                          }
-                        }
-
-                        if (
-                          searchType === "category" &&
-                          selectedCategory !== null &&
-                          selectedCategory !== undefined
-                        ) {
-                          result = result.filter(
-                            (assessment) =>
-                              assessment.category.id === selectedCategory
-                          );
-                        }
-
-                        if (
-                          searchType === "price" &&
-                          priceRange &&
-                          priceRange.length === 2
-                        ) {
-                          result = result.filter((assessment) => {
-                            const price = Number(assessment.data.price);
-                            return (
-                              price >= priceRange[0] && price <= priceRange[1]
-                            );
-                          });
-                        }
-
-                        setFilteredAssessments(result);
-                        scrollToTestsTop();
-                      }}
-                      className="grd-btn"
-                    >
+                    <Button onClick={handleSearch} className="grd-btn">
                       <MagniferBoldDuotone width={16} height={16} />
                       <span>Хайх</span>
                     </Button>

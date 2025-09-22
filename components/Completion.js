@@ -6,7 +6,7 @@ import Link from "next/link";
 import { ArchiveCheckBoldDuotone, DocumentAddBoldDuotone } from "solar-icons";
 import { api } from "@/app/utils/routes";
 
-const Completion = ({ code, showReport }) => {
+const Completion = ({ code, showReport, id }) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [progress, setProgress] = useState(0);
   const [svgStage, setSvgStage] = useState("doc");
@@ -175,7 +175,11 @@ const Completion = ({ code, showReport }) => {
 
             {stage === "processing" && (
               <div className="px-8 scale-95">
-                <Progress percent={progress} strokeColor="#4BB543" />
+                <Progress
+                  percent={progress}
+                  strokeColor="#4BB543"
+                  className="animate-pulse"
+                />
               </div>
             )}
 
@@ -190,8 +194,8 @@ const Completion = ({ code, showReport }) => {
                   <Button className="grd-btn-9 h-10 w-36">Өгсөн тестүүд</Button>
                 </Link>
               )}
-              <Link href="/">
-                <Button className="grd-btn h-10 w-36">Нүүр хуудас</Button>
+              <Link href={`/test/${id}`}>
+                <Button className="grd-btn h-10 w-36">Тест рүү буцах</Button>
               </Link>
             </div>
           </div>

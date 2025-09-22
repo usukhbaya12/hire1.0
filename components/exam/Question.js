@@ -469,7 +469,7 @@ const QuestionCard = ({
             {question.answers.map((answer, index) => (
               <React.Fragment key={index}>
                 <div className="items-center gap-2 md:gap-4 md:justify-between">
-                  <div className="md:flex md:pl-4 md:pr-12">
+                  <div className="md:flex md:pl-4 md:pr-10">
                     <Slider
                       tooltip={{ formatter: null }}
                       min={internalMinSingle}

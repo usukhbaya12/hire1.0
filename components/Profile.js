@@ -22,22 +22,22 @@ const TestsTabContent = ({ activeTab, session }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [messageApi, contextHolder] = message.useMessage();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const testHistoryRes = await getUserTestHistory(0);
-        if (testHistoryRes.success) {
-          setData(testHistoryRes.data);
-        }
-      } catch (error) {
-        console.error("GET / Алдаа гарлаа..", error);
-        messageApi.error("Сервертэй холбогдоход алдаа гарлаа..");
-      } finally {
-        setLoading(false);
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const testHistoryRes = await getUserTestHistory(0);
+      if (testHistoryRes.success) {
+        setData(testHistoryRes.data);
       }
-    };
+    } catch (error) {
+      console.error("GET / Алдаа гарлаа..", error);
+      messageApi.error("Сервертэй холбогдоход алдаа гарлаа..");
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     if (session?.user?.id) {
       fetchData();
     }
@@ -54,6 +54,10 @@ const TestsTabContent = ({ activeTab, session }) => {
         item.assessment.name.toLowerCase().includes(searchTerm.toLowerCase())
       )
     : [];
+
+  const refetchData = async () => {
+    await fetchData();
+  };
 
   const renderSkeletonCard = () => (
     <div className="w-full h-full relative overflow-hidden rounded-3xl shadow shadow-slate-200 bg-white/70 backdrop-blur-md px-6 pt-6 pb-4 animate-pulse">
@@ -239,7 +243,11 @@ const TestsTabContent = ({ activeTab, session }) => {
               ))}
           </div>
         ) : config.isApplicants ? (
-          <ApplicantsTable data={config.data} loading={loading} />
+          <ApplicantsTable
+            data={config.data}
+            loading={loading}
+            onRefresh={refetchData}
+          />
         ) : config.data && config.data.length > 0 ? (
           config.data.length > 0 ? (
             <HistoryCard data={config.data} isInvited={config.isInvited} />

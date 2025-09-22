@@ -571,21 +571,27 @@ export default function Test() {
                           status:
                             item.exams[0]?.userStartDate == null &&
                             item.exams[0]?.userEndDate == null ? (
-                              <Button className="shadow-md shadow-slate-200 grd-div-4">
-                                <div className="w-1.5 h-1.5 bg-amber-500 rounded-full"></div>
-                                Өгөөгүй
-                              </Button>
+                              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-50 to-amber-100 border border-amber-200 shadow-sm">
+                                <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></div>
+                                <span className="text-xs font-bold text-amber-700">
+                                  Өгөөгүй
+                                </span>
+                              </div>
                             ) : item.exams[0]?.userStartDate != null &&
                               item.exams[0]?.userEndDate == null ? (
-                              <Button className="grd-div-5 cursor-default shadow-md shadow-slate-200">
-                                <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
-                                Дуусгаагүй
-                              </Button>
+                              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-blue-200 to-blue-100 border border-blue-300 shadow-sm">
+                                <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                                <span className="text-xs font-semibold text-blue-700">
+                                  Эхэлсэн
+                                </span>
+                              </div>
                             ) : (
-                              <Button className="grd-div-6 cursor-default shadow-md shadow-slate-200">
-                                <div className="w-1.5 h-1.5 bg-emerald-600 rounded-full"></div>
-                                Дуусгасан
-                              </Button>
+                              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-emerald-300 to-green-300 border border-green-500 shadow-sm">
+                                <div className="w-2 h-2 bg-emerald-600 rounded-full"></div>
+                                <span className="text-xs font-bold text-emerald-700">
+                                  Дууссан
+                                </span>
+                              </div>
                             ),
                           result:
                             item.exams && item.exams.length > 0 ? (
@@ -765,21 +771,27 @@ export default function Test() {
                             <div>
                               {item.exams[0]?.userStartDate == null &&
                               item.exams[0]?.userEndDate == null ? (
-                                <Button className="shadow-md shadow-slate-200 grd-div-4">
-                                  <div className="w-1.5 h-1.5 bg-amber-500 rounded-full"></div>
-                                  Өгөөгүй
-                                </Button>
+                                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-50 to-amber-100 border border-amber-200 shadow-sm">
+                                  <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></div>
+                                  <span className="text-xs font-bold text-amber-700">
+                                    Өгөөгүй
+                                  </span>
+                                </div>
                               ) : item.exams[0]?.userStartDate != null &&
                                 item.exams[0]?.userEndDate == null ? (
-                                <Button className="grd-div-5 cursor-default shadow-md shadow-slate-200 ">
-                                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
-                                  Дуусгаагүй
-                                </Button>
+                                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-blue-200 to-blue-100 border border-blue-300 shadow-sm">
+                                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                                  <span className="text-xs font-semibold text-blue-700">
+                                    Эхэлсэн
+                                  </span>
+                                </div>
                               ) : (
-                                <Button className="grd-div-6 cursor-default shadow-md shadow-slate-200">
-                                  <div className="w-1.5 h-1.5 bg-emerald-600 rounded-full"></div>
-                                  Дуусгасан
-                                </Button>
+                                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-emerald-300 to-green-300 border border-green-500 shadow-sm">
+                                  <div className="w-2 h-2 bg-emerald-600 rounded-full"></div>
+                                  <span className="text-xs font-bold text-emerald-700">
+                                    Дууссан
+                                  </span>
+                                </div>
                               )}
                             </div>
                           </div>
@@ -972,45 +984,41 @@ export default function Test() {
 
                               endDate: isExpired ? (
                                 <div>
-                                  {date.toLocaleString("mn-MN", {
-                                    month: "numeric",
-                                    day: "numeric",
-                                    year: "numeric",
-                                    hour: "2-digit",
-                                    minute: "2-digit",
-                                    hour12: false,
-                                  })}
+                                  {date
+                                    ? dayjs(date).format("YYYY-MM-DD HH:mm")
+                                    : "-"}
                                 </div>
+                              ) : date ? (
+                                dayjs(date).format("YYYY-MM-DD HH:mm")
                               ) : (
-                                date.toLocaleString("mn-MN", {
-                                  month: "numeric",
-                                  day: "numeric",
-                                  year: "numeric",
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                  hour12: false,
-                                })
+                                "-"
                               ),
                               isExpired,
 
                               status:
                                 item.userStartDate == null &&
                                 item.userEndDate == null ? (
-                                  <Button className="shadow-md shadow-slate-200 grd-div-4">
-                                    <div className="w-1.5 h-1.5 bg-amber-500 rounded-full"></div>
-                                    Өгөөгүй
-                                  </Button>
+                                  <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-50 to-amber-100 border border-amber-200 shadow-sm">
+                                    <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></div>
+                                    <span className="text-xs font-bold text-amber-700">
+                                      Өгөөгүй
+                                    </span>
+                                  </div>
                                 ) : item.userStartDate != null &&
                                   item.userEndDate == null ? (
-                                  <Button className="grd-div-5 cursor-default shadow-md shadow-slate-200">
-                                    <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
-                                    Дуусгаагүй
-                                  </Button>
+                                  <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-blue-200 to-blue-100 border border-blue-300 shadow-sm">
+                                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                                    <span className="text-xs font-semibold text-blue-700">
+                                      Эхэлсэн
+                                    </span>
+                                  </div>
                                 ) : (
-                                  <Button className="grd-div-6 cursor-default shadow-md shadow-slate-200">
-                                    <div className="w-1.5 h-1.5 bg-emerald-600 rounded-full"></div>
-                                    Дуусгасан
-                                  </Button>
+                                  <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-emerald-300 to-green-300 border border-green-500 shadow-sm">
+                                    <div className="w-2 h-2 bg-emerald-600 rounded-full"></div>
+                                    <span className="text-xs font-bold text-emerald-700">
+                                      Дууссан
+                                    </span>
+                                  </div>
                                 ),
 
                               result: isExpired ? (
@@ -1170,21 +1178,27 @@ export default function Test() {
                                 <div>
                                   {item.userStartDate == null &&
                                   item.userEndDate == null ? (
-                                    <Button className="shadow-md shadow-slate-200 grd-div-4">
-                                      <div className="w-1.5 h-1.5 bg-amber-500 rounded-full"></div>
-                                      Өгөөгүй
-                                    </Button>
+                                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-50 to-amber-100 border border-amber-200 shadow-sm">
+                                      <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></div>
+                                      <span className="text-xs font-bold text-amber-700">
+                                        Өгөөгүй
+                                      </span>
+                                    </div>
                                   ) : item.userStartDate != null &&
                                     item.userEndDate == null ? (
-                                    <Button className="grd-div-5 cursor-default shadow-md shadow-slate-200">
-                                      <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
-                                      Дуусгаагүй
-                                    </Button>
+                                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-blue-200 to-blue-100 border border-blue-300 shadow-sm">
+                                      <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                                      <span className="text-xs font-semibold text-blue-700">
+                                        Эхэлсэн
+                                      </span>
+                                    </div>
                                   ) : (
-                                    <Button className="grd-div-6 cursor-default shadow-md shadow-slate-200">
-                                      <div className="w-1.5 h-1.5 bg-emerald-600 rounded-full"></div>
-                                      Дуусгасан
-                                    </Button>
+                                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-emerald-300 to-green-300 border border-green-500 shadow-sm">
+                                      <div className="w-2 h-2 bg-emerald-600 rounded-full"></div>
+                                      <span className="text-xs font-bold text-emerald-700">
+                                        Дууссан
+                                      </span>
+                                    </div>
                                   )}
                                 </div>
                               </div>
@@ -1264,14 +1278,11 @@ export default function Test() {
                                 )}
                                 <div className="flex items-center gap-1">
                                   <strong>Дуусах огноо: </strong>{" "}
-                                  {endDateObj.toLocaleString("mn-MN", {
-                                    month: "numeric",
-                                    day: "numeric",
-                                    year: "numeric",
-                                    hour: "2-digit",
-                                    minute: "2-digit",
-                                    hour12: false,
-                                  })}
+                                  {endDateObj
+                                    ? dayjs(endDateObj).format(
+                                        "YYYY-MM-DD HH:mm"
+                                      )
+                                    : "-"}
                                 </div>
                               </div>
 

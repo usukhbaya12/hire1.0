@@ -21,6 +21,7 @@ import { getExamCalculation, getReport } from "@/app/api/exam";
 import PdfViewer from "@/components/PdfViewer";
 import Footer from "@/components/Footer";
 import LoadingSpinner from "@/components/Spin";
+import dayjs from "dayjs";
 
 export default function Results() {
   const params = useParams();
@@ -95,15 +96,7 @@ export default function Results() {
   }
 
   const formatDate = (dateString) => {
-    if (!dateString) return "-";
-    const date = new Date(dateString);
-    return date.toLocaleString("mn-MN", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+    return date ? dayjs(date).format("YYYY-MM-DD HH:mm") : "-";
   };
 
   return (

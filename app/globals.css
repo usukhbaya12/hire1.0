@@ -94,10 +94,13 @@ body {
 }
 
 .ant-btn-variant-solid {
-  background-color: #f36421;
-  padding: 12px 10px;
-  border-radius: 9px;
+  padding: 10px 10px;
   box-shadow: none;
+
+  color: #fff;
+  background: #f26522 !important;
+  border-radius: 99px !important;
+  font-weight: 600 !important;
 }
 
 .ant-btn-variant-link {
@@ -699,6 +702,13 @@ textarea.ant-input {
     width: 50px;
     text-align: center;
   }
+
+  .single-slider.ant-slider .ant-slider-mark-text {
+    line-height: 1.2;
+    padding-top: 6px;
+    font-size: 12px;
+    width: 90px !important;
+  }
 }
 
 .ant-slider .ant-slider-track {
@@ -1130,12 +1140,12 @@ textarea.ant-input {
   border-radius: 99px !important;
 }
 
-.ant-dropdown .ant-table-filter-dropdown .ant-table-filter-dropdown-btns {
-  padding: 10px !important;
-}
-
 .ant-dropdown .ant-table-filter-dropdown {
   border-radius: 16px !important;
+}
+
+.ant-dropdown .ant-table-filter-dropdown .ant-table-filter-dropdown-btns {
+  padding: 10px !important;
 }
 
 .ant-dropdown .ant-table-filter-dropdown .ant-table-filter-dropdown-search {
@@ -1144,6 +1154,23 @@ textarea.ant-input {
 
 .ant-dropdown .ant-table-filter-dropdown .ant-table-filter-dropdown-tree {
   padding: 10px !important;
+}
+
+.ant-tree .ant-tree-node-content-wrapper {
+  border-radius: 99px !important;
+}
+.ant-picker-outlined {
+  border-radius: 99px !important;
+}
+
+.ant-btn-color-link.ant-btn-variant-link:disabled {
+  color: rgba(0, 0, 0, 0.25) !important;
+  font-weight: 600;
+}
+
+.ant-btn-color-link.ant-btn-variant-link {
+  color: #f26522 !important;
+  font-weight: 600;
 }
 
 @keyframes marquee {
