@@ -48,7 +48,7 @@ export async function generateTestMetadata({ params }) {
         const fullApiUrl = api.replace(/\/$/, "");
         metadata.openGraph.images = [
           {
-            url: `${fullApiUrl}/file/${icon}`,
+            url: `${fullApiUrl}file/${icon}`,
             width: 1536,
             height: 724,
             alt: testName,

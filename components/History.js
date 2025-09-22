@@ -48,7 +48,7 @@ const AssessmentCard = ({ assessment, isInvited = false }) => {
 
   const handleButtonClick = (history) => {
     if (history.completed) {
-      const reportUrl = `${api}file/report-${history.exams.code}.pdf`;
+      const reportUrl = `/api/report/${history.exams.code}`;
       window.open(reportUrl, "_blank");
     } else if (!history.completed && history.examStarted) {
       router.push(`/exam/${history.exams.code}`);
@@ -243,7 +243,7 @@ const AssessmentCard = ({ assessment, isInvited = false }) => {
                       </button>
                     ) : userEndDate ? (
                       <Link
-                        href={`${api}file/report-${code}.pdf`}
+                        href={`/api/report/${code}`}
                         target="_blank"
                         passHref
                       >

@@ -98,7 +98,7 @@ export default function RootLayout({ children }) {
       <body className={`${gilroy.variable} ${geistMono.variable} antialiased`}>
         <ClientLayout>
           {children}
-          <Analytics />
+          {/* <Analytics /> */}
         </ClientLayout>
       </body>
     </html>
