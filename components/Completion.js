@@ -194,9 +194,15 @@ const Completion = ({ code, showReport, id }) => {
                   <Button className="grd-btn-9 h-10 w-36">Өгсөн тестүүд</Button>
                 </Link>
               )}
-              <Link href={`/test/${id}`}>
-                <Button className="grd-btn h-10 w-36">Тест рүү буцах</Button>
-              </Link>
+              {stage === "ready" ? (
+                <Link href={`/test/${id}`}>
+                  <Button className="grd-btn h-10 w-36">Тест рүү буцах</Button>
+                </Link>
+              ) : (
+                <Link href="/">
+                  <Button className="grd-btn h-10 w-36">Нүүр хуудас</Button>
+                </Link>
+              )}
             </div>
           </div>
         </div>
