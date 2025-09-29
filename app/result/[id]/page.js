@@ -2,23 +2,21 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { LoadingOutlined } from "@ant-design/icons";
 import { Spin, Divider, Progress } from "antd";
 import Image from "next/image";
 import {
-  DocumentBoldDuotone,
   UserIdBoldDuotone,
   ClipboardBoldDuotone,
   GraphUpBoldDuotone,
-  DownloadBoldDuotone,
   CheckCircleBoldDuotone,
   QuestionCircleBoldDuotone,
   CalendarBoldDuotone,
   NotesBoldDuotone,
+  Buildings2BoldDuotone,
+  DownloadBoldDuotone,
 } from "solar-icons";
 import Error from "@/components/Error";
-import { getExamCalculation, getReport } from "@/app/api/exam";
-import PdfViewer from "@/components/PdfViewer";
+import { getExamCalculation } from "@/app/api/exam";
 import Footer from "@/components/Footer";
 import LoadingSpinner from "@/components/Spin";
 import dayjs from "dayjs";
@@ -38,21 +36,7 @@ export default function Results() {
         const resultResponse = await getExamCalculation(params.id);
 
         if (resultResponse.success) {
-          setData(resultResponse.data.value);
-
-          try {
-            const pdfResponse = await getReport(params.id);
-
-            if (pdfResponse.success && pdfResponse.data) {
-              const pdfBlob = new Blob([pdfResponse.data], {
-                type: "application/pdf",
-              });
-              const pdfUrl = URL.createObjectURL(pdfBlob);
-              setPdfData(pdfUrl);
-            }
-          } catch (pdfError) {
-            console.error("Error fetching PDF:", pdfError);
-          }
+          setData(resultResponse.data);
         } else {
           setError(resultResponse.message || "Тестийн мэдээлэл олдсонгүй.");
         }
@@ -68,17 +52,6 @@ export default function Results() {
       fetchData();
     }
   }, [params.id]);
-
-  const handleDownloadPdf = () => {
-    if (pdfData) {
-      const link = document.createElement("a");
-      link.href = pdfData;
-      link.download = `report_${params.id}.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-  };
 
   const getScoreColorClass = (percentage) => {
     if (percentage >= 80) return "text-green-600";
@@ -96,19 +69,14 @@ export default function Results() {
   }
 
   const formatDate = (dateString) => {
-    return date ? dayjs(date).format("YYYY-MM-DD HH:mm") : "-";
+    return dateString ? dayjs(dateString).format("YYYY-MM-DD HH:mm") : "-";
   };
 
   return (
     <div>
       <title>{data?.assessmentName || "Тестийн үр дүн"} | Hire.mn</title>
 
-      {/* <div className="inset-0 fixed">
-        <div className="absolute left-[-5%] w-[200px] h-[200px] md:w-[400px] md:h-[400px] rounded-full bg-orange-600/10 blur-[80px]" />
-        <div className="absolute bottom-[-20%] right-[-10%] w-[200px] h-[200px] md:w-[500px] md:h-[500px] rounded-full bg-orange-600/10 blur-[100px]" />
-      </div> */}
-
-      <div className="relative 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6 pb-16">
+      <div className="relative 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6 pb-12">
         <div className="pt-20 pb-6">
           <div className="flex flex-col items-center gap-3">
             <div className="w-16 h-16 bg-main/10 rounded-full flex items-center justify-center">
@@ -150,7 +118,7 @@ export default function Results() {
               </div>
 
               <div className="flex items-center gap-3 bg-white/60 p-4 px-6 rounded-full shadow-sm transition-transform hover:translate-x-1 duration-300">
-                <ClipboardBoldDuotone
+                <NotesBoldDuotone
                   width={28}
                   height={24}
                   className="text-main"
@@ -178,6 +146,21 @@ export default function Results() {
                   </div>
                 </div>
               </div>
+              {data?.isInvited && (
+                <div className="flex items-center gap-3 bg-white/60 p-4 px-6 rounded-full shadow-sm transition-transform hover:translate-x-1 duration-300">
+                  <Buildings2BoldDuotone
+                    width={28}
+                    height={24}
+                    className="text-main"
+                  />
+                  <div className="leading-5">
+                    <div className="text-gray-500 text-[13px]">
+                      Урьсан байгууллага
+                    </div>
+                    <div className="font-extrabold">{data?.orgName}</div>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="space-y-4">
@@ -190,7 +173,7 @@ export default function Results() {
                 <div className="leading-5">
                   <div className="text-gray-500 text-[13px]">Үр дүн</div>
                   <div className="min-w-[120px]">
-                    {data?.type === 11 ? (
+                    {data?.type === 10 || data?.type === 11 ? (
                       <div className="font-bold">
                         <Progress
                           size="small"
@@ -238,7 +221,29 @@ export default function Results() {
           </div>
         </div>
 
-        <PdfViewer pdfUrl={pdfData} />
+        {/* <div className="bg-white/70 backdrop-blur-md shadow shadow-slate-200 rounded-3xl p-8 text-center">
+          <div className="text-6xl mb-4">📱</div>
+          <h3 className="text-xl font-bold mb-2">Үр дүн ©</h3>
+          <p className="text-gray-600 mb-6">
+            Таны төхөөрөмж PDF файлыг шууд харуулах боломжгүй байна. Та доорх
+            товч дээр дарж PDF файлыг татаж авна уу.
+          </p>
+          <div className="inline-block">
+            <div className="relative group cursor-pointer">
+              <div className="absolute -inset-0.5 bg-gradient-to-br from-main/50 to-main/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+              <div className="relative bg-gradient-to-br from-main/30 to-secondary/20 rounded-full flex items-center justify-center border border-main/10">
+                <div className="flex items-center gap-1.5 font-extrabold bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent py-2 px-7">
+                  <DownloadBoldDuotone
+                    width={18}
+                    height={18}
+                    className="text-main"
+                  />
+                  Тайлан
+                </div>
+              </div>
+            </div>
+          </div>
+        </div> */}
       </div>
       <Footer />
     </div>
