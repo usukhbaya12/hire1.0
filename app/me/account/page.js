@@ -41,8 +41,8 @@ const Account = () => {
       }
       return null;
     } catch (error) {
-      console.error("GET / Алдаа гарлаа..", error);
-      messageApi.error("Сервертэй холбогдоход алдаа гарлаа..");
+      console.error("GET / Алдаа гарлаа.", error);
+      messageApi.error("Сервертэй холбогдоход алдаа гарлаа.");
       return null;
     }
   };
@@ -53,8 +53,8 @@ const Account = () => {
         setLoading(true);
         await fetchUserData();
       } catch (error) {
-        console.error("GET / Алдаа гарлаа..", error);
-        messageApi.error("Сервертэй холбогдоход алдаа гарлаа..");
+        console.error("GET / Алдаа гарлаа.", error);
+        messageApi.error("Сервертэй холбогдоход алдаа гарлаа.");
       } finally {
         setLoading(false);
       }
@@ -139,7 +139,7 @@ const Account = () => {
         messageApi.success("Нууц үг амжилттай шинэчлэгдлээ.");
         passwordForm.resetFields();
       } else {
-        messageApi.error(res.message || "Нууц үг шинэчлэхэд алдаа гарлаа..");
+        messageApi.error(res.message || "Нууц үг шинэчлэхэд алдаа гарлаа.");
       }
     } catch (error) {
       console.error("Error updating password:", error);

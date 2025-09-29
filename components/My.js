@@ -44,7 +44,7 @@ const HistoryTabContent = ({ session, onBarimtOpen }) => {
         }));
       }
     } catch (error) {
-      console.error("GET / Алдаа гарлаа..", error);
+      console.error("GET / Алдаа гарлаа.", error);
       messageApi.error("Сервертэй холбогдоход алдаа гарлаа.");
     } finally {
       setLoading(false);

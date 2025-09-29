@@ -30,8 +30,8 @@ const TestsTabContent = ({ activeTab, session }) => {
         setData(testHistoryRes.data);
       }
     } catch (error) {
-      console.error("GET / Алдаа гарлаа..", error);
-      messageApi.error("Сервертэй холбогдоход алдаа гарлаа..");
+      console.error("GET / Алдаа гарлаа.", error);
+      messageApi.error("Сервертэй холбогдоход алдаа гарлаа.");
     } finally {
       setLoading(false);
     }
