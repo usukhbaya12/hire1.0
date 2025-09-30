@@ -1,4 +1,3 @@
-// app/test/[id]/metadata.js
 import { getAssessmentById } from "@/app/api/assessment";
 import { api } from "@/app/utils/routes";
 
@@ -17,14 +16,16 @@ export async function generateTestMetadata({ params }) {
       type: "website",
       images: [
         {
-          url: "https://hire.mn/misc.png",
-          width: 1200,
-          height: 630,
+          url: `https://hire.mn/api/test/${testId}`,
+          width: 1600,
+          height: 837.7,
+          alt: "Test",
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
+      images: [`https://hire.mn/api/test/${testId}`],
     },
   };
 
@@ -33,7 +34,6 @@ export async function generateTestMetadata({ params }) {
 
     if (assessmentResponse.success && assessmentResponse.data?.data) {
       const testName = assessmentResponse.data.data.name || "Тестийн үр дүн";
-      const icon = assessmentResponse.data.data.icons;
 
       metadata.title = `${testName} / Hire.mn`;
       metadata.description =
@@ -43,18 +43,6 @@ export async function generateTestMetadata({ params }) {
       metadata.openGraph.description =
         assessmentResponse.data.data.description ||
         "Онлайн тест, хөндлөнгийн үнэлгээ";
-
-      if (icon) {
-        const fullApiUrl = api.replace(/\/$/, "");
-        metadata.openGraph.images = [
-          {
-            url: `${fullApiUrl}file/${icon}`,
-            width: 1536,
-            height: 724,
-            alt: testName,
-          },
-        ];
-      }
     }
   } catch (error) {
     console.error("Error generating test metadata:", error);
