@@ -125,7 +125,7 @@ export async function GET(request, { params }) {
       ctx.textAlign = "right";
 
       const maxWidth = 835 * SCALE;
-      const lineHeight = 95 * SCALE;
+      const lineHeight = 90 * SCALE;
       const words = assessmentName.split(" ");
       let line = "",
         lines = [];
@@ -193,7 +193,8 @@ export async function GET(request, { params }) {
         ctx.fillText(
           `/ ${total}`,
           78 * SCALE + scoreWidth + 5 * SCALE,
-          648 * SCALE + 6 * SCALE
+          648 * SCALE + 6 * SCALE,
+          750 * SCALE
         );
       } else {
         ctx.font = `${42 * SCALE}px Gilroy2, Arial, sans-serif`;
@@ -206,7 +207,7 @@ export async function GET(request, { params }) {
           resultText = examDetails.value;
         }
 
-        ctx.fillText(resultText, 78 * SCALE, 648 * SCALE);
+        ctx.fillText(resultText, 78 * SCALE, 648 * SCALE, 750 * SCALE);
       }
 
       ctx.font = `${24 * SCALE}px Gilroy3, Arial, sans-serif`;
