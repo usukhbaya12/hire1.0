@@ -29,7 +29,7 @@ export default async function sitemap() {
   ];
 
   const testPages = tests.map((test) => ({
-    url: `${baseUrl}/test/${test.id}`,
+    url: `${baseUrl}/test/${test.data.id}`,
     lastModified: test.updatedAt || new Date(),
     changeFrequency: "weekly",
     priority: 1,
