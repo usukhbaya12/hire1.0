@@ -102,7 +102,9 @@ export async function GET(request, { params }) {
 
   try {
     const examData = await getExamData(code);
-    const examDetails = examData?.value;
+    const examDetails = examData?.data;
+
+    console.log("aaa", examDetails);
     if (!examDetails) throw new Error("Invalid exam data structure.");
 
     const canvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
