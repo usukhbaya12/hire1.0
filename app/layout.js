@@ -103,7 +103,7 @@ export const metadata = {
     images: ["https://hire.mn/misc.png"],
   },
   icons: {
-    icon: "/profile.png",
+    icon: "/favicon.ico",
     // apple: '/apple-touch-icon.png',
   },
 
