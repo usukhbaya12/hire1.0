@@ -207,7 +207,28 @@ export async function GET(request, { params }) {
           resultText = examDetails.value;
         }
 
-        ctx.fillText(resultText, 78 * SCALE, 648 * SCALE, 750 * SCALE);
+        const maxResultWidth = 750 * SCALE;
+        const resultLineHeight = 50 * SCALE;
+        const words = resultText.split(" ");
+        let line = "";
+        let resultLines = [];
+
+        for (let i = 0; i < words.length; i++) {
+          const testLine = line + words[i] + " ";
+          const testWidth = ctx.measureText(testLine).width;
+          if (testWidth > maxResultWidth && i > 0) {
+            resultLines.push(line.trim());
+            line = words[i] + " ";
+          } else {
+            line = testLine;
+          }
+        }
+        if (line) resultLines.push(line.trim());
+
+        resultLines.forEach((textLine, index) => {
+          const y = 648 * SCALE + index * resultLineHeight;
+          ctx.fillText(textLine, 78 * SCALE, y);
+        });
       }
 
       ctx.font = `${24 * SCALE}px Gilroy3, Arial, sans-serif`;

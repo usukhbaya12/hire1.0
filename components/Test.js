@@ -171,7 +171,7 @@ export default function Test() {
       dataIndex: "report",
       align: "center",
     },
-    ...(assessmentData?.data?.price > 0
+    ...(testHistory?.data?.some((item) => item.price > 0)
       ? [
           {
             title: "Үйлдэл",
