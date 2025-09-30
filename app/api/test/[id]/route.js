@@ -107,7 +107,7 @@ export async function GET(request, { params }) {
 
       const assessmentName = assessmentData.name || "Test";
       ctx.font = `${86 * SCALE}px Gilroy2, sans-serif`;
-      ctx.fillStyle = "#ffffff";
+      ctx.fillStyle = "#231e20";
       ctx.textAlign = "right";
 
       const maxWidth = 835 * SCALE;
@@ -138,9 +138,9 @@ export async function GET(request, { params }) {
       ctx.textAlign = "left";
       try {
         const notesIcon = await loadImage(NOTES_ICON_URL);
-        const notesSize = 200 * SCALE;
-        const notesX = (CANVAS_WIDTH * 0.4 - notesSize) / 2;
-        const notesY = (CANVAS_HEIGHT - notesSize) / 2;
+        const notesSize = 350 * SCALE;
+        const notesX = 78 * SCALE;
+        const notesY = 500 * SCALE;
         ctx.drawImage(notesIcon, notesX, notesY, notesSize, notesSize);
       } catch (e) {
         console.error("Error loading notes icon (non-critical):", e);

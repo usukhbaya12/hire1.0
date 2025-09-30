@@ -13,9 +13,7 @@ const PLACEHOLDER_IMG_URL = "https://www.hire.mn/placeholder.png";
 const NAME_URL = "https://www.hire.mn/Group.png";
 const HEADER_ICON_URL = "https://www.hire.mn/header-top-white.png";
 const CACHE_CONTROL_SUCCESS = "public, max-age=31536000, immutable";
-const CACHE_CONTROL_ERROR = "no-cache, no-store, must-revalidate";
-
-const imageCache = new Map();
+const CACHE_CONTROL_ERROR = "no-cache";
 
 function registerFontIfExists(filePath, family, weight) {
   const fullPath = path.join(FONT_DIR, filePath);
@@ -29,25 +27,6 @@ function registerFontIfExists(filePath, family, weight) {
 registerFontIfExists("Gilroy-Bold.ttf", "Gilroy", "bold");
 registerFontIfExists("Gilroy-Black.ttf", "Gilroy2", "normal");
 registerFontIfExists("Gilroy-Regular.ttf", "Gilroy3", "normal");
-
-async function loadImageCached(url, timeoutMs = 5000) {
-  if (imageCache.has(url)) {
-    return imageCache.get(url);
-  }
-
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), timeoutMs);
-
-  try {
-    const image = await loadImage(url);
-    imageCache.set(url, image);
-    clearTimeout(timeout);
-    return image;
-  } catch (error) {
-    clearTimeout(timeout);
-    throw error;
-  }
-}
 
 async function getExamData(code) {
   try {
@@ -64,9 +43,8 @@ async function getExamData(code) {
 
 async function drawBackground(ctx, icons) {
   const imageUrl = icons ? `${api}file/${icons}` : PLACEHOLDER_IMG_URL;
-
   try {
-    const image = await loadImageCached(imageUrl);
+    const image = await loadImage(imageUrl);
     const imageAspectRatio = image.width / image.height;
     const targetHeight = CANVAS_HEIGHT;
     const targetWidth = targetHeight * imageAspectRatio;
@@ -74,7 +52,6 @@ async function drawBackground(ctx, icons) {
 
     ctx.fillStyle = "#F36421";
     ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-
     ctx.drawImage(image, imageX, 0, targetWidth, targetHeight);
 
     const gradient = ctx.createLinearGradient(0, 0, CANVAS_WIDTH, 0);
@@ -110,28 +87,8 @@ function generateFallbackImageBuffer() {
   return fallbackCanvas.toBuffer("image/png");
 }
 
-function wrapText(ctx, text, maxWidth) {
-  const words = text.split(" ");
-  let line = "";
-  const lines = [];
-
-  for (let i = 0; i < words.length; i++) {
-    const testLine = line + words[i] + " ";
-    const testWidth = ctx.measureText(testLine).width;
-    if (testWidth > maxWidth && i > 0) {
-      lines.push(line.trim());
-      line = words[i] + " ";
-    } else {
-      line = testLine;
-    }
-  }
-  if (line) lines.push(line.trim());
-  return lines;
-}
-
 export async function GET(request, { params }) {
   const code = (await params).code;
-
   if (!code) {
     console.error("Error: Missing 'code' parameter in request.");
     return new NextResponse(generateFallbackImageBuffer(), {
@@ -147,21 +104,20 @@ export async function GET(request, { params }) {
     const examData = await getExamData(code);
     const examDetails = examData;
 
+    console.log("aaa", examData);
     if (!examDetails) throw new Error("Invalid exam data structure.");
 
     const canvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
     const ctx = canvas.getContext("2d");
-
     await drawBackground(ctx, examData.icons);
 
     try {
-      loadImageCached(HEADER_ICON_URL)
-        .then((brainIcon) => {
-          ctx.drawImage(brainIcon, -345 * SCALE, 0, 961 * SCALE, 371 * SCALE);
-        })
-        .catch((e) =>
-          console.error("Error loading brain icon (non-critical):", e)
-        );
+      try {
+        const brainIcon = await loadImage(HEADER_ICON_URL);
+        ctx.drawImage(brainIcon, -345 * SCALE, 0, 961 * SCALE, 371 * SCALE);
+      } catch (e) {
+        console.error("Error loading brain icon (non-critical):", e);
+      }
 
       const assessmentName = examDetails.assessmentName || "Assessment Results";
       ctx.font = `${86 * SCALE}px Gilroy2, sans-serif`;
@@ -170,31 +126,42 @@ export async function GET(request, { params }) {
 
       const maxWidth = 835 * SCALE;
       const lineHeight = 90 * SCALE;
-      const lines = wrapText(ctx, assessmentName, maxWidth);
+      const words = assessmentName.split(" ");
+      let line = "",
+        lines = [];
+      for (let i = 0; i < words.length; i++) {
+        const testLine = line + words[i] + " ";
+        const testWidth = ctx.measureText(testLine).width;
+        if (testWidth > maxWidth && i > 0) {
+          lines.push(line.trim());
+          line = words[i] + " ";
+        } else {
+          line = testLine;
+        }
+      }
+      if (line) lines.push(line.trim());
 
       const bottomY = CANVAS_HEIGHT - 80 * SCALE;
+      const totalTextHeight = lines.length * lineHeight;
       const startY = bottomY - (lines.length - 1) * lineHeight;
-
       lines.forEach((textLine, index) => {
         const y = startY + index * lineHeight;
         ctx.fillText(textLine, CANVAS_WIDTH - 83 * SCALE, y);
       });
 
       ctx.textAlign = "left";
-
-      loadImageCached(NAME_URL)
-        .then((nameIcon) => {
-          ctx.drawImage(
-            nameIcon,
-            78 * SCALE,
-            445 * SCALE,
-            60 * SCALE,
-            48 * SCALE
-          );
-        })
-        .catch((e) =>
-          console.error("Error loading name icon (non-critical):", e)
+      try {
+        const nameIcon = await loadImage(NAME_URL);
+        ctx.drawImage(
+          nameIcon,
+          78 * SCALE,
+          445 * SCALE,
+          60 * SCALE,
+          48 * SCALE
         );
+      } catch (e) {
+        console.error("Error loading name icon (non-critical):", e);
+      }
 
       ctx.font = `bold ${47 * SCALE}px Gilroy2, Arial, sans-serif`;
       ctx.fillStyle = "#FFFFFF";
@@ -212,7 +179,6 @@ export async function GET(request, { params }) {
       ctx.stroke();
 
       const examType = examDetails.type;
-
       if (examType === 11 || examType === 10) {
         const score = examDetails.point ?? 0;
         const total = examDetails.total ?? 100;
@@ -228,7 +194,7 @@ export async function GET(request, { params }) {
           `/ ${total}`,
           78 * SCALE + scoreWidth + 5 * SCALE,
           648 * SCALE + 6 * SCALE,
-          750 * SCALE
+          650 * SCALE
         );
       } else {
         ctx.font = `${42 * SCALE}px Gilroy2, Arial, sans-serif`;
@@ -241,9 +207,23 @@ export async function GET(request, { params }) {
           resultText = examDetails.value;
         }
 
-        const maxResultWidth = 750 * SCALE;
+        const maxResultWidth = 650 * SCALE;
         const resultLineHeight = 50 * SCALE;
-        const resultLines = wrapText(ctx, resultText, maxResultWidth);
+        const words = resultText.split(" ");
+        let line = "";
+        let resultLines = [];
+
+        for (let i = 0; i < words.length; i++) {
+          const testLine = line + words[i] + " ";
+          const testWidth = ctx.measureText(testLine).width;
+          if (testWidth > maxResultWidth && i > 0) {
+            resultLines.push(line.trim());
+            line = words[i] + " ";
+          } else {
+            line = testLine;
+          }
+        }
+        if (line) resultLines.push(line.trim());
 
         resultLines.forEach((textLine, index) => {
           const y = 648 * SCALE + index * resultLineHeight;
@@ -266,16 +246,11 @@ export async function GET(request, { params }) {
       throw new Error(`Failed to draw image content. ${drawingError.message}`);
     }
 
-    const buffer = canvas.toBuffer("image/png", {
-      compressionLevel: 7,
-      filters: canvas.PNG_FILTER_NONE,
-    });
-
+    const buffer = canvas.toBuffer("image/png");
     return new NextResponse(buffer, {
       headers: {
         "Content-Type": "image/png",
         "Cache-Control": CACHE_CONTROL_SUCCESS,
-        "Content-Length": buffer.length.toString(),
       },
     });
   } catch (error) {
@@ -288,8 +263,4 @@ export async function GET(request, { params }) {
       status: 500,
     });
   }
-}
-
-export function clearImageCache() {
-  imageCache.clear();
 }
