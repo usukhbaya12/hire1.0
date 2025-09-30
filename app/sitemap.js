@@ -7,7 +7,7 @@ export default async function sitemap() {
   try {
     const response = await getAssessments();
     if (response.success && response.data) {
-      tests = response.data;
+      tests = response.data.data;
     }
   } catch (error) {
     console.error("Error fetching tests for sitemap:", error);
