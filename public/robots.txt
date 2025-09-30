@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Allow: /test/*
+Disallow: /api/
+Disallow: /exam/*
+Disallow: /admin/*
+
+Sitemap: https://hire.mn/sitemap.xml

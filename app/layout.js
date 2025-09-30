@@ -48,20 +48,51 @@ const gilroy = localFont({
 });
 
 export const metadata = {
-  title: "Hire.mn",
+  metadataBase: new URL("https://hire.mn"),
+  title: {
+    default: "Hire.mn: Зөв хүн, зөв газарт",
+    template: "%s / Hire.mn",
+  },
   description: "Онлайн тест, хөндлөнгийн үнэлгээ",
+  keywords: [
+    "онлайн тест",
+    "үнэлгээ",
+    "тест",
+    "hire",
+    "zangia",
+    "сорил",
+    "iq",
+    "логик",
+  ],
+  authors: [{ name: "Hire.mn" }],
+  creator: "Hire.mn",
+  publisher: "Hire.mn",
+
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+
   openGraph: {
-    title: "Hire.mn",
+    title: "Hire.mn: Зөв хүн, зөв газарт",
     description: "Онлайн тест, хөндлөнгийн үнэлгээ",
     url: "https://hire.mn",
-    siteName: "Hire.mn",
+    siteName: "Hire.mn: Зөв хүн, зөв газарт",
+    locale: "mn_MN",
     type: "website",
     images: [
       {
         url: "https://hire.mn/misc.png",
         width: 1200,
         height: 630,
-        alt: "Hire.mn - Онлайн тест платформ",
+        alt: "Hire.mn",
       },
     ],
   },
@@ -72,7 +103,12 @@ export const metadata = {
     images: ["https://hire.mn/misc.png"],
   },
   icons: {
-    icon: "/favicon.ico",
+    icon: "/profile.png",
+    // apple: '/apple-touch-icon.png',
+  },
+
+  alternates: {
+    canonical: "https://hire.mn",
   },
 };
 

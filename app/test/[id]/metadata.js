@@ -8,12 +8,23 @@ export async function generateTestMetadata({ params }) {
   let metadata = {
     title: "Тест / Hire.mn",
     description: "Онлайн тест, хөндлөнгийн үнэлгээ",
+    keywords: ["тест", "онлайн тест", "үнэлгээ", "hire", "zangia", "сорил"],
+    authors: [{ name: "Hire.mn" }],
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+      },
+    },
     openGraph: {
       title: "Тест / Hire.mn",
       description: "Онлайн тест, хөндлөнгийн үнэлгээ",
       url: `https://hire.mn/test/${testId}`,
       siteName: "Hire.mn",
       type: "website",
+      locale: "mn_MN",
       images: [
         {
           url: `https://hire.mn/api/test/${testId}`,
@@ -27,6 +38,9 @@ export async function generateTestMetadata({ params }) {
       card: "summary_large_image",
       images: [`https://hire.mn/api/test/${testId}`],
     },
+    alternates: {
+      canonical: `https://hire.mn/test/${testId}`,
+    },
   };
 
   try {
@@ -35,12 +49,35 @@ export async function generateTestMetadata({ params }) {
     if (assessmentResponse.success && assessmentResponse.data?.data) {
       const testName = assessmentResponse.data.data.name || "Тестийн үр дүн";
 
+      const test = assessmentResponse.data.data;
+      const description =
+        test.description || "Онлайн тест, хөндлөнгийн үнэлгээ";
+
+      const keywords = [
+        testName,
+        "тест",
+        "онлайн тест",
+        test.category?.name,
+        test.author,
+        "үнэлгээ",
+        "hire",
+        "zangia",
+        "сорил",
+        "iq",
+        "логик",
+      ].filter(Boolean);
+
       metadata.title = `${testName} / Hire.mn`;
-      metadata.description =
-        assessmentResponse.data.data.description ||
-        "Онлайн тест, хөндлөнгийн үнэлгээ";
+      metadata.description = description || "Онлайн тест, хөндлөнгийн үнэлгээ";
+      metadata.keywords = keywords;
+
       metadata.openGraph.title = `${testName} / Hire.mn`;
       metadata.openGraph.description =
+        assessmentResponse.data.data.description ||
+        "Онлайн тест, хөндлөнгийн үнэлгээ";
+
+      metadata.twitter.title = `${testName} / Hire.mn`;
+      metadata.twitter.description =
         assessmentResponse.data.data.description ||
         "Онлайн тест, хөндлөнгийн үнэлгээ";
     }
