@@ -727,7 +727,7 @@ const Account = () => {
 
   return (
     <>
-      <title>Hire.mn</title>
+      <title>Миний бүртгэл / Hire.mn</title>
       {contextHolder}
       <div className="inset-0 fixed">
         <div className="absolute left-[-5%] w-[200px] h-[200px] md:w-[400px] md:h-[400px] rounded-full bg-orange-600/10 blur-[80px]" />
