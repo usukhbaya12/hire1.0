@@ -139,7 +139,7 @@ export async function GET(request, { params }) {
       try {
         const notesIcon = await loadImage(NOTES_ICON_URL);
         const notesSize = 350 * SCALE;
-        const notesX = 78 * SCALE;
+        const notesX = 68 * SCALE;
         const notesY = 430 * SCALE;
         ctx.drawImage(notesIcon, notesX, notesY, notesSize, notesSize);
       } catch (e) {
