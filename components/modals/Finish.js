@@ -110,7 +110,7 @@ const FinishModal = ({ open, onClose, onSubmit, assessment }) => {
             <TextArea
               value={feedback}
               onChange={(e) => setFeedback(e.target.value)}
-              placeholder="Дэлгэрэнгүй бичнэ үү..."
+              placeholder="Сэтгэгдэл үлдээмээр байвал..."
               rows={3}
               className="rounded"
             />

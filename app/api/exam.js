@@ -190,7 +190,7 @@ export const getExamCalculation = async (id) => {
   try {
     const token = await getAuthToken();
 
-    const response = await axios.get(`${api}exam/calculation/${id}`, {
+    const response = await axios.get(`${api}exam/exam/${id}`, {
       headers: {
         Authorization: token ? `Bearer ${token}` : undefined,
         "Content-Type": "application/json",

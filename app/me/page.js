@@ -106,7 +106,7 @@ const Profile = () => {
   return (
     <>
       <ConfigProvider locale={mnMN}>
-        <title>Hire.mn</title>
+        <title>Миний тестүүд / Hire.mn</title>
         <EBarimtModal
           open={barimtModalOpen}
           onClose={() => setBarimtModalOpen(false)}

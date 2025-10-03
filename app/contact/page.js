@@ -95,7 +95,7 @@ const ContactPage = () => {
 
   return (
     <div>
-      <title>Hire.mn</title>
+      <title>Бидэнтэй холбогдох / Hire.mn</title>
       {contextHolder}
 
       {/* <div className="inset-0 fixed">

@@ -1,40 +1,24 @@
-import React, { useState, useEffect, useRef } from "react";
-import {
-  Table,
-  Tooltip,
-  Tag,
-  Button,
-  Empty,
-  Input,
-  message,
-  DatePicker,
-  Space,
-  Progress,
-} from "antd";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { Table, Tag, Button, Input, message, DatePicker, Progress } from "antd";
 import {
   MagniferBoldDuotone,
-  CheckCircleBoldDuotone,
-  ClockCircleBoldDuotone,
-  MouseBoldDuotone,
-  DocumentTextBoldDuotone,
-  ChartSquareBoldDuotone,
   EyeBoldDuotone,
   EyeClosedBold,
   ClipboardBoldDuotone,
-  ExportBoldDuotone,
   FilterBoldDuotone,
   CalendarBoldDuotone,
   DownloadBoldDuotone,
+  AlarmBoldDuotone,
+  RestartLineDuotone,
 } from "solar-icons";
-import { getReport } from "@/app/api/exam";
 import * as XLSX from "xlsx";
 import dayjs from "dayjs";
 import { customLocale } from "@/app/utils/values";
 import Link from "next/link";
+import RenewModal from "./modals/Renew";
 
-const ApplicantsTable = ({ data, loading }) => {
+const ApplicantsTable = ({ data, loading, onRefresh }) => {
   const [applicants, setApplicants] = useState([]);
-  const [filteredApplicants, setFilteredApplicants] = useState([]);
   const [messageApi, contextHolder] = message.useMessage();
   const [exporting, setExporting] = useState(false);
   const [searchText, setSearchText] = useState("");
@@ -42,31 +26,42 @@ const ApplicantsTable = ({ data, loading }) => {
   const [endDate, setEndDate] = useState(dayjs());
   const [tableFilters, setTableFilters] = useState({});
   const [tableSorters, setTableSorters] = useState({});
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+    showSizeChanger: true,
+    pageSizeOptions: ["10", "20", "50", "100"],
+  });
 
-  // Get unique test names for filter options
-  const getTestNames = () => {
+  const [isExtendModalVisible, setIsExtendModalVisible] = useState(false);
+  const [selectedExam, setSelectedExam] = useState(null);
+
+  const testNames = useMemo(() => {
     if (!applicants.length) return [];
-
     const uniqueTests = [
       ...new Set(applicants.map((item) => item.assessmentName)),
     ];
-    return uniqueTests.map((name) => ({
-      text: name,
-      value: name,
-    }));
-  };
+    return uniqueTests.map((name) => ({ text: name, value: name }));
+  }, [applicants]);
+
+  const statusFilters = useMemo(
+    () => [
+      { text: "Мэйл илгээсэн", value: "sent" },
+      { text: "Эхэлсэн", value: "started" },
+      { text: "Дууссан", value: "completed" },
+      { text: "Хугацаа хэтэрсэн", value: "renew" },
+    ],
+    []
+  );
 
   useEffect(() => {
-    if (!data || data.length === 0) {
+    if (!data?.length) {
       setApplicants([]);
-      setFilteredApplicants([]);
       return;
     }
 
     const flattenedData = data.reduce((acc, item) => {
-      if (!item.exams || item.exams.length === 0) {
-        return acc;
-      }
+      if (!item.exams?.length) return acc;
 
       const examEntries = item.exams.map((exam) => ({
         examId: exam.id,
@@ -77,177 +72,203 @@ const ApplicantsTable = ({ data, loading }) => {
         lastname: exam.lastname,
         email: exam.email,
         phone: exam.phone,
-        startDate: exam.userStartDate,
-        endDate: exam.userEndDate,
+        userStartDate: exam.userStartDate,
+        userEndDate: exam.userEndDate,
         code: exam.code,
         result: exam.result,
+        value: exam.value,
+        point: exam.point,
+        total: exam.total,
         testType: item.assessment.type,
         visible: exam.visible || false,
+        startDate: exam.startDate,
+        endDate: exam.endDate,
       }));
 
       return [...acc, ...examEntries];
     }, []);
 
     setApplicants(flattenedData);
-    applyFilters(flattenedData, searchText, startDate, endDate);
   }, [data]);
 
-  // Apply all filters (search, date, table filters)
-  const applyFilters = (data, search, start, end) => {
-    // First apply date filter if available
-    let filtered = data;
+  const filteredApplicants = useMemo(() => {
+    let filtered = [...applicants];
 
-    if (start && end) {
-      const startTimestamp = start.startOf("day").valueOf();
-      const endTimestamp = end.endOf("day").valueOf();
+    if (startDate && endDate) {
+      const startTs = startDate.startOf("day").valueOf();
+      const endTs = endDate.endOf("day").valueOf();
 
-      filtered = data.filter((item) => {
-        // If no dates are available, include it (show items with pending status)
-        if (!item.startDate && !item.endDate) return true;
+      filtered = filtered.filter((item) => {
+        if (!item.userStartDate && !item.userEndDate) return true;
 
-        const itemStartDate = item.startDate
-          ? new Date(item.startDate).getTime()
+        const itemStartTs = item.userStartDate
+          ? new Date(item.userStartDate).getTime()
           : 0;
-        const itemEndDate = item.endDate ? new Date(item.endDate).getTime() : 0;
+        const itemEndTs = item.userEndDate
+          ? new Date(item.userEndDate).getTime()
+          : 0;
 
-        // Check if start date or end date is within range
         return (
-          (itemStartDate >= startTimestamp && itemStartDate <= endTimestamp) ||
-          (itemEndDate >= startTimestamp && itemEndDate <= endTimestamp) ||
-          (itemStartDate <= startTimestamp &&
-            (itemEndDate >= endTimestamp || !itemEndDate))
+          (itemStartTs >= startTs && itemStartTs <= endTs) ||
+          (itemEndTs >= startTs && itemEndTs <= endTs) ||
+          (itemStartTs <= startTs && (itemEndTs >= endTs || !itemEndTs))
         );
       });
     }
 
-    // Then apply search filter if available
-    if (search) {
-      const searchLower = search.toLowerCase();
+    if (searchText) {
+      const searchLower = searchText.toLowerCase();
       filtered = filtered.filter((item) => {
-        const firstnameLower = (item.firstname || "").toLowerCase();
-        const lastnameLower = (item.lastname || "").toLowerCase();
-        const emailLower = (item.email || "").toLowerCase();
-        const fullName = `${firstnameLower} ${lastnameLower}`;
+        const firstname = (item.firstname || "").toLowerCase();
+        const lastname = (item.lastname || "").toLowerCase();
+        const email = (item.email || "").toLowerCase();
+        const fullName = `${firstname} ${lastname}`;
 
         return (
-          firstnameLower.includes(searchLower) ||
-          lastnameLower.includes(searchLower) ||
-          emailLower.includes(searchLower) ||
+          firstname.includes(searchLower) ||
+          lastname.includes(searchLower) ||
+          email.includes(searchLower) ||
           fullName.includes(searchLower)
         );
       });
     }
 
-    setFilteredApplicants(filtered);
-  };
+    if (tableFilters.assessmentName?.length) {
+      filtered = filtered.filter((item) =>
+        tableFilters.assessmentName.includes(item.assessmentName)
+      );
+    }
 
-  // Handle search input change
-  const handleSearch = (e) => {
-    const value = e.target.value;
-    setSearchText(value);
-    applyFilters(applicants, value, startDate, endDate);
-  };
+    if (tableFilters.status?.length) {
+      filtered = filtered.filter((item) => {
+        const isExpired =
+          !item.userEndDate && dayjs().isAfter(dayjs(item.endDate));
+        const isSent = !item.userStartDate && !item.userEndDate;
+        const isStarted = item.userStartDate && !item.userEndDate;
+        const isCompleted = !!item.userEndDate;
 
-  // Handle start date change
-  const handleStartDateChange = (date) => {
+        return tableFilters.status.some((status) => {
+          if (status === "sent") return isSent;
+          if (status === "started") return isStarted;
+          if (status === "completed") return isCompleted;
+          if (status === "renew") return isExpired;
+          return false;
+        });
+      });
+    }
+
+    if (tableSorters.field) {
+      filtered = [...filtered].sort((a, b) => {
+        if (tableSorters.field === "endDate") {
+          if (!a.userEndDate && !b.userEndDate) return 0;
+          if (!a.userEndDate) return tableSorters.order === "ascend" ? 1 : -1;
+          if (!b.userEndDate) return tableSorters.order === "ascend" ? -1 : 1;
+          const result = new Date(a.userEndDate) - new Date(b.userEndDate);
+          return tableSorters.order === "ascend" ? result : -result;
+        }
+        return 0;
+      });
+    }
+
+    return filtered;
+  }, [applicants, searchText, startDate, endDate, tableFilters, tableSorters]);
+
+  const handleSearch = useCallback((e) => {
+    setSearchText(e.target.value);
+    setPagination((prev) => ({ ...prev, current: 1 }));
+  }, []);
+
+  const handleStartDateChange = useCallback((date) => {
     setStartDate(date);
-    applyFilters(applicants, searchText, date, endDate);
-  };
+    setPagination((prev) => ({ ...prev, current: 1 }));
+  }, []);
 
-  // Handle end date change
-  const handleEndDateChange = (date) => {
+  const handleEndDateChange = useCallback((date) => {
     setEndDate(date);
-    applyFilters(applicants, searchText, startDate, date);
-  };
+    setPagination((prev) => ({ ...prev, current: 1 }));
+  }, []);
 
-  // Handle table change (for sorting and filtering)
-  const handleTableChange = (pagination, filters, sorter) => {
+  const handleTableChange = useCallback((paginationInfo, filters, sorter) => {
     setTableFilters(filters);
     setTableSorters(sorter);
-  };
+    setPagination(paginationInfo);
+  }, []);
 
-  // Clear all filters, search, and date range
-  const clearAll = () => {
+  const clearAll = useCallback(() => {
     setSearchText("");
     setStartDate(dayjs().subtract(1, "month"));
     setEndDate(dayjs());
     setTableFilters({});
     setTableSorters({});
+    setPagination((prev) => ({ ...prev, current: 1 }));
+  }, []);
 
-    // Force table to reset its filters
-    setTimeout(() => {
-      document.querySelectorAll(".ant-table-filter-trigger").forEach((el) => {
-        if (el.classList.contains("active")) {
-          el.click();
-          setTimeout(() => {
-            const resetButtons = document.querySelectorAll(
-              ".ant-table-filter-dropdown-btns .ant-btn-link"
-            );
-            resetButtons.forEach((button) => button.click());
-          }, 100);
-        }
-      });
-    }, 0);
-
-    // Apply default filters
-    applyFilters(applicants, "", dayjs().subtract(1, "month"), dayjs());
-  };
-
-  const exportToExcel = () => {
+  const exportToExcel = useCallback(() => {
     try {
       setExporting(true);
 
-      // Prepare the data for export
-      const exportData = filteredApplicants.map((item) => ({
+      const exportData = filteredApplicants.map((item, index) => ({
+        "№": index + 1,
+        "Илгээсэн огноо": formatDate(item.startDate),
+        "Тест дуусах огноо": formatDate(item.endDate),
         "Шалгуулагчийн нэр": `${item.firstname} ${item.lastname}`,
         "И-мэйл": item.email,
-        Утас: item.phone,
+        "Утасны дугаар": item.phone,
         "Тестийн нэр": item.assessmentName,
-        "Эхэлсэн огноо": item.startDate
-          ? new Date(item.startDate).toLocaleString()
+        "Тестийн төрөл": item.testType
+          ? item.testType === 10
+            ? "Зөв хариулттай"
+            : "Өөрийн үнэлгээ"
           : "-",
-        "Дууссан огноо": item.endDate
-          ? new Date(item.endDate).toLocaleString()
+        "Эхэлсэн огноо": item.userStartDate
+          ? formatDate(item.userStartDate)
           : "-",
+        "Дууссан огноо": item.userEndDate ? formatDate(item.userEndDate) : "-",
         Төлөв:
-          !item.startDate && !item.endDate
+          !item.userEndDate && dayjs().isAfter(item.endDate)
+            ? "Хугацаа хэтэрсэн"
+            : !item.userStartDate && !item.userEndDate
             ? "Мэйл илгээсэн"
-            : item.startDate && !item.endDate
+            : item.userStartDate && !item.userEndDate
             ? "Эхэлсэн"
-            : "Дуусгасан",
-        "Үр дүн": item.result
-          ? item.testType === 20
-            ? `${item.result.result || ""} - ${item.result.value || ""}`
-            : `${Math.round(
-                ((item.result.point || 0) / (item.result.total || 1)) * 100
-              )}%`
-          : "-",
+            : "Дууссан",
         "Шалгуулагч үр дүнгээ харах эсэх": item.visible ? "Тийм" : "Үгүй",
+        "Үр дүн":
+          item.testType === 10 || item.testType === 11
+            ? `${((item.result?.point / item.result?.total) * 100).toFixed(1)}%`
+            : item.result?.result,
+        Тайлбар: item.result?.value ? item.result?.value : "",
+        ...(item.testType === 10 || item.testType === 11
+          ? {
+              "Авах оноо": item.result?.total || "-",
+              "Авсан оноо": item.result?.point || "-",
+            }
+          : {}),
       }));
 
-      // Create worksheet
       const worksheet = XLSX.utils.json_to_sheet(exportData);
-
-      // Column widths
-      const colWidths = [
-        { wch: 25 }, // Name
-        { wch: 30 }, // Email
-        { wch: 15 }, // Phone
-        { wch: 25 }, // Test name
-        { wch: 20 }, // Start date
-        { wch: 20 }, // End date
-        { wch: 15 }, // Status
-        { wch: 20 }, // Result
-        { wch: 12 }, // Visible
+      worksheet["!cols"] = [
+        { wch: 5 },
+        { wch: 15 },
+        { wch: 15 },
+        { wch: 25 },
+        { wch: 30 },
+        { wch: 15 },
+        { wch: 25 },
+        { wch: 20 },
+        { wch: 15 },
+        { wch: 15 },
+        { wch: 15 },
+        { wch: 20 },
+        { wch: 30 },
+        { wch: 20 },
+        { wch: 10 },
+        { wch: 10 },
       ];
 
-      worksheet["!cols"] = colWidths;
-
-      // Create workbook
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, "Шалгуулагчид");
 
-      // Generate Excel file
       const filename = `Шалгуулагчид_${
         new Date().toISOString().split("T")[0]
       }.xlsx`;
@@ -260,47 +281,47 @@ const ApplicantsTable = ({ data, loading }) => {
     } finally {
       setExporting(false);
     }
-  };
+  }, [filteredApplicants, messageApi]);
 
-  const formatDate = (dateString) => {
-    if (!dateString) return "-";
-    return new Date(dateString).toLocaleString("mn-MN", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
+  const formatDate = useCallback((date) => {
+    return date ? dayjs(date).format("YYYY-MM-DD HH:mm") : "-";
+  }, []);
 
-  const getStatusTag = (record) => {
-    if (!record.startDate && !record.endDate) {
+  const getStatusTag = useCallback((record) => {
+    if (!record.userEndDate && dayjs().isAfter(dayjs(record.endDate))) {
       return (
-        <Button className="shadow-md shadow-slate-200 grd-div-4">
-          <div className="w-1.5 h-1.5 bg-amber-500 rounded-full"></div>
-          Мэйл илгээсэн
-        </Button>
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-red-200 to-red-300 border border-red-400 shadow-sm">
+          <div className="w-2 h-2 bg-red-600 rounded-full animate-pulse"></div>
+          <span className="text-xs font-bold text-red-700">Хэтэрсэн</span>
+        </div>
       );
-    } else if (record.startDate && !record.endDate) {
+    } else if (!record.userStartDate && !record.userEndDate) {
       return (
-        <Button className="grd-div-5 cursor-default shadow-md shadow-slate-200">
-          <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
-          Эхэлсэн
-        </Button>
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-50 to-amber-100 border border-amber-200 shadow-sm">
+          <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></div>
+          <span className="text-xs font-bold text-amber-700">Илгээсэн</span>
+        </div>
       );
-    } else if (record.endDate) {
+    } else if (record.userStartDate && !record.userEndDate) {
       return (
-        <Button className="grd-div-6 cursor-default shadow-md shadow-slate-200">
-          <div className="w-1.5 h-1.5 bg-emerald-600 rounded-full"></div>
-          Дуусгасан
-        </Button>
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-blue-200 to-blue-100 border border-blue-300 shadow-sm">
+          <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+          <span className="text-xs font-semibold text-blue-700">Эхэлсэн</span>
+        </div>
+      );
+    } else if (record.userEndDate) {
+      return (
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-emerald-300 to-green-300 border border-green-500 shadow-sm">
+          <div className="w-2 h-2 bg-emerald-600 rounded-full"></div>
+          <span className="text-xs font-bold text-emerald-700">Дууссан</span>
+        </div>
       );
     }
     return <Tag color="default">-</Tag>;
-  };
+  }, []);
 
-  const getScore = (record) => {
-    if (!record.endDate || !record.result) {
+  const getScore = useCallback((record) => {
+    if (!record.userEndDate || !record.result) {
       return <span className="text-gray-400">-</span>;
     }
 
@@ -320,14 +341,15 @@ const ApplicantsTable = ({ data, loading }) => {
         </div>
       );
     } else {
+      const percentage = Math.round(
+        (record.result.point / record.result.total) * 100
+      );
       return (
         <div className="flex items-center gap-2">
           <Progress
             className="min-w-4"
             size="small"
-            percent={Math.round(
-              (record.result.point / record.result.total) * 100
-            )}
+            percent={percentage}
             strokeColor={{
               "0%": "#FF8400",
               "100%": "#FF5C00",
@@ -339,151 +361,152 @@ const ApplicantsTable = ({ data, loading }) => {
         </div>
       );
     }
-  };
+  }, []);
 
-  // Status filter options
-  const statusFilters = [
-    {
-      text: "Мэйл илгээсэн",
-      value: "sent",
-    },
-    {
-      text: "Эхэлсэн",
-      value: "started",
-    },
-    {
-      text: "Дуусгасан",
-      value: "completed",
-    },
-  ];
+  const showExtendModal = useCallback((record) => {
+    setSelectedExam(record);
+    setIsExtendModalVisible(true);
+  }, []);
 
-  const columns = [
-    {
-      title: "№",
-      key: "index",
-      width: 60,
-      render: (_, __, index) => index + 1,
-    },
-    {
-      title: "Шалгуулагчийн нэр",
-      key: "user",
-      render: (record) => {
-        const firstname = record.firstname || "-";
-        const lastname = record.lastname || "";
-        const email = record.email || "-";
-        const initial = firstname ? firstname[0].toUpperCase() : "A";
+  const refreshData = useCallback(() => {
+    if (onRefresh && typeof onRefresh === "function") {
+      onRefresh();
+    }
+  }, [onRefresh]);
 
-        return (
-          <div className="flex items-center gap-3">
-            <div className="relative group">
-              <div className="absolute -inset-0.5 bg-gradient-to-br from-main/50 to-secondary/50 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
-              <div className="relative min-w-10 min-h-10 bg-gradient-to-br from-main/10 to-secondary/10 rounded-full flex items-center justify-center border border-main/10">
-                <div className="text-base font-bold uppercase bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent">
-                  {initial}
+  const columns = useMemo(
+    () => [
+      {
+        title: "№",
+        key: "index",
+        width: 60,
+        render: (_, __, index) => {
+          const { current = 1, pageSize = 10 } = pagination;
+          return (current - 1) * pageSize + index + 1;
+        },
+      },
+      {
+        title: "Шалгуулагчийн нэр",
+        key: "user",
+        render: (record) => {
+          const firstname = record.firstname || "-";
+          const lastname = record.lastname || "";
+          const email = record.email || "-";
+          const initial = firstname ? firstname[0].toUpperCase() : "A";
+
+          return (
+            <div className="flex items-center gap-3">
+              <div className="relative group">
+                <div className="absolute -inset-0.5 bg-gradient-to-br from-main/50 to-secondary/50 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
+                <div className="relative min-w-10 min-h-10 bg-gradient-to-br from-main/10 to-secondary/10 rounded-full flex items-center justify-center border border-main/10">
+                  <div className="text-base font-bold uppercase bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent">
+                    {initial}
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="leading-4">
-              <div className="font-semibold">
-                {firstname} {lastname}
+              <div className="leading-4">
+                <div className="font-bold">
+                  {firstname} {lastname}
+                </div>
+                <div className="text-gray-700 text-xs">{email}</div>
               </div>
-              <div className="text-gray-700 text-sm">{email}</div>
             </div>
-          </div>
-        );
+          );
+        },
       },
-    },
-    {
-      title: "Тестийн нэр",
-      key: "assessmentName",
-      dataIndex: "assessmentName",
-      filters: getTestNames(),
-      onFilter: (value, record) => record.assessmentName === value,
-      render: (_, record) => (
-        <div className="flex items-center gap-2">
-          <span className="font-bold text-main">{record.assessmentName}</span>
-        </div>
-      ),
-    },
-    {
-      title: "Эхэлсэн огноо",
-      key: "startDate",
-      dataIndex: "startDate",
-      sorter: (a, b) => {
-        if (!a.startDate && !b.startDate) return 0;
-        if (!a.startDate) return -1;
-        if (!b.startDate) return 1;
-        return new Date(a.startDate) - new Date(b.startDate);
+      {
+        title: "Тестийн нэр",
+        key: "assessmentName",
+        dataIndex: "assessmentName",
+        filters: testNames,
+        filteredValue: tableFilters.assessmentName || null,
+        render: (_, record) => (
+          <Link
+            href={`/tests/${record.assessmentId}`}
+            className="font-bold text-main hover:underline hover:text-secondary transition-colors"
+          >
+            {record.assessmentName}
+          </Link>
+        ),
       },
-      render: (_, record) => (
-        <div className="flex items-center gap-2">
-          <span>{formatDate(record.startDate)}</span>
-        </div>
-      ),
-    },
-    {
-      title: "Дууссан огноо",
-      key: "endDate",
-      dataIndex: "endDate",
-      sorter: (a, b) => {
-        if (!a.endDate && !b.endDate) return 0;
-        if (!a.endDate) return -1;
-        if (!b.endDate) return 1;
-        return new Date(a.endDate) - new Date(b.endDate);
-      },
-      render: (_, record) => (
-        <div className="flex items-center gap-2">
-          <span>{formatDate(record.endDate)}</span>
-        </div>
-      ),
-    },
-    {
-      title: "Төлөв",
-      key: "status",
-      filters: statusFilters,
-      onFilter: (value, record) => {
-        if (value === "sent") return !record.startDate && !record.endDate;
-        if (value === "started") return record.startDate && !record.endDate;
-        if (value === "completed") return !!record.endDate;
-        return true;
-      },
-      render: (_, record) => getStatusTag(record),
-      width: 200,
-    },
-    {
-      title: "Үр дүн",
-      key: "score",
-      render: (_, record) => getScore(record),
-    },
-    {
-      title: "Шалгуулагч үр дүнгээ харах эсэх",
-      dataIndex: "visible",
-      key: "visible",
-      render: (visible) =>
-        visible ? (
-          <div className="text-gray-700 flex items-center gap-1">
-            <EyeBoldDuotone width={18} /> Тийм
-          </div>
-        ) : (
-          <div className="text-gray-700 flex items-center gap-1">
-            <EyeClosedBold width={18} /> Үгүй
+      {
+        title: "Дууссан огноо",
+        key: "endDate",
+        dataIndex: "endDate",
+        sorter: true,
+        sortOrder: tableSorters.field === "endDate" && tableSorters.order,
+        render: (_, record) => (
+          <div className="flex items-center gap-2">
+            <span>{formatDate(record.userEndDate)}</span>
           </div>
         ),
-      width: 120,
-    },
-    {
-      title: "Үйлдэл",
-      key: "action",
-      align: "right",
-      render: (_, record) =>
-        record.endDate && record.result ? (
-          <Link href={`/api/report/${record.code}`} target="_blank" passHref>
-            <Button className="grd-btn">Тайлан татах</Button>
-          </Link>
-        ) : null,
-      align: "center",
-    },
-  ];
+      },
+      {
+        title: "Төлөв",
+        key: "status",
+        filters: statusFilters,
+        filteredValue: tableFilters.status || null,
+        render: (_, record) => getStatusTag(record),
+        width: 100,
+      },
+      {
+        title: "Үр дүн",
+        key: "score",
+        render: (_, record) => getScore(record),
+        width: 200,
+      },
+      {
+        title: "Шалгуулагч үр дүнгээ харах эсэх",
+        dataIndex: "visible",
+        key: "visible",
+        render: (visible) =>
+          visible ? (
+            <div className="text-gray-700 flex items-center gap-1">
+              <EyeBoldDuotone width={18} /> Тийм
+            </div>
+          ) : (
+            <div className="text-gray-700 flex items-center gap-1">
+              <EyeClosedBold width={18} /> Үгүй
+            </div>
+          ),
+        width: 120,
+      },
+      {
+        title: "Үйлдэл",
+        key: "action",
+        align: "right",
+        render: (_, record) =>
+          !record.userEndDate && dayjs().isAfter(record.endDate) ? (
+            <Button
+              className="link-btn-3 border-none"
+              onClick={() => showExtendModal(record)}
+            >
+              <AlarmBoldDuotone width={18} />
+              Сунгах
+            </Button>
+          ) : record.userEndDate && record.result ? (
+            <Link href={`/api/report/${record.code}`} target="_blank" passHref>
+              <Button className="link-btn-2 border-none">
+                <ClipboardBoldDuotone width={18} />
+                Тайлан
+              </Button>
+            </Link>
+          ) : null,
+        align: "center",
+      },
+    ],
+    [
+      pagination,
+      testNames,
+      tableFilters,
+      tableSorters,
+      statusFilters,
+      formatDate,
+      getStatusTag,
+      getScore,
+      showExtendModal,
+    ]
+  );
 
   return (
     <>
@@ -498,6 +521,7 @@ const ApplicantsTable = ({ data, loading }) => {
               prefix={
                 <MagniferBoldDuotone color={"#f36421"} width={18} height={18} />
               }
+              allowClear
               className="pr-8"
             />
           </div>
@@ -514,7 +538,7 @@ const ApplicantsTable = ({ data, loading }) => {
                 format="YYYY-MM-DD"
                 value={startDate}
                 onChange={handleStartDateChange}
-                className="min-w-36"
+                className="min-w-32"
               />
             </div>
             <span className="text-gray-400">-</span>
@@ -523,15 +547,14 @@ const ApplicantsTable = ({ data, loading }) => {
               format="YYYY-MM-DD"
               value={endDate}
               onChange={handleEndDateChange}
-              className="min-w-36"
+              className="min-w-32"
             />
           </div>
         </div>
 
         <div className="flex gap-3 items-center">
-          <Button onClick={clearAll} className="stroked-btn">
-            <FilterBoldDuotone width={18} height={18} />
-            Цэвэрлэх
+          <Button onClick={refreshData} className="stroked-btn">
+            <RestartLineDuotone width={18} height={18} />
           </Button>
 
           <Button
@@ -545,21 +568,29 @@ const ApplicantsTable = ({ data, loading }) => {
         </div>
       </div>
       <Table
-        // loc
         className="applicants-table overflow-x-auto"
         dataSource={filteredApplicants}
         loading={loading}
         rowKey={(record) => record.examId}
         pagination={{
+          ...pagination,
+          total: filteredApplicants.length,
           size: "small",
-          pageSize: 10,
-          hideOnSinglePage: true,
-          showSizeChanger: false,
+          showTotal: (total, range) =>
+            `${range[0]}-ээс ${range[1]} / Нийт ${total}`,
         }}
         onChange={handleTableChange}
         locale={customLocale}
         columns={columns}
       />
+      {selectedExam && (
+        <RenewModal
+          isVisible={isExtendModalVisible}
+          onClose={() => setIsExtendModalVisible(false)}
+          examData={selectedExam}
+          onSuccess={refreshData}
+        />
+      )}
     </>
   );
 };

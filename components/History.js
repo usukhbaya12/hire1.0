@@ -48,7 +48,7 @@ const AssessmentCard = ({ assessment, isInvited = false }) => {
 
   const handleButtonClick = (history) => {
     if (history.completed) {
-      const reportUrl = `${api}file/report-${history.exams.code}.pdf`;
+      const reportUrl = `/api/report/${history.exams.code}`;
       window.open(reportUrl, "_blank");
     } else if (!history.completed && history.examStarted) {
       router.push(`/exam/${history.exams.code}`);
@@ -142,20 +142,26 @@ const AssessmentCard = ({ assessment, isInvited = false }) => {
                     </div>
                     <div>
                       {userEndDate ? (
-                        <Button className="grd-div-6 cursor-default shadow-md shadow-slate-200">
-                          <div className="w-1.5 h-1.5 bg-emerald-600 rounded-full"></div>
-                          Дуусгасан
-                        </Button>
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-emerald-300 to-green-300 border border-green-500 shadow-sm">
+                          <div className="w-2 h-2 bg-emerald-600 rounded-full"></div>
+                          <span className="text-xs font-bold text-emerald-700">
+                            Дууссан
+                          </span>
+                        </div>
                       ) : examStartDate && !userEndDate ? (
-                        <Button className="grd-div-5 cursor-default shadow-md shadow-slate-200 ">
-                          <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
-                          Дуусгаагүй
-                        </Button>
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-blue-200 to-blue-100 border border-blue-300 shadow-sm">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                          <span className="text-xs font-semibold text-blue-700">
+                            Эхэлсэн
+                          </span>
+                        </div>
                       ) : (
-                        <Button className="shadow-md shadow-slate-200 grd-div-4">
-                          <div className="w-1.5 h-1.5 bg-amber-500 rounded-full"></div>
-                          Өгөөгүй
-                        </Button>
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-50 to-amber-100 border border-amber-200 shadow-sm">
+                          <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></div>
+                          <span className="text-xs font-bold text-amber-700">
+                            Өгөөгүй
+                          </span>
+                        </div>
                       )}
                     </div>
                     {/* <div className="flex items-center gap-2">
@@ -243,7 +249,7 @@ const AssessmentCard = ({ assessment, isInvited = false }) => {
                       </button>
                     ) : userEndDate ? (
                       <Link
-                        href={`${api}file/report-${code}.pdf`}
+                        href={`/api/report/${code}`}
                         target="_blank"
                         passHref
                       >
@@ -253,7 +259,7 @@ const AssessmentCard = ({ assessment, isInvited = false }) => {
                           disabled={isExpired || isCompletedButNotVisible}
                         >
                           <ClipboardTextBoldDuotone width={18} height={18} />
-                          Тайлан харах
+                          Тайлан
                         </Button>
                       </Link>
                     ) : examStartDate && !userEndDate ? (
@@ -328,7 +334,7 @@ const AssessmentCard = ({ assessment, isInvited = false }) => {
             <div>
               <Link href={`/test/${assessment.originalId || assessment.id}`}>
                 <h1 className="w-fit text-base font-extrabold leading-5 sm:min-h-[2.5rem] flex items-start">
-                  <span className="pr-4 text-base leading-5 relative bg-gradient-to-r from-main to-secondary bg-clip-text text-transparent cursor-pointer line-clamp-2 after:absolute after:-bottom-[1px] after:left-0 after:w-full after:h-[2.5px] after:bg-gradient-to-r after:from-main after:to-secondary after:scale-x-0 hover:after:scale-x-100 after:transition-transform">
+                  <span className="pr-4 text-base leading-5 relative bg-gradient-to-r from-main to-secondary bg-clip-text text-transparent cursor-pointer line-clamp-2 hover:underline hover:text-secondary">
                     {assessment.name}
                   </span>
                 </h1>

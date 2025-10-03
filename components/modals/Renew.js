@@ -28,7 +28,7 @@ const RenewModal = ({ isVisible, onClose, examData, onSuccess }) => {
     try {
       setLoading(true);
 
-      const formattedDate = selectedDate.format("YYYY-MM-DD HH:mm:ss");
+      const formattedDate = dayjs(selectedDate).format("YYYY-MM-DD HH:mm");
       const response = await extendExamDate(examData.code, {
         endDate: formattedDate,
       });
@@ -84,7 +84,9 @@ const RenewModal = ({ isVisible, onClose, examData, onSuccess }) => {
               <div className="text-red-500 flex gap-1 items-center">
                 <AlarmBoldDuotone width={18} /> Дууссан огноо:
               </div>
-              <div className="font-semibold">{examData?.endDate || "-"}</div>
+              <div className="font-semibold">
+                {dayjs(examData?.endDate).format("YYYY-MM-DD HH:mm") || "-"}
+              </div>
             </div>
 
             <div className="flex items-center gap-2">

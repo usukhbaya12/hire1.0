@@ -9,7 +9,7 @@ import { DropdownIcon } from "@/components/Icons";
 const PrivacyPage = () => {
   return (
     <div>
-      <title>Hire.mn</title>
+      <title>Нууцлалын бодлого / Hire.mn</title>
       {/* <div className="inset-0 fixed">
         <div className="absolute left-[-5%] w-[200px] h-[200px] md:w-[400px] md:h-[400px] rounded-full bg-orange-600/10 blur-[80px]" />
         <div className="absolute bottom-[-20%] right-[-10%] w-[200px] h-[200px] md:w-[500px] md:h-[500px] rounded-full bg-orange-600/10 blur-[100px]" />
