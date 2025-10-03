@@ -37,6 +37,7 @@ const MyTests = () => {
       setLoading(true);
 
       const res = await getUserTestHistory(params.id);
+      console.log(res);
       if (res.success) {
         setData(res.data);
       }

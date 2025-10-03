@@ -88,7 +88,6 @@ export default function TestDetails() {
         service: serviceId,
         count: 1,
       });
-
       if (examResponse.success) {
         const examId = examResponse.data;
         router.push(`/exam/${examId}`, undefined, { shallow: true });
