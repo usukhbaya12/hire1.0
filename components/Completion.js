@@ -4,7 +4,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { Button, Progress, message } from "antd";
 import Link from "next/link";
 import { ArchiveCheckBoldDuotone, DocumentAddBoldDuotone } from "solar-icons";
-import { api } from "@/app/utils/routes";
+import { getReportStatus } from "@/app/api/exam";
 
 const Completion = ({ code, showReport, id }) => {
   const [messageApi, contextHolder] = message.useMessage();
@@ -32,12 +32,18 @@ const Completion = ({ code, showReport, id }) => {
 
     const fetchStatus = async (id) => {
       try {
-        const endpoint = `${api}report/${id}/status`;
-        const res = await fetch(endpoint);
+        const result = await getReportStatus(id);
 
-        const data = await res.json();
+        if (!result.success) {
+          clearInterval(interval);
+          setStage("failed");
+          messageApi.error(
+            result.message || "Тайлан боловсруулахад алдаа гарлаа."
+          );
+          return;
+        }
 
-        const { status, progress, jobId: newJobId } = data.payload;
+        const { status, progress, jobId: newJobId } = result.payload;
 
         if (!jobId && newJobId) {
           setJobId(newJobId);
@@ -69,10 +75,17 @@ const Completion = ({ code, showReport, id }) => {
     // 1️⃣ First fetch with code to get jobId
     const init = async () => {
       try {
-        const endpoint = `${api}report/${code}/status`;
-        const res = await fetch(endpoint);
-        const data = await res.json();
-        const { status, progress, jobId: newJobId } = data.payload;
+        const result = await getReportStatus(code);
+
+        if (!result.success) {
+          setStage("failed");
+          messageApi.error(
+            result.message || "Тайлан боловсруулахад алдаа гарлаа."
+          );
+          return;
+        }
+
+        const { status, progress, jobId: newJobId } = result.payload;
 
         if (!newJobId) throw new Error("No jobId returned from server");
 
@@ -147,8 +160,10 @@ const Completion = ({ code, showReport, id }) => {
 
           <div className="space-y-6 animate-fadeIn min-h-[160px]">
             <h1 className="text-xl font-extrabold text-gray-900 text-center leading-5">
-              {stage === "ready"
+              {stage === "ready" && showReport
                 ? "Таны тайлан бэлэн боллоо!"
+                : stage === "ready" && !showReport
+                ? "Тест өгч дууслаа!"
                 : stage === "failed"
                 ? "Алдаа гарлаа."
                 : "Тайлан боловсруулж байна..."}
@@ -173,7 +188,7 @@ const Completion = ({ code, showReport, id }) => {
               )}
             </p>
 
-            {stage === "processing" && (
+            {stage === "processing" && showReport && (
               <div className="px-8 scale-95">
                 <Progress
                   percent={progress}
