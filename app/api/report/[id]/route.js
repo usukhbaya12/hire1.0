@@ -3,20 +3,33 @@
 import { NextResponse } from "next/server";
 import axios from "axios";
 import { api } from "@/app/utils/routes";
-
+import { getAuthToken } from "../../../utils/auth";
 export async function GET(req, context) {
   const params = await context.params;
   const { id } = params;
 
   try {
-    // 🟢 Чиний backend PDF URL
     const backendUrl = `${api}exam/pdf/${id}`;
-    // Backend руу request явуулж PDF-ийг татаж авна
+    const token = await getAuthToken();
     const response = await axios.get(backendUrl, {
       responseType: "arraybuffer", // PDF-г binary татна
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      validateStatus: () => true,
     });
 
-    // Response-г шууд client рүү дамжуулж өгнө
+    if (response.status != 200) {
+      const msg = Buffer.from(response.data).toString();
+      return new NextResponse(
+        JSON.parse(msg)?.message ?? "Тайлан татахад алдаа гарлаа.",
+        {
+          status: 202,
+        }
+      );
+    }
+
     return new NextResponse(response.data, {
       headers: {
         "Content-Type": "application/pdf",
@@ -24,7 +37,9 @@ export async function GET(req, context) {
       },
     });
   } catch (err) {
-    console.error(err);
-    return new NextResponse("PDF download failed", { status: 500 });
+    console.log("errr", err);
+    return new NextResponse(err.message ?? "Тайлан татахад алдаа гарлаа", {
+      status: 500,
+    });
   }
 }

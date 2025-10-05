@@ -20,12 +20,14 @@ export const authOptions = {
       credentials: {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
+        isOrg: { label: "isOrg", type: "text" },
       },
       async authorize(credentials) {
         try {
           const body = {
             email: credentials.email,
             password: credentials.password,
+            isOrg: credentials.isOrg,
           };
 
           const response = await fetch(`${api}login`, {

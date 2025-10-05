@@ -112,20 +112,31 @@ export const getReport = async (code) => {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-      responseType: "blob",
+      responseType: "arraybuffer",
     });
+
+    if (response.status === 202) {
+      const msg = Buffer.from(response.data).toString();
+      console.log(msg);
+      return new NextResponse(
+        JSON.parse(msg)?.message ?? "PDF download failed",
+        {
+          status: 202,
+        }
+      );
+    }
 
     return {
       data: response.data,
       token: true,
-      success: true,
+      status: response.status,
     };
   } catch (error) {
     console.error(error);
     return {
       success: false,
-      message:
-        error.response?.data?.message || "Сервертэй холбогдоход алдаа гарлаа.",
+      token: true,
+      message: error.response?.message || "Сервертэй холбогдоход алдаа гарлаа.",
     };
   }
 };
@@ -209,6 +220,30 @@ export const getExamCalculation = async (id) => {
       success: false,
       message:
         error.response?.data?.message || "Сервертэй холбогдоход алдаа гарлаа.",
+    };
+  }
+};
+
+export const getReportStatus = async (id) => {
+  try {
+    const endpoint = `${api}report/${id}/status`;
+    const res = await fetch(endpoint);
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
+    const data = await res.json();
+
+    return {
+      success: true,
+      payload: data.payload,
+    };
+  } catch (error) {
+    console.error("Error fetching report status:", error);
+    return {
+      success: false,
+      message: error.message || "Статус шалгахад алдаа гарлаа.",
     };
   }
 };

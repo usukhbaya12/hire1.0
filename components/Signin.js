@@ -80,6 +80,7 @@ function SigninForm() {
         redirect: false,
         email: emailToUse,
         password,
+        isOrg: userType === "Байгууллага",
       });
 
       if (result?.error) {
@@ -589,24 +590,21 @@ function SigninForm() {
                     rules={[
                       {
                         required: true,
-                        message: "Зөв регистрийн дугаар оруулна уу.",
-                      },
-                      {
-                        pattern: /^\d{7}$/,
-                        message: "Зөв регистрийн дугаар оруулна уу.",
+                        type: "email",
+                        message: "Зөв и-мэйл хаяг оруулна уу.",
                       },
                     ]}
                     validateTrigger="onSubmit"
                   >
                     <Input
                       prefix={
-                        <Card2BoldDuotone
+                        <LetterBoldDuotone
                           width={18}
                           height={18}
                           className="text-gray-400"
                         />
                       }
-                      placeholder="Регистрийн дугаар"
+                      placeholder="И-мэйл хаяг"
                       className="sm:w-[280px] rounded-lg"
                     />
                   </Form.Item>

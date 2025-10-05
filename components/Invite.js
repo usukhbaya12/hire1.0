@@ -48,7 +48,7 @@ const SpreadsheetInviteTable = ({ testData, onSuccess }) => {
   const [validatedData, setValidatedData] = useState([]);
   const lastId = useRef(0);
   const [messageApi, contextHolder] = message.useMessage();
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef(null);
 

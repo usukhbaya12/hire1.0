@@ -92,7 +92,7 @@ const MyTests = () => {
 
   return (
     <>
-      <title>{data?.data?.[0].assessment.id}</title>
+      <title>{data?.data?.[0].assessment.name}</title>
 
       <PurchaseModal
         isOpen={isModalOpen}

@@ -300,6 +300,7 @@ export default function Exam() {
       setLoading(true);
       const result = await publish();
 
+      console.log("result", result);
       if (questionData?.categories?.length > 0) {
         const nextCategoryId = questionData.categories[0];
         const response = await getExamQuestions(
