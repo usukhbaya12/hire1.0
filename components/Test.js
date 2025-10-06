@@ -480,7 +480,9 @@ export default function Test() {
                     );
                   }}
                 >
-                  Жишиг тайлан харах
+                  {assessmentData?.data?.type === 10
+                    ? "Онооны тайлбар харах"
+                    : "Жишиг тайлан харах"}
                 </Button>
               )}
             </div>
@@ -547,7 +549,9 @@ export default function Test() {
                     );
                   }}
                 >
-                  Жишиг тайлан харах
+                  {assessmentData?.data?.type === 10
+                    ? "Онооны тайлбар харах"
+                    : "Жишиг тайлан харах"}
                 </Button>
               )}
             </div>
