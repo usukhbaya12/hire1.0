@@ -350,6 +350,8 @@ export default function Test() {
     return <LoadingSpinner />;
   }
 
+  console.log("history", testHistory);
+
   return (
     <>
       {/* <Spin

@@ -64,6 +64,7 @@ const WalletTabContent = ({ session, onRechargeOpen }) => {
     }
   };
 
+  console.log("r", paymentData);
   return (
     <>
       {contextHolder}
