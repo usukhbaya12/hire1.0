@@ -391,7 +391,7 @@ export default function Test() {
                     <Image
                       src={
                         assessmentData.data.icons
-                          ? `${api}file/${assessmentData.data.icons}`
+                          ? `/api/file/${assessmentData.data.icons}`
                           : "/placeholder.png"
                       }
                       alt="Assessment Icon"
@@ -475,7 +475,7 @@ export default function Test() {
                   className="grd-btn-2 h-10 w-full"
                   onClick={() => {
                     window.open(
-                      `${api}file/${assessmentData.data.exampleReport}`,
+                      `/api/file/${assessmentData.data.exampleReport}`,
                       "_blank"
                     );
                   }}
@@ -542,7 +542,7 @@ export default function Test() {
                   className="grd-btn-2 h-10 w-[202px]"
                   onClick={() => {
                     window.open(
-                      `${api}file/${assessmentData.data.exampleReport}`,
+                      `/api/file/${assessmentData.data.exampleReport}`,
                       "_blank"
                     );
                   }}

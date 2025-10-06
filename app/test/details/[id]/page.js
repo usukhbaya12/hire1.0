@@ -174,7 +174,7 @@ export default function TestDetails() {
                     <div className="relative z-10 w-60 h-60 mx-auto mb-4 bg-main/70 backdrop-blur-sm rounded-full shadow-inner flex items-center justify-center">
                       {assessmentData?.data?.icons ? (
                         <img
-                          src={`${api}file/${assessmentData.data.icons}`}
+                          src={`/api/file/${assessmentData.data.icons}`}
                           alt="Test icon"
                           className="w-full h-full object-cover rounded-full p-7"
                         />

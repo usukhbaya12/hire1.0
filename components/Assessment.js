@@ -60,7 +60,7 @@ const Assessment = ({ assessment }) => {
               <BlurImage
                 src={
                   assessment.data.icons
-                    ? `${api}file/${assessment.data.icons}`
+                    ? `/api/file/${assessment.data.icons}`
                     : "/placeholder.png"
                 }
                 alt={assessment.data.name}

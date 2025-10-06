@@ -42,7 +42,9 @@ async function getExamData(code) {
 }
 
 async function drawBackground(ctx, icons) {
-  const imageUrl = icons ? `${api}file/${icons}` : PLACEHOLDER_IMG_URL;
+  const imageUrl = icons
+    ? `${process.env.NEXT_PUBLIC_SITE_URL}/api/file/${icons}`
+    : PLACEHOLDER_IMG_URL;
   try {
     const image = await loadImage(imageUrl);
     const imageAspectRatio = image.width / image.height;

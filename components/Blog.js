@@ -69,7 +69,7 @@ export default function BlogDetailPage() {
     fetchBlog();
   }, [blogId, messageApi, router]);
 
-  const imageUrl = blog?.image ? `${api}file/${blog.image}` : null;
+  const imageUrl = blog?.image ? `/api/file/${blog.image}` : null;
 
   const metadata = blog
     ? {

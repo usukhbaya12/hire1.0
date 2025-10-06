@@ -43,7 +43,7 @@ const BlogCard = ({ blog, disablePinnedLayout = false }) => {
   const isPinned = blog.pinned;
   const categoryMap = { 1: "Блог", 2: "Зөвлөмжүүд" };
   const imageUrl = blog.image
-    ? `${api}file/${blog.image}`
+    ? `/api/file/${blog.image}`
     : "/placeholder-blog.jpg";
 
   const formattedDate = blog.createdAt
