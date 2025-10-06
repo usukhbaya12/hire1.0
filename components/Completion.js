@@ -95,7 +95,7 @@ const Completion = ({ code, showReport, id }) => {
         // Start interval polling with jobId
         interval = setInterval(() => {
           fetchStatus(newJobId);
-        }, 1000);
+        }, 2000);
       } catch (err) {
         console.error("❌ Initial status fetch error:", err);
         setStage("failed");
