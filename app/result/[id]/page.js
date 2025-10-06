@@ -56,12 +56,12 @@ export default function Results() {
     }
   }, [params.id]);
 
-  const getScoreColorClass = (percentage) => {
-    if (percentage >= 80) return "text-green-600";
-    if (percentage >= 60) return "text-main";
-    if (percentage >= 40) return "text-yellow-600";
-    return "text-red-600";
-  };
+  // const getScoreColorClass = (percentage) => {
+  //   if (percentage >= 80) return "text-green-600";
+  //   if (percentage >= 60) return "text-main";
+  //   if (percentage >= 40) return "text-yellow-600";
+  //   return "text-red-600";
+  // };
 
   if (loading) {
     return <LoadingSpinner />;
@@ -74,115 +74,115 @@ export default function Results() {
   const formatDate = (dateString) => {
     return dateString ? dayjs(dateString).format("YYYY-MM-DD HH:mm") : "-";
   };
-  const AnimatedBackground = () => {
-    const lines = Array.from({ length: 20 });
-    const colors = [
-      "#f36421",
-      "#ed1c45",
-      "#3b82f6",
-      "#8b5cf6",
-      "#10b981",
-      "#f59e0b",
-    ];
+  // const AnimatedBackground = () => {
+  //   const lines = Array.from({ length: 20 });
+  //   const colors = [
+  //     "#f36421",
+  //     "#ed1c45",
+  //     "#3b82f6",
+  //     "#8b5cf6",
+  //     "#10b981",
+  //     "#f59e0b",
+  //   ];
 
-    return (
-      <div className="absolute inset-0 overflow-hidden opacity-30">
-        <svg
-          className="w-full h-full"
-          xmlns="http://www.w3.org/2000/svg"
-          preserveAspectRatio="none"
-          viewBox="0 0 1000 900"
-        >
-          {lines.map((_, i) => {
-            const y = Math.random() * 1000;
+  //   return (
+  //     <div className="absolute inset-0 overflow-hidden opacity-30">
+  //       <svg
+  //         className="w-full h-full"
+  //         xmlns="http://www.w3.org/2000/svg"
+  //         preserveAspectRatio="none"
+  //         viewBox="0 0 1000 900"
+  //       >
+  //         {lines.map((_, i) => {
+  //           const y = Math.random() * 1000;
 
-            const amp1 = 50 + Math.random() * 150;
-            const amp2 = 50 + Math.random() * 150;
-            const mid1 = 200 + Math.random() * 200;
-            const mid2 = 500 + Math.random() * 300;
+  //           const amp1 = 50 + Math.random() * 150;
+  //           const amp2 = 50 + Math.random() * 150;
+  //           const mid1 = 200 + Math.random() * 200;
+  //           const mid2 = 500 + Math.random() * 300;
 
-            const path = `M-100,${y} 
-                      C${mid1},${y + (Math.random() > 0.5 ? amp1 : -amp1)} 
-                       ${mid2},${y + (Math.random() > 0.5 ? amp2 : -amp2)} 
-                       1100,${y + (Math.random() - 0.5) * 100}`;
+  //           const path = `M-100,${y}
+  //                     C${mid1},${y + (Math.random() > 0.5 ? amp1 : -amp1)}
+  //                      ${mid2},${y + (Math.random() > 0.5 ? amp2 : -amp2)}
+  //                      1100,${y + (Math.random() - 0.5) * 100}`;
 
-            return (
-              <path
-                key={i}
-                d={path}
-                stroke={colors[i % colors.length]}
-                strokeWidth={4 + Math.random() * 3}
-                strokeOpacity="0.2"
-                fill="transparent"
-                className={`animate-wave-${i % 3}`}
-                style={{
-                  animationDuration: `${5 + Math.random() * 10}s`,
-                  animationDelay: `${Math.random() * 5}s`,
-                }}
-              />
-            );
-          })}
-        </svg>
+  //           return (
+  //             <path
+  //               key={i}
+  //               d={path}
+  //               stroke={colors[i % colors.length]}
+  //               strokeWidth={4 + Math.random() * 3}
+  //               strokeOpacity="0.2"
+  //               fill="transparent"
+  //               className={`animate-wave-${i % 3}`}
+  //               style={{
+  //                 animationDuration: `${5 + Math.random() * 10}s`,
+  //                 animationDelay: `${Math.random() * 5}s`,
+  //               }}
+  //             />
+  //           );
+  //         })}
+  //       </svg>
 
-        <style jsx>{`
-          @keyframes wave-0 {
-            0%,
-            100% {
-              transform: translate(0, 0);
-            }
-            25% {
-              transform: translate(80px, -30px);
-            }
-            50% {
-              transform: translate(-40px, 50px);
-            }
-            75% {
-              transform: translate(60px, 20px);
-            }
-          }
-          @keyframes wave-1 {
-            0%,
-            100% {
-              transform: translate(0, 0);
-            }
-            30% {
-              transform: translate(-70px, 40px);
-            }
-            60% {
-              transform: translate(90px, -20px);
-            }
-          }
-          @keyframes wave-2 {
-            0%,
-            100% {
-              transform: translate(0, 0);
-            }
-            20% {
-              transform: translate(50px, 60px);
-            }
-            70% {
-              transform: translate(-80px, -30px);
-            }
-          }
-          .animate-wave-0 {
-            animation: wave-0 ease-in-out infinite;
-          }
-          .animate-wave-1 {
-            animation: wave-1 ease-in-out infinite;
-          }
-          .animate-wave-2 {
-            animation: wave-2 ease-in-out infinite;
-          }
-        `}</style>
-      </div>
-    );
-  };
+  //       <style jsx>{`
+  //         @keyframes wave-0 {
+  //           0%,
+  //           100% {
+  //             transform: translate(0, 0);
+  //           }
+  //           25% {
+  //             transform: translate(80px, -30px);
+  //           }
+  //           50% {
+  //             transform: translate(-40px, 50px);
+  //           }
+  //           75% {
+  //             transform: translate(60px, 20px);
+  //           }
+  //         }
+  //         @keyframes wave-1 {
+  //           0%,
+  //           100% {
+  //             transform: translate(0, 0);
+  //           }
+  //           30% {
+  //             transform: translate(-70px, 40px);
+  //           }
+  //           60% {
+  //             transform: translate(90px, -20px);
+  //           }
+  //         }
+  //         @keyframes wave-2 {
+  //           0%,
+  //           100% {
+  //             transform: translate(0, 0);
+  //           }
+  //           20% {
+  //             transform: translate(50px, 60px);
+  //           }
+  //           70% {
+  //             transform: translate(-80px, -30px);
+  //           }
+  //         }
+  //         .animate-wave-0 {
+  //           animation: wave-0 ease-in-out infinite;
+  //         }
+  //         .animate-wave-1 {
+  //           animation: wave-1 ease-in-out infinite;
+  //         }
+  //         .animate-wave-2 {
+  //           animation: wave-2 ease-in-out infinite;
+  //         }
+  //       `}</style>
+  //     </div>
+  //   );
+  // };
 
   return (
     <div>
       <title>{data?.assessmentName || "Тестийн үр дүн"} | Hire.mn</title>
 
-      <div className="relative 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6 pb-12">
+      <div className="relative 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6 pb-10">
         <div className="pt-20 pb-6">
           <div className="flex flex-col items-center gap-3">
             <div className="w-16 h-16 bg-main/10 rounded-full flex items-center justify-center">
@@ -350,7 +350,7 @@ export default function Results() {
             </div>
           </div>
         </div> */}
-        <div className="pt-6">
+        {/* <div className="pt-6">
           {data?.assessment === 45 ? (
             <>
               <h1 className="pb-6 text-xl font-black bg-gradient-to-r from-main to-secondary bg-clip-text text-transparent text-center">
@@ -608,7 +608,7 @@ export default function Results() {
           ) : (
             <></>
           )}
-        </div>
+        </div> */}
       </div>
       <Footer />
     </div>

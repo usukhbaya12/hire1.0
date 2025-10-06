@@ -734,23 +734,19 @@ export default function Home() {
               </div>
             </div>
           </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            className="font-black text-xl inline-flex gap-1 text-main relative 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6 pb-4 pt-8 bg-white/95 backdrop-blur-md w-full"
+          >
+            <Buildings2BoldDuotone />
+            Тест хамтран хөгжүүлэгч байгууллагууд
+          </motion.div>
           <div ref={testsSectionRef} id="tests">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 1.1 }}
-            >
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5 }}
-                className="font-black text-xl inline-flex gap-1 text-main relative 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6 pb-4 pt-8 bg-white/95 backdrop-blur-md w-full"
-              >
-                <Buildings2BoldDuotone />
-                Тест хамтран хөгжүүлэгч байгууллагууд
-              </motion.div>
-              <Marquee />
-            </motion.div>
+            <Marquee />
+
             <div className="bg-gray-50 relative 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6 pb-14">
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
