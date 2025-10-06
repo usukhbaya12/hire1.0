@@ -92,11 +92,11 @@ export default function Footer() {
           </div>
           <div className="text-gray-700 flex items-center gap-2">
             <a
-              href="mailto:support@hire.mn"
+              href="mailto:info@axiominc.mn"
               className="text-gray-700 flex items-center gap-2 hover:underline"
             >
               <LetterBoldDuotone width={18} />
-              support@hire.mn
+              info@axiominc.mn
             </a>
           </div>
         </div>

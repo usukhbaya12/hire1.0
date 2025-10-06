@@ -3,7 +3,6 @@ import { createCanvas, loadImage, registerFont } from "canvas";
 import path from "path";
 import fs from "fs";
 import { getExamCalculation } from "../../exam";
-import { api } from "@/app/utils/routes";
 
 const SCALE = 1.5;
 const CANVAS_WIDTH = 1600 * SCALE;
@@ -42,7 +41,9 @@ async function getExamData(code) {
 }
 
 async function drawBackground(ctx, icons) {
-  const imageUrl = icons ? `${api}file/${icons}` : PLACEHOLDER_IMG_URL;
+  const imageUrl = icons
+    ? `${process.env.NEXT_PUBLIC_SITE_URL}/api/file/${icons}`
+    : PLACEHOLDER_IMG_URL;
   try {
     const image = await loadImage(imageUrl);
     const imageAspectRatio = image.width / image.height;

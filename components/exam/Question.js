@@ -553,7 +553,7 @@ const QuestionCard = ({
       {question.question.file && (
         <div className="pt-3 sm:pt-2 sm:pb-1 sm:max-w-[400px] flex sm:ml-[55px]">
           <Image
-            src={`${api}file/${question.question.file}`}
+            src={`/api/file/${question.question.file}`}
             alt="Question"
             className="object-cover rounded-xl"
           />

@@ -18,7 +18,7 @@ export async function generateMetadata({ params }) {
         {
           url: `https://hire.mn/api/share/${code}`,
           width: 1600,
-          height: 837.7,
+          height: 838,
           alt: "Test Results",
         },
       ],

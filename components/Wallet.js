@@ -64,6 +64,7 @@ const WalletTabContent = ({ session, onRechargeOpen }) => {
     }
   };
 
+  console.log("r", paymentData);
   return (
     <>
       {contextHolder}
@@ -241,10 +242,10 @@ const WalletTabContent = ({ session, onRechargeOpen }) => {
                             ? assessment
                             : assessment?.name || ""}
                         </div>
-                        <div className="text-gray-700 font-medium">
+                        {/* <div className="text-gray-700 font-medium">
                           <span className="px-2">•</span>
                           {Math.abs(record.price / record.assessment.price)} эрх
-                        </div>
+                        </div> */}
                       </div>
                     ) : (
                       <>

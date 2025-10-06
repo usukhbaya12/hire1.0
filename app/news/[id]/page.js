@@ -13,7 +13,9 @@ export async function generateMetadata({ params }) {
     if (!blog) return { title: "Blog Post" };
 
     const imageUrl = blog.image
-      ? `${api}file/${blog.image}`
+      ? `${process.env.NEXT_PUBLIC_SITE_URL || "https://hire.mn"}/api/file/${
+          blog.image
+        }`
       : "https://www.hire.mn/misc.png";
 
     return {

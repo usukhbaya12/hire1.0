@@ -102,44 +102,44 @@ export const getUserAnswer = async (code, id) => {
   }
 };
 
-export const getReport = async (code) => {
-  try {
-    const token = await getAuthToken();
-    if (!token) return { token: false };
+// export const getReport = async (code) => {
+//   try {
+//     const token = await getAuthToken();
+//     if (!token) return { token: false };
 
-    const response = await axios.get(`${api}exam/pdf/${code}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      responseType: "arraybuffer",
-    });
+//     const response = await axios.get(`${api}exam/pdf/${code}`, {
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//         "Content-Type": "application/json",
+//       },
+//       responseType: "arraybuffer",
+//     });
 
-    if (response.status === 202) {
-      const msg = Buffer.from(response.data).toString();
-      console.log(msg);
-      return new NextResponse(
-        JSON.parse(msg)?.message ?? "PDF download failed",
-        {
-          status: 202,
-        }
-      );
-    }
+//     if (response.status === 202) {
+//       const msg = Buffer.from(response.data).toString();
+//       console.log(msg);
+//       return new NextResponse(
+//         JSON.parse(msg)?.message ?? "PDF download failed",
+//         {
+//           status: 202,
+//         }
+//       );
+//     }
 
-    return {
-      data: response.data,
-      token: true,
-      status: response.status,
-    };
-  } catch (error) {
-    console.error(error);
-    return {
-      success: false,
-      token: true,
-      message: error.response?.message || "Сервертэй холбогдоход алдаа гарлаа.",
-    };
-  }
-};
+//     return {
+//       data: response.data,
+//       token: true,
+//       status: response.status,
+//     };
+//   } catch (error) {
+//     console.error(error);
+//     return {
+//       success: false,
+//       token: true,
+//       message: error.response?.message || "Сервертэй холбогдоход алдаа гарлаа.",
+//     };
+//   }
+// };
 
 export const postFeedback = async (data) => {
   const token = await getAuthToken();

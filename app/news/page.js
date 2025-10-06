@@ -43,7 +43,7 @@ const BlogCard = ({ blog, disablePinnedLayout = false }) => {
   const isPinned = blog.pinned;
   const categoryMap = { 1: "Блог", 2: "Зөвлөмжүүд" };
   const imageUrl = blog.image
-    ? `${api}file/${blog.image}`
+    ? `/api/file/${blog.image}`
     : "/placeholder-blog.jpg";
 
   const formattedDate = blog.createdAt
@@ -88,7 +88,7 @@ const BlogCard = ({ blog, disablePinnedLayout = false }) => {
           <div className="flex items-center gap-2 bg-gradient-to-r from-yellow-50 to-orange-50 text-orange-500 px-3 py-1.5 rounded-3xl border border-orange-200">
             <UserLineDuotone width={16} height={16} />
             <span className="font-semibold text-sm truncate max-w-[220px]">
-              {blog?.user?.firstname || "Hire.mn"}
+              Hire.mn
             </span>
           </div>
         </div>

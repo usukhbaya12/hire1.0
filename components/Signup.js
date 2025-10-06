@@ -311,236 +311,6 @@ const Signup = () => {
                   </>
                 ) : (
                   <>
-                    <div className="font-semibold pb-4 text-center pt-6 sm:pt-0">
-                      Байгууллагын мэдээлэл
-                    </div>
-                    <Form.Item
-                      name="organizationName"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Байгууллагын нэрээ оруулна уу.",
-                        },
-                      ]}
-                      validateTrigger="onSubmit"
-                    >
-                      <Input
-                        prefix={
-                          <UserIdBoldDuotone
-                            width={18}
-                            height={18}
-                            className="text-gray-400"
-                          />
-                        }
-                        placeholder="Байгууллагын нэр"
-                        className="sm:w-[240px]"
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      name="organizationRegisterNumber"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Зөв регистрийн дугаар оруулна уу.",
-                        },
-                        {
-                          pattern: /^\d{7}$/,
-                          message: "Зөв регистрийн дугаар оруулна уу.",
-                        },
-                      ]}
-                      validateTrigger="onSubmit"
-                    >
-                      <Input
-                        prefix={
-                          <Card2BoldDuotone
-                            width={18}
-                            height={18}
-                            className="text-gray-400"
-                          />
-                        }
-                        placeholder="Регистрийн дугаар"
-                        className="sm:w-[240px]"
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      name="organizationPhone"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Зөв утасны дугаар оруулна уу.",
-                        },
-                        {
-                          pattern: /^\d{8}$/,
-                          message: "Зөв утасны дугаар оруулна уу.",
-                        },
-                      ]}
-                      validateTrigger="onSubmit"
-                    >
-                      <Input
-                        prefix={
-                          <PhoneCallingRoundedBoldDuotone
-                            width={18}
-                            height={18}
-                            className="text-gray-400"
-                          />
-                        }
-                        placeholder="Утасны дугаар"
-                        className="sm:w-[240px]"
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      name="password"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Нууц үгээ оруулна уу.",
-                        },
-                        {
-                          min: 6,
-                          message: "Багадаа 6 тэмдэгт оруулна уу.",
-                        },
-                      ]}
-                      validateTrigger="onSubmit"
-                    >
-                      <Input
-                        prefix={
-                          <KeyBoldDuotone
-                            width={18}
-                            height={18}
-                            className="text-gray-400"
-                          />
-                        }
-                        type="password"
-                        placeholder="Нууц үг"
-                        className="sm:w-[240px]"
-                        autoComplete="new-password"
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      name="passwordverify"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Нууц үгээ оруулна уу.",
-                        },
-                        {
-                          validator: (_, value) =>
-                            value && value === form.getFieldValue("password")
-                              ? Promise.resolve()
-                              : Promise.reject("Нууц үг тохирохгүй байна."),
-                        },
-                      ]}
-                      validateTrigger="onSubmit"
-                    >
-                      <Input
-                        prefix={
-                          <KeyBoldDuotone
-                            width={18}
-                            height={18}
-                            className="text-gray-400"
-                          />
-                        }
-                        type="password"
-                        placeholder="Нууц үгээ давтах"
-                        className="sm:w-[240px]"
-                        autoComplete="new-password"
-                      />
-                    </Form.Item>
-                  </>
-                )}
-              </div>
-              <div
-                className={`pt-0 ${isOrganization ? "md:pt-14" : "md:pt-24"}`}
-              >
-                {!isOrganization ? (
-                  <>
-                    <Form.Item
-                      name="phone"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Утасны дугаараа оруулна уу.",
-                        },
-                        {
-                          pattern: /^\d{8}$/,
-                          message: "Зөв утасны дугаар оруулна уу.",
-                        },
-                      ]}
-                      validateTrigger="onSubmit"
-                    >
-                      <Input
-                        prefix={
-                          <PhoneCallingRoundedBoldDuotone
-                            width={18}
-                            height={18}
-                            className="text-gray-400"
-                          />
-                        }
-                        placeholder="Утасны дугаар"
-                        className="sm:w-[240px]"
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      name="password"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Нууц үгээ оруулна уу.",
-                        },
-                        {
-                          min: 6,
-                          message: "Багадаа 6 тэмдэгт оруулна уу.",
-                        },
-                      ]}
-                      validateTrigger="onSubmit"
-                    >
-                      <Input
-                        prefix={
-                          <KeyBoldDuotone
-                            width={18}
-                            height={18}
-                            className="text-gray-400"
-                          />
-                        }
-                        type="password"
-                        placeholder="Нууц үг"
-                        className="sm:w-[240px]"
-                        autoComplete="new-password"
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      name="passwordverify"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Нууц үгээ оруулна уу.",
-                        },
-                        {
-                          validator: (_, value) =>
-                            value && value === form.getFieldValue("password")
-                              ? Promise.resolve()
-                              : Promise.reject("Нууц үг тохирохгүй байна."),
-                        },
-                      ]}
-                      validateTrigger="onSubmit"
-                    >
-                      <Input
-                        prefix={
-                          <KeyBoldDuotone
-                            width={18}
-                            height={18}
-                            className="text-gray-400"
-                          />
-                        }
-                        type="password"
-                        placeholder="Нууц үгээ давтах"
-                        className="sm:w-[240px]"
-                        autoComplete="new-password"
-                      />
-                    </Form.Item>
-                  </>
-                ) : (
-                  <>
                     <div className="font-semibold pb-4 text-center">
                       Ажилтны мэдээлэл
                     </div>
@@ -610,29 +380,7 @@ const Signup = () => {
                         className="sm:w-[240px]"
                       />
                     </Form.Item>
-                    <Form.Item
-                      name="email"
-                      rules={[
-                        {
-                          required: true,
-                          type: "email",
-                          message: "Зөв и-мэйл хаяг оруулна уу.",
-                        },
-                      ]}
-                      validateTrigger="onSubmit"
-                    >
-                      <Input
-                        prefix={
-                          <LetterBoldDuotone
-                            width={18}
-                            height={18}
-                            className="text-gray-400"
-                          />
-                        }
-                        placeholder="И-мэйл хаяг"
-                        className="sm:w-[240px]"
-                      />
-                    </Form.Item>
+
                     <Form.Item
                       name="phone"
                       rules={[
@@ -657,6 +405,260 @@ const Signup = () => {
                         }
                         placeholder="Утасны дугаар"
                         className="sm:w-[240px]"
+                      />
+                    </Form.Item>
+                  </>
+                )}
+              </div>
+              <div
+                className={`pt-0 ${isOrganization ? "md:pt-14" : "md:pt-24"}`}
+              >
+                {!isOrganization ? (
+                  <>
+                    <Form.Item
+                      name="phone"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Утасны дугаараа оруулна уу.",
+                        },
+                        {
+                          pattern: /^\d{8}$/,
+                          message: "Зөв утасны дугаар оруулна уу.",
+                        },
+                      ]}
+                      validateTrigger="onSubmit"
+                    >
+                      <Input
+                        prefix={
+                          <PhoneCallingRoundedBoldDuotone
+                            width={18}
+                            height={18}
+                            className="text-gray-400"
+                          />
+                        }
+                        placeholder="Утасны дугаар"
+                        className="sm:w-[240px]"
+                      />
+                    </Form.Item>
+
+                    <Form.Item
+                      name="password"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Нууц үгээ оруулна уу.",
+                        },
+                        {
+                          min: 6,
+                          message: "Багадаа 6 тэмдэгт оруулна уу.",
+                        },
+                      ]}
+                      validateTrigger="onSubmit"
+                    >
+                      <Input
+                        prefix={
+                          <KeyBoldDuotone
+                            width={18}
+                            height={18}
+                            className="text-gray-400"
+                          />
+                        }
+                        type="password"
+                        placeholder="Нууц үг"
+                        className="sm:w-[240px]"
+                        autoComplete="new-password"
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      name="passwordverify"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Нууц үгээ оруулна уу.",
+                        },
+                        {
+                          validator: (_, value) =>
+                            value && value === form.getFieldValue("password")
+                              ? Promise.resolve()
+                              : Promise.reject("Нууц үг тохирохгүй байна."),
+                        },
+                      ]}
+                      validateTrigger="onSubmit"
+                    >
+                      <Input
+                        prefix={
+                          <KeyBoldDuotone
+                            width={18}
+                            height={18}
+                            className="text-gray-400"
+                          />
+                        }
+                        type="password"
+                        placeholder="Нууц үгээ давтах"
+                        className="sm:w-[240px]"
+                        autoComplete="new-password"
+                      />
+                    </Form.Item>
+                  </>
+                ) : (
+                  <>
+                    <div className="font-semibold pb-4 text-center pt-6 sm:pt-0">
+                      Байгууллагын мэдээлэл
+                    </div>
+                    <Form.Item
+                      name="organizationName"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Байгууллагын нэрээ оруулна уу.",
+                        },
+                      ]}
+                      validateTrigger="onSubmit"
+                    >
+                      <Input
+                        prefix={
+                          <UserIdBoldDuotone
+                            width={18}
+                            height={18}
+                            className="text-gray-400"
+                          />
+                        }
+                        placeholder="Байгууллагын нэр"
+                        className="sm:w-[240px]"
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      name="organizationRegisterNumber"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Зөв регистрийн дугаар оруулна уу.",
+                        },
+                        {
+                          pattern: /^\d{7}$/,
+                          message: "Зөв регистрийн дугаар оруулна уу.",
+                        },
+                      ]}
+                      validateTrigger="onSubmit"
+                    >
+                      <Input
+                        prefix={
+                          <Card2BoldDuotone
+                            width={18}
+                            height={18}
+                            className="text-gray-400"
+                          />
+                        }
+                        placeholder="Регистрийн дугаар"
+                        className="sm:w-[240px]"
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      name="email"
+                      rules={[
+                        {
+                          required: true,
+                          type: "email",
+                          message: "Зөв и-мэйл хаяг оруулна уу.",
+                        },
+                      ]}
+                      validateTrigger="onSubmit"
+                    >
+                      <Input
+                        prefix={
+                          <LetterBoldDuotone
+                            width={18}
+                            height={18}
+                            className="text-gray-400"
+                          />
+                        }
+                        placeholder="Нэвтрэх и-мэйл хаяг"
+                        className="sm:w-[240px]"
+                      />
+                    </Form.Item>
+                    {/* <Form.Item
+                      name="organizationPhone"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Зөв утасны дугаар оруулна уу.",
+                        },
+                        {
+                          pattern: /^\d{8}$/,
+                          message: "Зөв утасны дугаар оруулна уу.",
+                        },
+                      ]}
+                      validateTrigger="onSubmit"
+                    >
+                      <Input
+                        prefix={
+                          <PhoneCallingRoundedBoldDuotone
+                            width={18}
+                            height={18}
+                            className="text-gray-400"
+                          />
+                        }
+                        placeholder="Байгууллагын утас"
+                        className="sm:w-[240px]"
+                      />
+                    </Form.Item> */}
+                    <Form.Item
+                      name="password"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Нууц үгээ оруулна уу.",
+                        },
+                        {
+                          min: 6,
+                          message: "Багадаа 6 тэмдэгт оруулна уу.",
+                        },
+                      ]}
+                      validateTrigger="onSubmit"
+                    >
+                      <Input
+                        prefix={
+                          <KeyBoldDuotone
+                            width={18}
+                            height={18}
+                            className="text-gray-400"
+                          />
+                        }
+                        type="password"
+                        placeholder="Нууц үг"
+                        className="sm:w-[240px]"
+                        autoComplete="new-password"
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      name="passwordverify"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Нууц үгээ оруулна уу.",
+                        },
+                        {
+                          validator: (_, value) =>
+                            value && value === form.getFieldValue("password")
+                              ? Promise.resolve()
+                              : Promise.reject("Нууц үг тохирохгүй байна."),
+                        },
+                      ]}
+                      validateTrigger="onSubmit"
+                    >
+                      <Input
+                        prefix={
+                          <KeyBoldDuotone
+                            width={18}
+                            height={18}
+                            className="text-gray-400"
+                          />
+                        }
+                        type="password"
+                        placeholder="Нууц үгээ давтах"
+                        className="sm:w-[240px]"
+                        autoComplete="new-password"
                       />
                     </Form.Item>
                   </>

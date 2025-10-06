@@ -350,6 +350,8 @@ export default function Test() {
     return <LoadingSpinner />;
   }
 
+  console.log("history", testHistory);
+
   return (
     <>
       {/* <Spin
@@ -389,7 +391,7 @@ export default function Test() {
                     <Image
                       src={
                         assessmentData.data.icons
-                          ? `${api}file/${assessmentData.data.icons}`
+                          ? `/api/file/${assessmentData.data.icons}`
                           : "/placeholder.png"
                       }
                       alt="Assessment Icon"
@@ -473,12 +475,14 @@ export default function Test() {
                   className="grd-btn-2 h-10 w-full"
                   onClick={() => {
                     window.open(
-                      `${api}file/${assessmentData.data.exampleReport}`,
+                      `/api/file/${assessmentData.data.exampleReport}`,
                       "_blank"
                     );
                   }}
                 >
-                  Жишиг тайлан харах
+                  {assessmentData?.data?.type === 10
+                    ? "Онооны тайлбар харах"
+                    : "Жишиг тайлан харах"}
                 </Button>
               )}
             </div>
@@ -540,12 +544,14 @@ export default function Test() {
                   className="grd-btn-2 h-10 w-[202px]"
                   onClick={() => {
                     window.open(
-                      `${api}file/${assessmentData.data.exampleReport}`,
+                      `/api/file/${assessmentData.data.exampleReport}`,
                       "_blank"
                     );
                   }}
                 >
-                  Жишиг тайлан харах
+                  {assessmentData?.data?.type === 10
+                    ? "Онооны тайлбар харах"
+                    : "Жишиг тайлан харах"}
                 </Button>
               )}
             </div>

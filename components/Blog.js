@@ -69,7 +69,7 @@ export default function BlogDetailPage() {
     fetchBlog();
   }, [blogId, messageApi, router]);
 
-  const imageUrl = blog?.image ? `${api}file/${blog.image}` : null;
+  const imageUrl = blog?.image ? `/api/file/${blog.image}` : null;
 
   const metadata = blog
     ? {
@@ -156,7 +156,7 @@ export default function BlogDetailPage() {
                     <div className="flex items-center gap-2 bg-gradient-to-r from-yellow-50 to-orange-50 text-orange-500 px-3 py-1.5 rounded-3xl border border-orange-200">
                       <UserLineDuotone width={16} height={16} />
                       <span className="font-semibold text-sm truncate max-w-[220px]">
-                        {blog?.user?.firstname || "Hire.mn"}
+                        Hire.mn
                       </span>
                     </div>
 

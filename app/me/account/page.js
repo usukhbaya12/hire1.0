@@ -377,29 +377,20 @@ const Account = () => {
                     </Form.Item>
 
                     <Form.Item
+                      name="email"
+                      label="Нэвтрэх и-мэйл хаяг"
                       className="fnp"
-                      name="organizationPhone"
-                      label="Утасны дугаар"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Зөв утасны дугаар оруулна уу.",
-                        },
-                        {
-                          pattern: /^\d{8}$/,
-                          message: "Зөв утасны дугаар оруулна уу.",
-                        },
-                      ]}
                     >
                       <Input
+                        disabled
                         prefix={
-                          <PhoneCallingRoundedBoldDuotone
+                          <LetterBoldDuotone
                             width={18}
                             height={18}
                             className="text-gray-400"
                           />
                         }
-                        placeholder="Утасны дугаар"
+                        placeholder="И-мэйл хаяг"
                       />
                     </Form.Item>
                   </div>
@@ -415,20 +406,6 @@ const Account = () => {
                     Ажилтан
                   </h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 p-2">
-                    <Form.Item name="email" label="И-мэйл хаяг" className="fnp">
-                      <Input
-                        disabled
-                        prefix={
-                          <LetterBoldDuotone
-                            width={18}
-                            height={18}
-                            className="text-gray-400"
-                          />
-                        }
-                        placeholder="И-мэйл хаяг"
-                      />
-                    </Form.Item>
-
                     <Form.Item
                       className="fnp"
                       name="lastname"
