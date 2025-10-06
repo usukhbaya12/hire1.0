@@ -617,7 +617,7 @@ const TestsTabContent = ({ activeTab, session }) => {
       key: "date",
       width: "120px",
       sorter: (a, b) => a.dateValue - b.dateValue,
-      defaultSortOrder: "descend",
+      // defaultSortOrder: "descend",
     },
     {
       title: "Дуусах огноо",
