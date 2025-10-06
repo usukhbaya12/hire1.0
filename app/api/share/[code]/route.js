@@ -3,7 +3,6 @@ import { createCanvas, loadImage, registerFont } from "canvas";
 import path from "path";
 import fs from "fs";
 import { getExamCalculation } from "../../exam";
-import { api } from "@/app/utils/routes";
 
 const SCALE = 1.5;
 const CANVAS_WIDTH = 1600 * SCALE;
