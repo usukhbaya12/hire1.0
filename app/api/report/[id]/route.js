@@ -129,40 +129,45 @@ export async function GET(req, context) {
       validateStatus: () => true,
     });
 
-    const parsed = JSON.parse(Buffer.from(response.data).toString());
+    if (response.status === 403 || response.status === 400) {
+      const parsed = JSON.parse(Buffer.from(response.data).toString());
 
-    if (parsed.message === "Forbidden resource") {
-      let errorMessage = "Хандах эрхгүй байна.";
-      try {
-        const parsed = JSON.parse(Buffer.from(response.data).toString());
-        errorMessage = parsed?.message || errorMessage;
-      } catch {}
+      if (parsed.message === "Forbidden resource") {
+        let errorMessage = "Хандах эрхгүй байна.";
+        try {
+          const parsed = JSON.parse(Buffer.from(response.data).toString());
+          errorMessage = parsed?.message || errorMessage;
+        } catch {}
 
-      return new NextResponse(
-        createErrorPage(403, "Хандах эрхгүй байна.", errorMessage, true),
-        { status: 403, headers: { "Content-Type": "text/html; charset=utf-8" } }
-      );
-    }
+        return new NextResponse(
+          createErrorPage(403, "Хандах эрхгүй байна.", errorMessage, true),
+          {
+            status: 403,
+            headers: { "Content-Type": "text/html; charset=utf-8" },
+          }
+        );
+      }
 
-    if (response.status !== 200) {
-      let errorMessage = "Тайлан татахад алдаа гарлаа.";
-      try {
-        const parsed = JSON.parse(Buffer.from(response.data).toString());
-        errorMessage = parsed?.message || errorMessage;
-      } catch {}
+      if (response.status !== 200) {
+        let errorMessage = "Тайлан татахад алдаа гарлаа.";
+        try {
+          const parsed = JSON.parse(Buffer.from(response.data).toString());
+          errorMessage = parsed?.message || errorMessage;
+        } catch {}
 
-      return new NextResponse(
-        createErrorPage(
-          response.status,
-          errorMessage,
-          "Эрхээ шалгана уу.",
-          false
-        ),
-        {
-          status: response.status,
-          headers: { "Content-Type": "text/html; charset=utf-8" },
-        }
-      );
+        return new NextResponse(
+          createErrorPage(
+            response.status,
+            errorMessage,
+            "Эрхээ шалгана уу.",
+            false
+          ),
+          {
+            status: response.status,
+            headers: { "Content-Type": "text/html; charset=utf-8" },
+          }
+        );
+      }
     }
 
     return new NextResponse(response.data, {
