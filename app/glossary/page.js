@@ -9,25 +9,108 @@ import { MagniferBoldDuotone, File } from "solar-icons";
 
 const glossaryData = [
   {
-    id: "assessment",
-    term: "Assessment",
-    mongolian: "Үнэлгээ",
-    definition: "Нэр томьёоны тайлбар, дэлгэрэнгүй.",
-    category: "Ангилал",
+    id: "1",
+    term: "Admin",
+    mongolian: "Админ ",
+    definition:
+      "Платформ дээр байрлах тест, үнэлгээний төрөл, төрөл доторх тест банк, үр дүнгийн тооцоолол, үнэлгээний тайлангийн загварыг нэмэх хасах, засах эрх бүхий Hire.mn-ний ажилтныг хэлнэ. Мөн байгууллага, шалгуулагч, зочдын хэрэглээний өгөгдлийг бодит цаг хугацаанд харах, хэрэглээ хандалтыг хязгаарлах, нэмэх эрх бүхий",
+    category: "misc",
   },
   {
-    id: "personality-test",
-    term: "Personality Test",
-    mongolian: "Зан төлөвийн тест",
-    definition: "Нэр томьёоны тайлбар, дэлгэрэнгүй.",
-    category: "Ангилал",
+    id: "2",
+    term: "Aptitude test",
+    mongolian: "Чадамжийн тест",
+    definition:
+      "Когнитив чадамжийг үнэлэх зорилго бүхий тест. Үүнд математик логик, тоон мэдээлэл, хүснэгт график, бичгэн мэдээллийг уншиж ойлгох, учир шалтгааныг тайлах чадамжууд багтана.",
+    category: "test",
   },
   {
-    id: "psychometric-test",
-    term: "Ур чадварын тест",
+    id: "3",
+    term: "Behavioral anchor",
+    mongolian: "Зан төлөвийн хүлээлт",
+    definition:
+      "Тухайлсан ажлын байранд шаардлагатай зан төлөвийн шинжийг объектив байдлаар тодорхойлсон тодорхойлолт.",
+    category: "other",
+  },
+  {
+    id: "4",
+    term: "Client",
+    mongolian: "Байгууллага",
+    definition:
+      "Өөрийн ажилтнууд, ажил горилогчийг шалгуулах зорилгоор хамтран ажиллаж буй харилцагч байгууллагууд. Платформоос санал болгож урьдчилан бэлдсэн тест болон өөрийн хэрэгцээнд нийцсэн тест бэлдэн шалгалтыг авах, үр дүн тайланг хүлээн авагч.",
+    category: "misc",
+  },
+  {
+    id: "5",
+    term: "Competency model",
+    mongolian: "Чадамжийн загвар",
+    definition:
+      "Ажлын байранд өндөр гүйцэтгэлтэй ажиллахад шаардлагатай чадамжуудын цогц.",
+    category: "other",
+  },
+  {
+    id: "6",
+    term: "Hire.mn",
+    mongolian: "Hire.mn",
+    definition:
+      "Hire.mn онлайн тест,  хөндлөнгийн үнэлгээний платформ. Төрөл бүрийн урьдчилан бэлдсэн тест, хөндлөнгийн үнэлгээний үйлчилгээг байгууллага, шалгуулагч нарт санал болгоно.",
+    category: "misc",
+  },
+  {
+    id: "7",
+    term: "Job test",
+    mongolian: "Ажлын байрны тест",
+    definition:
+      "Ажил горилогчийн мэдлэг, чадвар, чадамж, зан төлөв тухайн ажлын байранд нийцэж буй эсэхийг үнэлэх зорилго бүхий тест.",
+    category: "test",
+  },
+  {
+    id: "8",
+    term: "Personality test",
+    mongolian: "Хувь хүний зан төлөвийн тест",
+    definition:
+      "Хувь хүний зан төлөв, хандлага, сэдэл, үнэт зүйлийг илрүүлэх зорилго бүхий тест.",
+    category: "test",
+  },
+  {
+    id: "9",
+    term: "Professional test",
+    mongolian: "Мэргэжлийн тест",
+    definition:
+      "Тухайлсан мэргэжлийн мэдлэг, ур чадвар шалгах эсвэл баталгаажуулах зорилго бүхий тестийг хэлнэ.",
+    category: "test",
+  },
+  {
+    id: "10",
+    term: "Psychometric test",
+    mongolian: "Психометрик тест",
+    definition:
+      "Хүний зан төлөвийн хэв маяг, чадамж, танин мэдэхүйн чадварыг үнэлэх зорилго бүхий стандартчилагдсан тест.",
+    category: "test",
+  },
+  {
+    id: "11",
+    term: "Self assessment",
+    mongolian: "Өөрийн үнэлгээ",
+    definition:
+      "Өөрийн ур чадвар, гүйцэтгэл, чадамж, зан төлөвөө хувь хүн өөрөө үнэлэх төрөл бөгөөд ингэснээр өөрийн сул талыг илрүүлэх түүнийгээ хөгжүүлэх сэдэл авах зорилготой.",
+    category: "test",
+  },
+  {
+    id: "12",
+    term: "Skill test",
     mongolian: "Ур чадварын тест",
-    definition: "Нэр томьёоны тайлбар, дэлгэрэнгүй.",
-    category: "Ангилал",
+    definition:
+      "Өгөгдсөн сэдвийн хүрээнд шалгуулагчийн мэдлэг, ур чадварыг үнэлэх зорилго бүхий тест. Жишээ нь, код бичих ур чадвар, багаар ажиллах ур чадвар г.м.",
+    category: "test",
+  },
+  {
+    id: "13",
+    term: "Test taker",
+    mongolian: "Шалгуулагч",
+    definition:
+      "Байгууллагаас илгээсэн тест, үнэлгээнд  оролцогч  ажил горилогчид, ажилтнууд болон хувиараа бүртгүүлэн тест, үнэлгээнд оролцогчийг хэлнэ.",
+    category: "misc",
   },
 ];
 
@@ -146,7 +229,7 @@ const GlossaryPage = () => {
                 <h3 className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2 px-2">
                   Нэр томьёоны жагсаалт
                 </h3>
-                <div className="space-y-1 max-h-[60vh] overflow-y-auto pr-2 glossary-terms">
+                <div className="space-y-1 max-h-[20vh] sm:max-h-[60vh] overflow-y-auto pr-2 glossary-terms">
                   {filteredTerms.length > 0 ? (
                     filteredTerms.map((term) => (
                       <div
@@ -191,9 +274,9 @@ const GlossaryPage = () => {
                     <h2 className="text-2xl font-extrabold text-gray-800">
                       {activeTerm.term}
                     </h2>
-                    <span className="px-3 py-1 bg-gray-100 rounded-full text-sm font-medium text-gray-700">
+                    {/* <span className="px-3 py-1 bg-gray-100 rounded-full text-sm font-medium text-gray-700">
                       {activeTerm.category}
-                    </span>
+                    </span> */}
                   </div>
 
                   <div className="flex items-center gap-2 mb-6 text-main">
