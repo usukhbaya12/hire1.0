@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useRef, useEffect } from "react";
 import {
   Table,
@@ -178,12 +180,12 @@ const SpreadsheetInviteTable = ({ testData, onSuccess }) => {
 
         const rowsNeeded = activeRowIndex + pasteData.length;
         while (newData.length < rowsNeeded) {
-          if (newData.length >= remainingAccesses) {
-            messageApi.warning(
-              `Зөвхөн ${remainingAccesses} шалгуулагч нэмэх боломжтой.`
-            );
-            break;
-          }
+          // if (newData.length >= remainingAccesses) {
+          //   messageApi.warning(
+          //     `Зөвхөн ${remainingAccesses} шалгуулагч нэмэх боломжтой.`
+          //   );
+          //   break;
+          // }
           newData.push({
             key: generateKey(),
             email: "",
@@ -278,42 +280,50 @@ const SpreadsheetInviteTable = ({ testData, onSuccess }) => {
 
         const excelData = XLSX.utils.sheet_to_json(worksheet);
 
-        if (excelData.length + data.length > remainingAccesses) {
-          throw new Error(
-            `Зөвхөн ${remainingAccesses} шалгуулагч нэмэх боломжтой.`
+        // if (excelData.length + data.length > remainingAccesses) {
+        //   throw new Error(
+        //     `Зөвхөн ${remainingAccesses} шалгуулагч нэмэх боломжтой.`
+        //   );
+        // }
+
+        const mappedData = excelData
+          .map((row) => {
+            const result = { key: generateKey() };
+
+            Object.keys(row).forEach((key) => {
+              const lowerKey = key.toLowerCase();
+              if (lowerKey.includes("email") || lowerKey.includes("мэйл")) {
+                result.email = row[key];
+              } else if (
+                (lowerKey.includes("first") || lowerKey.includes("нэр")) &&
+                !lowerKey.includes("овог") &&
+                !lowerKey.includes("last")
+              ) {
+                result.firstname = row[key];
+              } else if (
+                lowerKey.includes("last") ||
+                lowerKey.includes("овог") ||
+                lowerKey.includes("surname")
+              ) {
+                result.lastname = row[key];
+              } else if (
+                lowerKey.includes("phone") ||
+                lowerKey.includes("утас") ||
+                lowerKey.includes("дугаар")
+              ) {
+                result.phone = String(row[key]).replace(/\D/g, "");
+              }
+            });
+
+            return result;
+          })
+          .filter(
+            (row) => row.email || row.firstname || row.lastname || row.phone
           );
+
+        if (mappedData.length === 0) {
+          throw new Error("Excel файлд өгөгдөл олдсонгүй.");
         }
-
-        const mappedData = excelData.map((row) => {
-          const result = { key: generateKey() };
-
-          Object.keys(row).forEach((key) => {
-            const lowerKey = key.toLowerCase();
-            if (lowerKey.includes("email") || lowerKey.includes("мэйл")) {
-              result.email = row[key];
-            } else if (
-              (lowerKey.includes("first") || lowerKey.includes("нэр")) &&
-              !lowerKey.includes("овог") &&
-              !lowerKey.includes("last")
-            ) {
-              result.firstname = row[key];
-            } else if (
-              lowerKey.includes("last") ||
-              lowerKey.includes("овог") ||
-              lowerKey.includes("surname")
-            ) {
-              result.lastname = row[key];
-            } else if (
-              lowerKey.includes("phone") ||
-              lowerKey.includes("утас") ||
-              lowerKey.includes("дугаар")
-            ) {
-              result.phone = String(row[key]).replace(/\D/g, "");
-            }
-          });
-
-          return result;
-        });
 
         setData([...data, ...mappedData]);
         messageApi.success(`${mappedData.length} мөр амжилттай нэмэгдлээ.`);
@@ -410,22 +420,72 @@ const SpreadsheetInviteTable = ({ testData, onSuccess }) => {
   };
 
   const prepareForSend = () => {
-    const validData = validateData();
-    if (!validData) return;
-
-    const dataToSend =
+    // If rows are selected, only validate and send those rows
+    const rowsToValidate =
       selectedRowKeys.length > 0
-        ? validData.filter((item) => selectedRowKeys.includes(item.key))
-        : validData;
+        ? data.filter((item) => selectedRowKeys.includes(item.key))
+        : data;
 
-    if (dataToSend.length > remainingAccesses) {
+    if (rowsToValidate.length === 0) {
+      messageApi.error("Шалгуулагч нэмнэ үү.");
+      return;
+    }
+
+    const nonEmptyRows = rowsToValidate.filter(
+      (row) => row.email || row.firstname || row.lastname || row.phone
+    );
+
+    if (nonEmptyRows.length === 0) {
+      messageApi.error("Шалгуулагчийн мэдээлэл оруулна уу.");
+      return;
+    }
+
+    const partialRows = nonEmptyRows.filter(
+      (row) => !row.email || !row.firstname || !row.lastname || !row.phone
+    );
+
+    if (partialRows.length > 0) {
+      const rowNumbers = partialRows
+        .map((row) => data.findIndex((r) => r.key === row.key) + 1)
+        .join(", ");
+      messageApi.error(`${rowNumbers}-р мөрний мэдээллийг бүрэн бөглөнө үү.`);
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const invalidEmails = nonEmptyRows.filter(
+      (row) => !emailRegex.test(row.email)
+    );
+
+    if (invalidEmails.length > 0) {
+      const rowNumbers = invalidEmails
+        .map((row) => data.findIndex((r) => r.key === row.key) + 1)
+        .join(", ");
+      messageApi.error(`${rowNumbers}-р мөрний и-мэйл хаяг буруу байна.`);
+      return;
+    }
+
+    const phoneRegex = /^\d{8}$/;
+    const invalidPhones = nonEmptyRows.filter(
+      (row) => !phoneRegex.test(row.phone)
+    );
+
+    if (invalidPhones.length > 0) {
+      const rowNumbers = invalidPhones
+        .map((row) => data.findIndex((r) => r.key === row.key) + 1)
+        .join(", ");
+      messageApi.error(`${rowNumbers}-р мөрний утасны дугаар буруу байна.`);
+      return;
+    }
+
+    if (nonEmptyRows.length > remainingAccesses) {
       messageApi.error(
-        `Зөвхөн ${remainingAccesses} шалгуулагч нэмэх боломжтой.`
+        `Зөвхөн ${remainingAccesses} шалгуулагч сонгох боломжтой.`
       );
       return;
     }
 
-    setValidatedData(dataToSend);
+    setValidatedData(nonEmptyRows);
     setIsConfirmModalVisible(true);
   };
 
@@ -571,37 +631,46 @@ const SpreadsheetInviteTable = ({ testData, onSuccess }) => {
 
   const columns = [
     {
+      title: "№",
+      key: "index",
+      width: "60px",
+      align: "center",
+      render: (_, __, index) => (
+        <span className="font-semibold text-gray-600">{index + 1}</span>
+      ),
+    },
+    {
       title: "И-мэйл хаяг",
       dataIndex: "email",
       key: "email",
-      width: "30%",
+      width: "28%",
       render: (text, record) => renderEditableCell(text, record, "email"),
     },
     {
       title: "Нэр",
       dataIndex: "firstname",
       key: "firstname",
-      width: "20%",
+      width: "18%",
       render: (text, record) => renderEditableCell(text, record, "firstname"),
     },
     {
       title: "Овог",
       dataIndex: "lastname",
       key: "lastname",
-      width: "20%",
+      width: "18%",
       render: (text, record) => renderEditableCell(text, record, "lastname"),
     },
     {
       title: "Утасны дугаар",
       dataIndex: "phone",
       key: "phone",
-      width: "20%",
+      width: "18%",
       render: (text, record) => renderEditableCell(text, record, "phone"),
     },
     {
       title: "Үйлдэл",
       key: "action",
-      width: "10%",
+      width: "80px",
       align: "center",
       render: (_, record) => (
         <Tooltip title="Устгах">
@@ -627,40 +696,69 @@ const SpreadsheetInviteTable = ({ testData, onSuccess }) => {
     <div className="spreadsheet-table">
       <style jsx global>{`
         .spreadsheet-table .editable-cell {
-          padding: 4px;
+          padding: 6px;
           cursor: cell;
-          min-height: 32px;
+          min-height: 36px;
           border: 1px solid transparent;
+          border-radius: 6px;
+          transition: all 0.2s ease;
         }
 
         .spreadsheet-table .editable-cell:hover {
-          background-color: #f5f5f5;
+          background-color: #f8fafc;
+          border-color: #e2e8f0;
         }
 
         .spreadsheet-table .active-cell {
           border: 1px solid #f36421;
           background-color: #fff;
+          box-shadow: 0 0 0 3px rgba(243, 100, 33, 0.1);
         }
 
         .spreadsheet-table .cell-content {
-          padding: 4px 8px;
-          min-height: 32px;
+          padding: 6px 10px;
+          min-height: 24px;
           display: flex;
           align-items: center;
         }
 
         .spreadsheet-table .ant-table-tbody > tr > td {
-          padding: 4px;
+          padding: 6px;
+          background: white;
+        }
+
+        .spreadsheet-table .ant-table-thead > tr > th {
+          background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+          font-weight: 700;
+          color: #334155;
+          border-bottom: 2px solid #e2e8f0;
+          padding: 12px;
+          font-size: 14px;
+        }
+
+        .spreadsheet-table .ant-table {
+          border-radius: 12px;
+          overflow: hidden;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .spreadsheet-table .ant-table-tbody > tr:hover > td {
+          background: #fafbfc !important;
         }
 
         .spreadsheet-table .ant-input {
           border: none;
           box-shadow: none;
-          padding: 4px 8px;
+          padding: 6px 10px;
+          font-size: 14px;
         }
 
         .spreadsheet-table .ant-input:focus {
           box-shadow: none;
+        }
+
+        .spreadsheet-table .ant-table-tbody > tr.ant-table-row-selected > td {
+          background: #fef3e8 !important;
         }
       `}</style>
 
@@ -669,7 +767,7 @@ const SpreadsheetInviteTable = ({ testData, onSuccess }) => {
       <div className="flex items-center gap-4 mb-4 flex-wrap">
         <Button
           onClick={() => handleAdd(5)}
-          className="stroked-btn add flex items-center gap-2 text-main hover:text-secondary border-main/50 rounded-xl font-medium transition-colors duration-400"
+          className="stroked-btn add flex items-center gap-2 text-main hover:text-secondary border-main/50 rounded-xl font-medium transition-colors duration-400 "
         >
           <AddCircleBoldDuotone width={18} height={18} />
           Мөр нэмэх
@@ -677,7 +775,7 @@ const SpreadsheetInviteTable = ({ testData, onSuccess }) => {
 
         <Button
           onClick={() => setIsModalVisible(true)}
-          className="stroked-btn-2 flex items-center gap-2 rounded-xl font-medium transition-colors duration-400"
+          className="stroked-btn-2 flex items-center gap-2 rounded-xl font-medium transition-colors duration-400 "
         >
           <File width={18} height={18} />
           Excel импортлох
@@ -686,57 +784,87 @@ const SpreadsheetInviteTable = ({ testData, onSuccess }) => {
         {selectedRowKeys.length > 0 && (
           <Button
             onClick={handleBulkDelete}
-            className="stroked-btn-3 flex items-center gap-2 text-red-600 border-red-500/50 hover:text-red-500 rounded-xl remove font-medium transition-colors duration-400"
+            className="stroked-btn-3 flex items-center gap-2 text-red-600 border-red-500/50 hover:text-red-500 rounded-xl remove font-medium transition-colors duration-400 "
           >
             <TrashBinMinimalistic2BoldDuotone width={18} height={18} />
             Устгах ({selectedRowKeys.length})
           </Button>
         )}
       </div>
-      {data.length > 0 && (
-        <div className="bg-gray-50 p-2 px-4 rounded-xl mb-4 flex items-center text-sm text-gray-600">
-          <ShieldWarningBoldDuotone
-            className="text-main mr-2"
-            width={18}
-            height={18}
-          />
-          <div>
-            <span className="font-medium">Заавар:</span>
-          </div>
-        </div>
-      )}
 
       {data.length > 0 && (
-        <Table
-          locale={customLocale}
-          rowSelection={rowSelection}
-          dataSource={data}
-          columns={columns}
-          pagination={false}
-          rowClassName="editable-row"
-          className="test-history-table overflow-x-auto"
-        />
+        <>
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-xl mb-5 border border-blue-100">
+            <div className="flex items-start gap-3">
+              <div>
+                <ShieldWarningBoldDuotone
+                  className="text-blue-600"
+                  width={20}
+                  height={20}
+                />
+              </div>
+              <div className="flex-1">
+                <div className="font-bold text-blue-900 mb-2">Заавар</div>
+              </div>
+            </div>
+            <div className="text-sm text-blue-800 flex items-center gap-2 leading-relaxed">
+              <li className="flex items-start gap-2">
+                <span>
+                  <strong>Tab</strong> - дараагийн нүд рүү шилжих
+                </span>
+                <span className="text-blue-600 gap-2">/</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span>
+                  <strong>Enter</strong> - мөр шилжих
+                </span>
+                <span className="text-blue-600 gap-2">/</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span>
+                  <strong>Ctrl+V</strong> - Excel-ээс хуулах
+                </span>
+              </li>
+            </div>
+          </div>
+
+          <Table
+            locale={customLocale}
+            rowSelection={rowSelection}
+            dataSource={data}
+            columns={columns}
+            pagination={false}
+            rowClassName="editable-row"
+            className="test-history-table overflow-x-auto"
+          />
+        </>
       )}
 
       {data.length > 0 && (
         <>
-          <div className="pt-6">
-            <div className="flex items-center gap-2 font-bold">
-              <CalendarBoldDuotone width={18} height={18} />
+          <div className="pt-8">
+            <div className="flex items-center gap-2 font-bold text-lg text-gray-800">
+              <CalendarBoldDuotone
+                width={20}
+                height={20}
+                className="text-main"
+              />
               Тест өгөх хугацаа
             </div>
           </div>
-          <div className="mt-3">
+          <div className="mt-4">
             <DateTimePicker dateRange={dateRange} setDateRange={setDateRange} />
           </div>
-          <div className="flex justify-between pt-2 items-center">
+          <div className="flex justify-between pt-4 items-center">
             <div className="pt-2 gap-2 flex items-center">
               <Switch
                 size="small"
                 checked={show}
                 onChange={(checked) => setShow(checked)}
               />
-              <div>Тестийн үр дүнг шалгуулагчдад харуулах эсэх</div>
+              <div className="text-gray-700">
+                Тестийн үр дүнг шалгуулагчдад харуулах эсэх
+              </div>
             </div>
             <div
               className="relative group cursor-pointer"
@@ -744,7 +872,7 @@ const SpreadsheetInviteTable = ({ testData, onSuccess }) => {
             >
               <div className="absolute -inset-0.5 bg-gradient-to-br from-main/50 to-main/70 rounded-full blur opacity-30 group-hover:opacity-40 transition duration-300"></div>
               <div className="relative bg-gradient-to-br from-main/30 to-secondary/20 rounded-full flex items-center justify-center border border-main/10">
-                <div className="flex items-center gap-1.5 font-extrabold bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent py-1.5 px-7">
+                <div className="flex items-center gap-1.5 font-extrabold bg-gradient-to-br from-main to-secondary bg-clip-text text-transparent py-1.5 px-6">
                   <LetterBoldDuotone
                     width={18}
                     height={18}
@@ -788,11 +916,9 @@ const SpreadsheetInviteTable = ({ testData, onSuccess }) => {
               <p className="ant-upload-drag-icon pt-2">
                 <UploadBoldDuotone size={40} className="mx-auto text-main" />
               </p>
-              <p className="font-bold text-base">
-                Excel файлаа энд чирч оруулна уу.
-              </p>
+              <p className="font-bold text-base">Файл оруулах</p>
               <p className="ant-upload-hint leading-5 pt-1 pb-1">
-                Хүснэгтэн форматын файлуудыг дэмжинэ.
+                .xlsx, .xls өргөтгөлтэй файл оруулна уу.
               </p>
             </>
           )}

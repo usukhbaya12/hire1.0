@@ -105,7 +105,7 @@ const InfoModal = ({
           className="mt-4"
         />
       )}
-      <div className="prose prose-sm max-w-none bg-gray-50 px-6 py-2 rounded-xl my-4">
+      <div className="prose prose-sm max-w-none bg-gray-50 px-6 py-2 rounded-xl my-4 max-h-[40vh] overflow-y-auto">
         <div dangerouslySetInnerHTML={{ __html: advice }} />
       </div>
 

@@ -141,19 +141,19 @@ const ApplicantsTable = ({ data, loading, onRefresh }) => {
 
     if (tableFilters.status?.length) {
       filtered = filtered.filter((item) => {
-        const isExpired =
-          !item.userEndDate && dayjs().isAfter(dayjs(item.endDate));
-        const isSent = !item.userStartDate && !item.userEndDate;
-        const isStarted = item.userStartDate && !item.userEndDate;
-        const isCompleted = !!item.userEndDate;
+        let itemStatus;
 
-        return tableFilters.status.some((status) => {
-          if (status === "sent") return isSent;
-          if (status === "started") return isStarted;
-          if (status === "completed") return isCompleted;
-          if (status === "renew") return isExpired;
-          return false;
-        });
+        if (!item.userEndDate && dayjs().isAfter(dayjs(item.endDate))) {
+          itemStatus = "renew";
+        } else if (!item.userStartDate && !item.userEndDate) {
+          itemStatus = "sent";
+        } else if (item.userStartDate && !item.userEndDate) {
+          itemStatus = "started";
+        } else {
+          itemStatus = "completed";
+        }
+
+        return tableFilters.status.includes(itemStatus);
       });
     }
 
