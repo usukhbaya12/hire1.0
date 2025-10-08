@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 import BlogDetailPage from "@/components/Blog";
 import { getBlogById } from "@/app/api/main";
-import { api } from "@/app/utils/routes";
 
 export async function generateMetadata({ params }) {
   const { id } = await params;
@@ -24,6 +23,10 @@ export async function generateMetadata({ params }) {
           blog.image
         }`
       : "https://www.hire.mn/misc.png";
+
+    const blogUrl = `${
+      process.env.NEXT_PUBLIC_SITE_URL || "https://hire.mn"
+    }/news/${id}`;
 
     return {
       title: blog.title,
@@ -52,7 +55,13 @@ export async function generateMetadata({ params }) {
       },
     };
   } catch (error) {
-    return { title: "Blog Post" };
+    console.error("Error generating metadata:", error);
+    return {
+      title: "Blog Post",
+      openGraph: {
+        images: ["https://www.hire.mn/misc.png"],
+      },
+    };
   }
 }
 
