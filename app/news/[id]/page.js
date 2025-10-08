@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import BlogDetailPage from "@/components/Blog";
 import { getBlogById } from "@/app/api/main";
+import { api } from "@/app/utils/routes";
 
 export async function generateMetadata({ params }) {
   const { id } = await params;
@@ -9,14 +10,7 @@ export async function generateMetadata({ params }) {
     const response = await getBlogById(id);
     const blog = response.success ? response.data : null;
 
-    if (!blog) {
-      return {
-        title: "Blog Post",
-        openGraph: {
-          images: ["https://www.hire.mn/misc.png"],
-        },
-      };
-    }
+    if (!blog) return { title: "Blog Post" };
 
     const imageUrl = blog.image
       ? `${process.env.NEXT_PUBLIC_SITE_URL || "https://hire.mn"}/api/file/${
@@ -24,18 +18,12 @@ export async function generateMetadata({ params }) {
         }`
       : "https://www.hire.mn/misc.png";
 
-    const blogUrl = `${
-      process.env.NEXT_PUBLIC_SITE_URL || "https://hire.mn"
-    }/news/${id}`;
-
     return {
       title: blog.title,
       description: blog.description || blog.title,
       openGraph: {
         title: blog.title,
         description: blog.description || blog.title,
-        url: blogUrl,
-        siteName: "Hire.mn",
         images: [
           {
             url: imageUrl,
@@ -45,23 +33,10 @@ export async function generateMetadata({ params }) {
           },
         ],
         type: "article",
-        locale: "mn_MN",
-      },
-      twitter: {
-        card: "summary_large_image",
-        title: blog.title,
-        description: blog.description || blog.title,
-        images: [imageUrl],
       },
     };
   } catch (error) {
-    console.error("Error generating metadata:", error);
-    return {
-      title: "Blog Post",
-      openGraph: {
-        images: ["https://www.hire.mn/misc.png"],
-      },
-    };
+    return { title: "Blog Post" };
   }
 }
 
