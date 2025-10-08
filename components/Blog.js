@@ -178,7 +178,7 @@ export default function BlogDetailPage() {
                         alt="Facebook icon"
                         width={20}
                         height={20}
-                        className="hover:opacity-70 transition-opacity"
+                        className="hover:opacity-70 transition-opacity min-h-[20px] min-w-[20px]"
                       />
                     </button>
                     <button

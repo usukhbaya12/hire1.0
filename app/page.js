@@ -11,12 +11,16 @@ import React, {
 } from "react";
 import Image from "next/image";
 import {
+  BookmarkOpenedBoldDuotone,
   Buildings2BoldDuotone,
   FiltersBoldDuotone,
   MagniferBoldDuotone,
   NotesBoldDuotone,
+  NotificationUnreadLinesBoldDuotone,
   SquareArrowRightDownBoldDuotone,
   StarFall2BoldDuotone,
+  Stars1BoldDuotone,
+  StarsBoldDuotone,
   UserCheckRoundedBoldDuotone,
   VerifiedCheckBoldDuotone,
   Wallet2BoldDuotone,
@@ -526,7 +530,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7 }}
-                className="text-3xl sm:text-3xl xl:text-4xl 2xl:text-5xl font-black sm:max-w-xl bg-gradient-to-r from-main to-secondary bg-clip-text text-transparent"
+                className="text-3xl sm:text-3xl xl:text-4xl 2xl:text-5xl font-black sm:max-w-xl bg-gradient-to-r from-main via-pink-500 to-secondary bg-clip-text text-transparent tracking-tight leading-[1.1]"
               >
                 Онлайн тест, хөндлөнгийн үнэлгээ
               </motion.div>
@@ -536,7 +540,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
-              className="hidden sm:grid grid-cols-1 sm:grid-cols-3 gap-4 py-3 mt-8 sm:mt-12 w-full sm:w-[55%] shadow shadow-slate-200 rounded-3xl sm:rounded-full bg-white/60 backdrop-blur-md"
+              className="hidden sm:grid grid-cols-1 sm:grid-cols-3 gap-4 py-3 mt-8 sm:mt-12 w-full sm:w-[80%] lg:w-[55%] shadow shadow-slate-200 rounded-3xl sm:rounded-full bg-white/60 backdrop-blur-md"
             >
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -635,7 +639,6 @@ export default function Home() {
                 <div className="font-semibold">Хамтрагч байгууллагууд</div>
               </motion.div>
             </motion.div>
-
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -649,7 +652,35 @@ export default function Home() {
                 transition={{ duration: 0.5 }}
                 className="font-black text-xl inline-flex gap-1 text-main"
               >
-                <StarFall2BoldDuotone />
+                <Stars1BoldDuotone />
+                Онцлох
+              </motion.div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
+                {loading
+                  ? renderSkeletonCards(3)
+                  : home.highlight.map((assessment) => (
+                      <Assessment
+                        key={assessment.data.id}
+                        assessment={assessment}
+                      />
+                    ))}
+              </div>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="pt-12"
+              id="new"
+            >
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5 }}
+                className="font-black text-xl inline-flex gap-1 text-main"
+              >
+                <NotificationUnreadLinesBoldDuotone />
                 Шинээр нэмэгдсэн
               </motion.div>
 

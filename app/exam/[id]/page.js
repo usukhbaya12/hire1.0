@@ -365,7 +365,7 @@ export default function Exam() {
   const renderContent = () => {
     const renderHeader = () => (
       <>
-        <div className="fixed top-0 sm:top-4 w-full sm:w-fit 2xl:px-72 xl:px-24 lg:px-16 md:px-12 z-[100]">
+        <div className="fixed top-0 sm:top-4 w-full sm:w-fit 2xl:px-72 xl:px-24 lg:px-16 md:px-12 z-[100] md:hidden lg:block">
           <Header assessment={questionData?.assessment.timeout} />
         </div>
         <div className="hidden sm:block fixed -top-48 w-[500px] h-[500px] 2xl:right-60 xl:right-24 lg:right-16 md:right-12">

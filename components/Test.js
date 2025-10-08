@@ -377,13 +377,13 @@ export default function Test() {
             <div className="absolute bottom-[-20%] right-[-10%] w-[200px] h-[200px] md:w-[500px] md:h-[500px] rounded-full bg-orange-600/5 blur-[100px]" />
           </div>
           <div className="absolute top-0 right-0 w-full h-full overflow-hidden pointer-events-none">
-            <div className="absolute top-0 -right-10 sm:-right-8 lg:right-0 xl:right-[20px] 2xl:right-[210px] w-[600px] sm:w-[520px] md:w-[600px] lg:w-[600px] xl:w-[820px] 2xl:w-[880px] 3xl:w-[1000px] flex items-center justify-center">
+            <div className="absolute top-0 -right-10 md:right-4 lg:right-0 xl:right-[20px] 2xl:right-[210px] w-[600px] sm:w-[520px] md:w-[600px] lg:w-[600px] xl:w-[820px] 2xl:w-[880px] 3xl:w-[1000px] flex items-center justify-center">
               <div className="relative w-full pb-[50%]">
                 <Image
                   src="/halfcircle.png"
                   alt="Half circle"
                   fill
-                  className="object-contain opacity-50 sm:opacity-100 z-[1]"
+                  className="object-contain opacity-50 lg:opacity-100 z-[1]"
                   priority
                 />
                 <div className="absolute top-1 inset-x-0 h-[60%] flex items-start justify-center overflow-hidden">
@@ -397,7 +397,7 @@ export default function Test() {
                       alt="Assessment Icon"
                       width={600}
                       height={600}
-                      className="absolute top-[-30px] object-cover object-top w-full h-auto hidden sm:block"
+                      className="absolute top-[-30px] object-cover object-top w-full h-auto hidden lg:block"
                       priority
                     />
                   </div>
@@ -487,7 +487,7 @@ export default function Test() {
               )}
             </div>
             <div
-              className={`w-full grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mt-8`}
+              className={`w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mt-8`}
             >
               {[
                 {
@@ -689,6 +689,7 @@ export default function Test() {
                                     width={18}
                                     height={18}
                                     priority
+                                    className="min-h-[18px] min-w-[18px]"
                                   />
                                 </Button>
                               </div>
@@ -746,6 +747,7 @@ export default function Test() {
                                       width={18}
                                       height={18}
                                       priority
+                                      className="min-h-[18px] min-w-[18px]"
                                     />
                                   </Button>
                                 )}
@@ -897,6 +899,7 @@ export default function Test() {
                                       width={18}
                                       height={18}
                                       alt="facebook"
+                                      className="min-h-[18px] min-w-[18px]"
                                     />
                                   </Button>
                                 </div>
@@ -954,6 +957,7 @@ export default function Test() {
                                     width={18}
                                     height={18}
                                     alt="facebook"
+                                    className="min-h-[18px] min-w-[18px]"
                                   />
                                 </Button>
                               )}
@@ -1138,6 +1142,7 @@ export default function Test() {
                                       width={18}
                                       height={18}
                                       priority
+                                      className="min-h-[18px] min-w-[18px]"
                                     />
                                   </Button>
                                 </div>
@@ -1345,6 +1350,7 @@ export default function Test() {
                                           width={18}
                                           height={18}
                                           alt="facebook"
+                                          className="min-h-[18px] min-w-[18px]"
                                         />
                                       </Button>
                                     </>

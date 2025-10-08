@@ -15,7 +15,11 @@ const SidePanel = ({
     className={`fixed hidden sm:block ${position}-0 top-1/2 -translate-y-1/2 z-20 
   ${
     isOpen
-      ? `${position === "left" ? "xl:w-[320px] 2xl:w-[420px]" : "w-[290px]"}`
+      ? `${
+          position === "left"
+            ? "md:w-[350px] xl:w-[320px] 2xl:w-[420px]"
+            : "w-[290px]"
+        }`
       : "w-[69px] cursor-pointer hover:w-[60px] transition-[width] duration-300"
   }`}
     onClick={() => !isOpen && setIsOpen(true)}
