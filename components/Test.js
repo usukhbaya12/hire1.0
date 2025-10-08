@@ -721,7 +721,7 @@ export default function Test() {
                             ) : (
                               <div className="flex justify-center items-center gap-2">
                                 <Link
-                                  href={`/api/report/${item.exams[0].code}`}
+                                  href={`/api/report/${item.exams[0].code}?display=inline`}
                                   target="_blank"
                                   passHref
                                 >
@@ -928,7 +928,7 @@ export default function Test() {
                             ) : (
                               <>
                                 <Link
-                                  href={`/api/report/${item.exams[0].code}`}
+                                  href={`/api/report/${item.exams[0].code}?display=inline`}
                                   target="_blank"
                                   passHref
                                 >
@@ -1115,7 +1115,7 @@ export default function Test() {
                               ) : item.visible ? (
                                 <div className="flex justify-center items-center gap-2">
                                   <Link
-                                    href={`/api/report/${item.code}`}
+                                    href={`/api/report/${item.code}?display=inline`}
                                     target="_blank"
                                     passHref
                                   >
@@ -1322,7 +1322,7 @@ export default function Test() {
                                   ) : item.visible ? (
                                     <>
                                       <Link
-                                        href={`/api/report/${item.code}`}
+                                        href={`/api/report/${item.code}?display=inline`}
                                         target="_blank"
                                         passHref
                                       >

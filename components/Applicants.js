@@ -476,7 +476,7 @@ const EmployeeTable = ({ testData, onRefresh }) => {
             <>
               {isReportAvailable && (
                 <Link
-                  href={`/api/report/${record.code}`}
+                  href={`/api/report/${record.code}?display=inline`}
                   target="_blank"
                   passHref
                 >

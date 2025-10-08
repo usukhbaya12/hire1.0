@@ -485,7 +485,11 @@ const ApplicantsTable = ({ data, loading, onRefresh }) => {
               Сунгах
             </Button>
           ) : record.userEndDate && record.result ? (
-            <Link href={`/api/report/${record.code}`} target="_blank" passHref>
+            <Link
+              href={`/api/report/${record.code}?display=inline`}
+              target="_blank"
+              passHref
+            >
               <Button className="link-btn-2 border-none">
                 <ClipboardBoldDuotone width={18} />
                 Тайлан

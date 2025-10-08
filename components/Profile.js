@@ -362,7 +362,7 @@ const TestsTabContent = ({ activeTab, session }) => {
             ) : (
               <div className="flex justify-center items-center gap-2">
                 <Link
-                  href={`/api/report/${item.exams[0].code}`}
+                  href={`/api/report/${item.exams[0].code}?display=inline`}
                   target="_blank"
                   passHref
                 >
@@ -519,7 +519,11 @@ const TestsTabContent = ({ activeTab, session }) => {
           </div>
         ) : item.visible ? (
           <div className="flex justify-center items-center gap-2">
-            <Link href={`/api/report/${item.code}`} target="_blank" passHref>
+            <Link
+              href={`/api/report/${item.code}?display=inline`}
+              target="_blank"
+              passHref
+            >
               <Button className="grd-btn">
                 <ClipboardTextBoldDuotone width={18} />
                 Татах
@@ -899,7 +903,7 @@ const TestsTabContent = ({ activeTab, session }) => {
                               ) : item.visible ? (
                                 <>
                                   <Link
-                                    href={`/api/report/${item.code}`}
+                                    href={`/api/report/${item.code}?display=inline`}
                                     target="_blank"
                                     passHref
                                   >
@@ -1074,7 +1078,7 @@ const TestsTabContent = ({ activeTab, session }) => {
                             ) : (
                               <>
                                 <Link
-                                  href={`/api/report/${item.exams[0].code}`}
+                                  href={`/api/report/${item.exams[0].code}?display=inline`}
                                   target="_blank"
                                   passHref
                                 >
