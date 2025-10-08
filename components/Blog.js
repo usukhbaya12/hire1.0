@@ -16,7 +16,6 @@ import { getBlogById } from "@/app/api/main";
 import DOMPurify from "dompurify";
 import Link from "next/link";
 import { HomeOutlined, LoadingOutlined } from "@ant-design/icons";
-import DynamicMetaTags from "./Meta";
 import NotFoundPage from "@/app/not-found";
 import LoadingSpinner from "./Spin";
 import News from "@/app/news/page";
@@ -107,8 +106,6 @@ export default function BlogDetailPage() {
 
   return (
     <div>
-      {blog && <DynamicMetaTags metadata={metadata} />}
-
       <title>{blog?.title}</title>
       {contextHolder}
       <div className="relative flex flex-col bg-gradient-to-b from-gray-100 to-white">

@@ -10,7 +10,14 @@ export async function generateMetadata({ params }) {
     const response = await getBlogById(id);
     const blog = response.success ? response.data : null;
 
-    if (!blog) return { title: "Blog Post" };
+    if (!blog) {
+      return {
+        title: "Blog Post",
+        openGraph: {
+          images: ["https://www.hire.mn/misc.png"],
+        },
+      };
+    }
 
     const imageUrl = blog.image
       ? `${process.env.NEXT_PUBLIC_SITE_URL || "https://hire.mn"}/api/file/${
@@ -24,6 +31,8 @@ export async function generateMetadata({ params }) {
       openGraph: {
         title: blog.title,
         description: blog.description || blog.title,
+        url: blogUrl,
+        siteName: "Hire.mn",
         images: [
           {
             url: imageUrl,
@@ -33,6 +42,13 @@ export async function generateMetadata({ params }) {
           },
         ],
         type: "article",
+        locale: "mn_MN",
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: blog.title,
+        description: blog.description || blog.title,
+        images: [imageUrl],
       },
     };
   } catch (error) {
