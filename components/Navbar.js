@@ -205,7 +205,7 @@ function NavbarContent() {
 
         {/* DESKTOP MENU */}
         <div className="flex items-center gap-7">
-          <div className="hidden md:flex space-x-6 items-center">
+          <div className="hidden md:flex md:space-x-4 lg:space-x-6 items-center">
             <div>
               <div className="relative py-1">
                 <Link
@@ -227,7 +227,7 @@ function NavbarContent() {
               </div>
             </div>
             <div>
-              <div className="relative py-1">
+              <div className="relative py-1 md:hidden lg:block">
                 <button className="font-bold" onClick={handleTestsClick}>
                   Тестүүд
                 </button>

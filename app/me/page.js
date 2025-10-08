@@ -169,7 +169,7 @@ const Profile = () => {
               </div>
 
               <div className="bg-white/40 backdrop-blur-md rounded-3xl p-2 sm:px-4 sm:py-5 shadow shadow-slate-200 h-fit">
-                <div className="flex md:flex-col gap-1">
+                <div className="flex lg:flex-col gap-1">
                   {menuItems
                     .filter((item) => item.show !== false)
                     .map((item) => (

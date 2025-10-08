@@ -13,8 +13,9 @@ export default function Footer() {
 
   const items = [
     { key: "1", label: "Тестийн сан", link: "/#tests" },
-    { key: "2", label: "Шинээр нэмэгдсэн", link: "/#starred" },
-    { key: "3", label: "Эрэлттэй", link: "/#popular" },
+    { key: "2", label: "Онцлох", link: "/#starred" },
+    { key: "3", label: "Шинээр нэмэгдсэн", link: "/#new" },
+    { key: "4", label: "Эрэлттэй", link: "/#popular" },
   ];
   const knowledge = [
     { key: "1", label: "Блог, зөвлөмжүүд", link: "/news" },
@@ -55,7 +56,7 @@ export default function Footer() {
 
   return (
     <div className="bg-white/70 backdrop-blur-md border-t border-slate-200 pt-12 pb-8 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6">
-      <div className="grid grid-cols-2 sm:grid-cols-6">
+      <div className="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-6">
         <div className="flex flex-col gap-4 col-span-2">
           <div>
             <Image
@@ -100,7 +101,7 @@ export default function Footer() {
             </a>
           </div>
         </div>
-        <div className="pt-8 sm:pt-0 sm:pl-4">
+        <div className="pt-8 sm:pt-0 sm:pl-4 md:pl-10 lg:pl-4">
           <div className="font-extrabold text-base">Тестүүд</div>
           <div className="pt-2 sm:pt-4 text-gray-700">
             {items.map((item) => (
@@ -113,6 +114,8 @@ export default function Footer() {
                     } else if (item.key === "2") {
                       handleScrollToSection("starred");
                     } else if (item.key === "3") {
+                      handleScrollToSection("new");
+                    } else if (item.key === "4") {
                       handleScrollToSection("popular");
                     } else {
                       handleLinkClick(item.link);
@@ -125,7 +128,7 @@ export default function Footer() {
             ))}
           </div>
         </div>
-        <div className="pt-8 sm:pt-0 sm:pl-4">
+        <div className="pt-8 sm:pt-0 sm:pl-4 md:hidden lg:block">
           <div className="font-extrabold text-base">Мэдлэгийн сан</div>
           <div className="pt-2 sm:pt-4 text-gray-700">
             {knowledge.map((item) => (
@@ -140,7 +143,7 @@ export default function Footer() {
             ))}
           </div>
         </div>
-        <div className="pt-8 sm:pt-0 sm:pl-16">
+        <div className="pt-8 sm:pt-0 sm:pl-16 md:pl-4 lg:pl-16">
           <div className="font-extrabold text-base">Холбоос</div>
           <div className="pt-2 sm:pt-4 text-gray-700">
             {link.map((item) => (

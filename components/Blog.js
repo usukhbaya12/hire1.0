@@ -16,7 +16,6 @@ import { getBlogById } from "@/app/api/main";
 import DOMPurify from "dompurify";
 import Link from "next/link";
 import { HomeOutlined, LoadingOutlined } from "@ant-design/icons";
-import DynamicMetaTags from "./Meta";
 import NotFoundPage from "@/app/not-found";
 import LoadingSpinner from "./Spin";
 import News from "@/app/news/page";
@@ -107,8 +106,6 @@ export default function BlogDetailPage() {
 
   return (
     <div>
-      {blog && <DynamicMetaTags metadata={metadata} />}
-
       <title>{blog?.title}</title>
       {contextHolder}
       <div className="relative flex flex-col bg-gradient-to-b from-gray-100 to-white">
@@ -117,13 +114,19 @@ export default function BlogDetailPage() {
           {!loading && !error && blog && (
             <>
               {imageUrl && (
-                <div className="relative w-full h-[180px] md:h-[350px] overflow-hidden">
+                <div className="-top-28 relative w-full h-[180px] md:h-[380px] overflow-hidden hidden sm:block">
+                  <img
+                    src={`${process.env.NEXT_PUBLIC_SITE_URL}${imageUrl}`}
+                    alt={blog?.title || "Blog image"}
+                    className="hidden"
+                  />
+
                   <div
-                    className="absolute inset-0 bg-repeat-x bg-top"
+                    className="absolute inset-0"
                     style={{
-                      backgroundImage: imageUrl
-                        ? `url(${imageUrl})`
-                        : `url(/misc.png)`,
+                      backgroundImage: `url("${process.env.NEXT_PUBLIC_SITE_URL}${imageUrl}")`,
+                      backgroundRepeat: "repeat-x",
+                      backgroundPosition: "top",
                       backgroundSize: "auto 100%",
                       backgroundColor: "#f3f4f6",
                     }}
@@ -133,7 +136,7 @@ export default function BlogDetailPage() {
                 </div>
               )}
 
-              <article className="max-w-2xl mx-auto overflow-hidden pt-6 px-6 pb-2">
+              <article className="max-w-2xl lg:max-w-3xl xl:max-w-4xl mx-auto overflow-hidden pt-6 md:pt-0 md:-mt-16 px-6 pb-2">
                 <Breadcrumb
                   items={[
                     {
@@ -178,7 +181,7 @@ export default function BlogDetailPage() {
                         alt="Facebook icon"
                         width={20}
                         height={20}
-                        className="hover:opacity-70 transition-opacity"
+                        className="hover:opacity-70 transition-opacity min-h-[20px] min-w-[20px]"
                       />
                     </button>
                     <button

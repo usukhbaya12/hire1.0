@@ -711,8 +711,9 @@ const Account = () => {
         <div className="absolute bottom-[-20%] right-[-10%] w-[200px] h-[200px] md:w-[500px] md:h-[500px] rounded-full bg-orange-600/10 blur-[100px]" />
       </div>
       <div className="relative 2xl:px-72 xl:px-24 lg:px-16 md:px-12 px-6 pt-8 md:pt-12 pb-8 z-[3]">
-        <div className="flex flex-col md:flex-row gap-6">
-          <div className="w-full md:w-1/5 space-y-4">
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* Sidebar */}
+          <div className="w-full lg:w-1/5 space-y-4">
             <div className="relative p-6 bg-white/40 backdrop-blur-md rounded-3xl shadow shadow-slate-200 overflow-hidden">
               <div className="absolute top-32 -right-14 w-60 h-60">
                 <Image
@@ -755,7 +756,7 @@ const Account = () => {
             </div>
 
             <div className="bg-white/40 backdrop-blur-md rounded-3xl p-2 sm:px-4 sm:py-5 shadow shadow-slate-200 h-fit">
-              <div className="flex md:flex-col gap-1">
+              <div className="flex lg:flex-col gap-1">
                 {menuItems.map((item) => (
                   <div
                     key={item.key}
@@ -783,7 +784,7 @@ const Account = () => {
               </div>
             </div>
           </div>
-          <div className="w-full md:w-4/5">{renderContent()}</div>
+          <div className="w-full lg:w-4/5">{renderContent()}</div>
         </div>
       </div>
       <Footer />

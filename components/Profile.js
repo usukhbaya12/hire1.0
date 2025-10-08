@@ -387,6 +387,7 @@ const TestsTabContent = ({ activeTab, session }) => {
                     width={18}
                     height={18}
                     priority
+                    className="min-h-[18px] min-w-[18px]"
                   />
                 </Button>
               </div>
@@ -542,6 +543,7 @@ const TestsTabContent = ({ activeTab, session }) => {
                 width={18}
                 height={18}
                 priority
+                className="min-h-[18px] min-w-[18px]"
               />
             </Button>
           </div>
@@ -924,6 +926,7 @@ const TestsTabContent = ({ activeTab, session }) => {
                                       width={18}
                                       height={18}
                                       alt="facebook"
+                                      className="min-h-[18px] min-w-[18px]"
                                     />
                                   </Button>
                                 </>
@@ -1107,6 +1110,7 @@ const TestsTabContent = ({ activeTab, session }) => {
                                     height={18}
                                     alt="facebook"
                                     priority
+                                    className="min-h-[18px] min-w-[18px]"
                                   />
                                 </Button>
                               )}

@@ -459,9 +459,6 @@ export const getBlogById = async (id) => {
 };
 
 export const getBlogs = async (limit = 10, page = 1, type = 0) => {
-  const token = await getAuthToken();
-  if (!token) return { token: false };
-
   try {
     const params = {};
     params.limit = limit;
@@ -472,7 +469,6 @@ export const getBlogs = async (limit = 10, page = 1, type = 0) => {
 
     const res = await axios.get(`${api}blog/all`, {
       headers: {
-        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
       params,

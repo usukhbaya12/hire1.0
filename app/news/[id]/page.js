@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 import BlogDetailPage from "@/components/Blog";
 import { getBlogById } from "@/app/api/main";
-import { api } from "@/app/utils/routes";
 
 export async function generateMetadata({ params }) {
   const { id } = await params;
@@ -10,33 +9,64 @@ export async function generateMetadata({ params }) {
     const response = await getBlogById(id);
     const blog = response.success ? response.data : null;
 
-    if (!blog) return { title: "Blog Post" };
+    if (!blog) {
+      return {
+        title: "Blog Post",
+        metadataBase: new URL("https://www.hire.mn"),
+        openGraph: {
+          images: ["/misc.png"],
+        },
+      };
+    }
 
     const imageUrl = blog.image
-      ? `${process.env.NEXT_PUBLIC_SITE_URL || "https://hire.mn"}/api/file/${
-          blog.image
-        }`
-      : "https://www.hire.mn/misc.png";
+      ? `/api/file/${blog.image}` // Relative URL - metadataBase will make it absolute
+      : "/misc.png";
+
+    console.log("Blog metadata:", {
+      id,
+      title: blog.title,
+      imageUrl,
+      hasImage: !!blog.image,
+      fullImageUrl: `https://www.hire.mn${imageUrl}`,
+    });
 
     return {
+      metadataBase: new URL("https://www.hire.mn"), // This is critical!
       title: blog.title,
       description: blog.description || blog.title,
       openGraph: {
         title: blog.title,
         description: blog.description || blog.title,
+        url: `/news/${id}`, // Relative - will become https://www.hire.mn/news/[id]
+        siteName: "Hire.mn",
         images: [
           {
-            url: imageUrl,
+            url: imageUrl, // Relative URL
             width: 1200,
             height: 630,
             alt: blog.title,
           },
         ],
         type: "article",
+        locale: "mn_MN",
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: blog.title,
+        description: blog.description || blog.title,
+        images: [imageUrl], // Relative URL
       },
     };
   } catch (error) {
-    return { title: "Blog Post" };
+    console.error("Error generating metadata:", error);
+    return {
+      title: "Blog Post",
+      metadataBase: new URL("https://www.hire.mn"),
+      openGraph: {
+        images: ["/misc.png"],
+      },
+    };
   }
 }
 
