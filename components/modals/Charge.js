@@ -23,7 +23,7 @@ const ChargeModal = ({ isOpen, onClose }) => {
       {
         src: "https://qpay.mn/q/logo/khanbank.png",
         name: "ХААН БАНК",
-        account: "5009375211",
+        account: "MN070005005070465457",
       },
     ],
   };
@@ -161,7 +161,8 @@ const ChargeModal = ({ isOpen, onClose }) => {
                 <div>
                   <p className="text-main font-bold">Гүйлгээний утга</p>
                   <p className="text-sm text-gray-600">
-                    Байгууллагын регистрийн дугаар, холбогдох утасны дугаар
+                    Бүртгэлтэй мэйл хаяг, байгууллагын регистрийн дугаар,
+                    холбогдох утасны дугаар
                   </p>
                 </div>
               </div>
@@ -190,7 +191,7 @@ const ChargeModal = ({ isOpen, onClose }) => {
             </div>
             <div className="flex items-center gap-2">
               <LetterBoldDuotone width={18} className="text-main" />
-              <span className="text-sm text-gray-700">support@hire.mn</span>
+              <span className="text-sm text-gray-700">info@axiominc.mn</span>
             </div>
           </div>
         </div>
