@@ -23,14 +23,6 @@ export async function generateMetadata({ params }) {
       ? `/api/file/${blog.image}` // Relative URL - metadataBase will make it absolute
       : "/misc.png";
 
-    console.log("Blog metadata:", {
-      id,
-      title: blog.title,
-      imageUrl,
-      hasImage: !!blog.image,
-      fullImageUrl: `https://www.hire.mn${imageUrl}`,
-    });
-
     return {
       metadataBase: new URL("https://www.hire.mn"), // This is critical!
       title: blog.title,

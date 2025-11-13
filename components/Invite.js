@@ -35,7 +35,6 @@ import { customLocale } from "@/app/utils/values";
 import { LoadingOutlined } from "@ant-design/icons";
 
 const SpreadsheetInviteTable = ({ testData, onSuccess }) => {
-  console.log(testData);
   const [dateRange, setDateRange] = useState([
     dayjs(),
     dayjs().add(24, "hour"),
@@ -502,15 +501,6 @@ const SpreadsheetInviteTable = ({ testData, onSuccess }) => {
           const startDate = dateRange[0].toISOString();
           const endDate = dateRange[1].toISOString();
           try {
-            console.log({
-              service: test.id,
-              count: Math.min(
-                remainingForThisTest,
-                validatedData.length - examCodes.length
-              ),
-              startDate,
-              endDate,
-            });
             const examResponse = await getCode({
               service: test.id,
               count: Math.min(
@@ -520,7 +510,6 @@ const SpreadsheetInviteTable = ({ testData, onSuccess }) => {
               startDate,
               endDate,
             });
-            console.log(examResponse);
             if (examResponse.success && examResponse.data) {
               examCodes.push(...examResponse.data);
             }

@@ -41,13 +41,13 @@ import Assessment from "./Assessment";
 import Footer from "./Footer";
 import dayjs from "dayjs";
 
-export default function Test() {
+export default function Test({ session }) {
   const params = useParams();
   const testId = params.id;
   const [loading, setLoading] = useState(false);
   const [loadingTakeTest, setLoadingTakeTest] = useState(false);
   const [assessmentData, setAssessmentData] = useState([]);
-  const { data: session } = useSession();
+  // const { data: session } = useSession();
   const router = useRouter();
   const [messageApi, contextHolder] = message.useMessage();
   const [testHistory, setTestHistory] = useState(null);
@@ -350,8 +350,6 @@ export default function Test() {
     return <LoadingSpinner />;
   }
 
-  console.log("history", testHistory);
-
   return (
     <>
       {/* <Spin
@@ -466,7 +464,9 @@ export default function Test() {
                   testHistory?.data.some(
                     (item) => item.usedUserCount === 0 && item.status === 20
                   )) ||
-                (session?.user?.role === 20 && assessmentData.data.price === 0)
+                (session?.user?.role === 20 &&
+                  assessmentData.data.price === 0) ||
+                (!session?.user?.role && assessmentData.data.price === 0)
                   ? "Тест өгөх"
                   : "Худалдаж авах"}
               </Button>
@@ -535,7 +535,9 @@ export default function Test() {
                   testHistory?.data.some(
                     (item) => item.usedUserCount === 0 && item.status === 20
                   )) ||
-                (session?.user?.role === 20 && assessmentData.data.price === 0)
+                (session?.user?.role === 20 &&
+                  assessmentData.data.price === 0) ||
+                (!session?.user?.role && assessmentData.data.price === 0)
                   ? "Тест өгөх"
                   : "Худалдаж авах"}
               </Button>
@@ -1371,42 +1373,7 @@ export default function Test() {
                   )}
                 </div>
               )}
-            {session?.user?.role === 20 && (
-              <div className="pt-12 sm:pt-8">
-                <div className="font-black text-xl inline-flex gap-1 text-main">
-                  <StarFall2BoldDuotone />
-                  Танд санал болгох
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
-                  {recommend.map((assessment) => (
-                    <Assessment
-                      key={assessment.data.id}
-                      assessment={assessment}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-            <QPay
-              isOpen={showPaymentModal}
-              onClose={() => setShowPaymentModal(false)}
-              paymentData={paymentData}
-              serviceId={paymentData?.data?.id}
-              onSuccess={() => {
-                router.push(`/test/details/${testId}`);
-              }}
-            />
-            <PurchaseModal
-              isOpen={isModalOpen}
-              onClose={() => setIsModalOpen(false)}
-              confirmLoading={confirmLoading}
-              onPurchase={handleOrganizationPurchase}
-              testPrice={assessmentData.data?.price || 0}
-              remaining={testHistory?.data.reduce(
-                (sum, item) => sum + (item.count - item.usedUserCount),
-                0
-              )}
-            />
+
             {session?.user?.role === 30 &&
               testHistory?.data &&
               testHistory?.data.length > 0 && (
@@ -1467,6 +1434,41 @@ export default function Test() {
                   />
                 </div>
               )}
+            <div className="pt-12 sm:pt-8">
+              <div className="font-black text-xl inline-flex gap-1 text-main">
+                <StarFall2BoldDuotone />
+                Танд санал болгох
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
+                {recommend.map((assessment) => (
+                  <Assessment
+                    key={assessment.data.id}
+                    assessment={assessment}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <QPay
+              isOpen={showPaymentModal}
+              onClose={() => setShowPaymentModal(false)}
+              paymentData={paymentData}
+              serviceId={paymentData?.data?.id}
+              onSuccess={() => {
+                router.push(`/test/details/${testId}`);
+              }}
+            />
+            <PurchaseModal
+              isOpen={isModalOpen}
+              onClose={() => setIsModalOpen(false)}
+              confirmLoading={confirmLoading}
+              onPurchase={handleOrganizationPurchase}
+              testPrice={assessmentData.data?.price || 0}
+              remaining={testHistory?.data.reduce(
+                (sum, item) => sum + (item.count - item.usedUserCount),
+                0
+              )}
+            />
           </div>
           <Footer />
         </div>
