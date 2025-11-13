@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 import { getAssessmentById, getUserTestHistory } from "@/app/api/assessment";
 import { Breadcrumb, Button, Divider, message, Progress, Table } from "antd";
 import {
@@ -47,7 +46,6 @@ export default function Test({ session }) {
   const [loading, setLoading] = useState(false);
   const [loadingTakeTest, setLoadingTakeTest] = useState(false);
   const [assessmentData, setAssessmentData] = useState([]);
-  // const { data: session } = useSession();
   const router = useRouter();
   const [messageApi, contextHolder] = message.useMessage();
   const [testHistory, setTestHistory] = useState(null);

@@ -1,6 +1,9 @@
 User-agent: *
 Allow: /
 Allow: /test/*
+Allow: /api/auth/session
+Allow: /api/auth/providers
+Allow: /api/auth/csrf
 Disallow: /api/
 Disallow: /exam/*
 Disallow: /admin/*
