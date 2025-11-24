@@ -223,10 +223,10 @@ const PrivacyPage = () => {
                   <p>
                     И-мэйл:{" "}
                     <a
-                      href="mailto:info@hire.mn"
+                      href="mailto:info@axiominc.mn"
                       className="underline hover:text-main"
                     >
-                      info@hire.mn
+                      info@axiominc.mn
                     </a>
                   </p>
                   <p>

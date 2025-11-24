@@ -97,7 +97,7 @@ const EBarimtModal = ({ open, onClose, barimtData, assessment }) => {
               Утасны дугаар <div className="text-main">9909-9371</div>
             </div>
             <div className="flex items-center justify-between font-bold">
-              И-мэйл хаяг <div className="text-main">info@hire.mn</div>
+              И-мэйл хаяг <div className="text-main">info@axiominc.mn</div>
             </div>
           </>
         )}
