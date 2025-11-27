@@ -197,7 +197,7 @@ export default function Footer() {
 
         <div className="flex items-center gap-3">
           <a
-            href="https://facebook.com/AxiomIncLLC"
+            href="https://www.facebook.com/profile.php?id=61582780914037"
             target="_blank"
             rel="noopener noreferrer"
             className="transition-transform"
@@ -205,6 +205,21 @@ export default function Footer() {
             <Image
               src="/facebook.png"
               alt="Facebook icon"
+              width={20}
+              height={20}
+              priority
+              className="filter grayscale brightness-125 hover:grayscale-0 hover:brightness-100 transition duration-300"
+            />
+          </a>
+          <a
+            href="https://www.instagram.com/hire.mn"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="transition-transform"
+          >
+            <Image
+              src="/instagram.png"
+              alt="Instagram icon"
               width={20}
               height={20}
               priority
