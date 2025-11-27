@@ -333,7 +333,7 @@ const TermsPage = () => {
                   <p>
                     Вэбсайт:{" "}
                     <a
-                      href="https://www.hire.mn"
+                      href="https://hire.mn"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="underline hover:text-main"

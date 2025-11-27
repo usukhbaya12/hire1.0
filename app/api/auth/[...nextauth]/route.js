@@ -10,7 +10,7 @@ export const authOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       authorization: {
         params: {
-          redirect_uri: "https://www.hire.mn/api/auth/callback/google",
+          redirect_uri: "https://hire.mn/api/auth/callback/google",
         },
       },
     }),

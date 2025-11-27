@@ -33,7 +33,7 @@ export function getImageUrl(fileId, fallback = "/placeholder-blog.jpg") {
 
 export function getAbsoluteImageUrl(
   fileId,
-  fallback = "https://www.hire.mn/misc.png"
+  fallback = "https://hire.mn/misc.png"
 ) {
   return getFileUrl(fileId, { absolute: true, fallback });
 }

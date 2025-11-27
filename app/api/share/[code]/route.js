@@ -8,9 +8,9 @@ const SCALE = 1.5;
 const CANVAS_WIDTH = 1600 * SCALE;
 const CANVAS_HEIGHT = Math.round(837.7 * SCALE);
 const FONT_DIR = path.join(process.cwd(), "app/fonts");
-const PLACEHOLDER_IMG_URL = "https://www.hire.mn/placeholder.png";
-const NAME_URL = "https://www.hire.mn/Group.png";
-const HEADER_ICON_URL = "https://www.hire.mn/header-top-white.png";
+const PLACEHOLDER_IMG_URL = "https://hire.mn/placeholder.png";
+const NAME_URL = "https://hire.mn/Group.png";
+const HEADER_ICON_URL = "https://hire.mn/header-top-white.png";
 const CACHE_CONTROL_SUCCESS = "public, max-age=31536000, immutable";
 const CACHE_CONTROL_ERROR = "no-cache";
 

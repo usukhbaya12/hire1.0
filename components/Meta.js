@@ -20,11 +20,8 @@ export default function DynamicMetaTags({ metadata }) {
         "og:description",
         metadata.description || "Онлайн тест, хөндлөнгийн үнэлгээ"
       );
-      updateMetaTag("og:url", metadata.url || `https://www.hire.mn${pathname}`);
-      updateMetaTag(
-        "og:image",
-        metadata.image || "https://www.hire.mn/misc.png"
-      );
+      updateMetaTag("og:url", metadata.url || `https://hire.mn${pathname}`);
+      updateMetaTag("og:image", metadata.image || "https://hire.mn/misc.png");
       updateMetaTag("og:type", metadata.type || "website");
     }
   }, [metadata, pathname]);

@@ -12,7 +12,7 @@ export async function generateMetadata({ params }) {
     if (!blog) {
       return {
         title: "Blog Post",
-        metadataBase: new URL("https://www.hire.mn"),
+        metadataBase: new URL("https://hire.mn"),
         openGraph: {
           images: ["/misc.png"],
         },
@@ -24,13 +24,13 @@ export async function generateMetadata({ params }) {
       : "/misc.png";
 
     return {
-      metadataBase: new URL("https://www.hire.mn"), // This is critical!
+      metadataBase: new URL("https://hire.mn"), // This is critical!
       title: blog.title,
       description: blog.description || blog.title,
       openGraph: {
         title: blog.title,
         description: blog.description || blog.title,
-        url: `/news/${id}`, // Relative - will become https://www.hire.mn/news/[id]
+        url: `/news/${id}`, // Relative - will become https://hire.mn/news/[id]
         siteName: "Hire.mn",
         images: [
           {
@@ -54,7 +54,7 @@ export async function generateMetadata({ params }) {
     console.error("Error generating metadata:", error);
     return {
       title: "Blog Post",
-      metadataBase: new URL("https://www.hire.mn"),
+      metadataBase: new URL("https://hire.mn"),
       openGraph: {
         images: ["/misc.png"],
       },
