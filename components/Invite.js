@@ -488,81 +488,157 @@ const SpreadsheetInviteTable = ({ testData, onSuccess }) => {
     setIsConfirmModalVisible(true);
   };
 
+  const BATCH_SIZE = 30;
+  const MAX_RETRY = 2;
+
+  const chunkArray = (array, size) => {
+    const result = [];
+    for (let i = 0; i < array.length; i += size) {
+      result.push(array.slice(i, i + size));
+    }
+    return result;
+  };
+
+  const sleep = (ms) => new Promise((res) => setTimeout(res, ms));
+
   const handleSend = async () => {
+    if (isLoading) return;
     if (!validatedData.length) return;
 
+    setIsLoading(true);
+
     try {
-      setIsLoading(true);
-
+      /* =====================================================
+       * 1. GET EXAM CODES (20 BY 20, SEQUENTIAL)
+       * ===================================================== */
       const examCodes = [];
-      for (const test of testData) {
-        const remainingForThisTest = test.count - test.usedUserCount;
-        if (remainingForThisTest > 0) {
-          const startDate = dateRange[0].toISOString();
-          const endDate = dateRange[1].toISOString();
-          try {
-            const examResponse = await getCode({
-              service: test.id,
-              count: Math.min(
-                remainingForThisTest,
-                validatedData.length - examCodes.length
-              ),
-              startDate,
-              endDate,
-            });
-            if (examResponse.success && examResponse.data) {
-              examCodes.push(...examResponse.data);
-            }
+      const totalNeeded = validatedData.length;
 
-            if (examCodes.length >= validatedData.length) break;
-          } catch (error) {
-            console.error("Error getting exam codes:", error);
+      for (const test of testData) {
+        if (examCodes.length >= totalNeeded) break;
+
+        let remainingForTest = test.count - test.usedUserCount;
+        if (remainingForTest <= 0) continue;
+
+        while (remainingForTest > 0 && examCodes.length < totalNeeded) {
+          const requestCount = Math.min(
+            BATCH_SIZE,
+            remainingForTest,
+            totalNeeded - examCodes.length
+          );
+
+          let attempt = 0;
+          let fetched = false;
+
+          while (!fetched && attempt <= MAX_RETRY) {
+            try {
+              const examResponse = await getCode({
+                service: test.id,
+                count: requestCount,
+                startDate: dateRange[0].toISOString(),
+                endDate: dateRange[1].toISOString(),
+              });
+
+              if (!examResponse?.success || !examResponse?.data?.length) {
+                throw new Error("GET_CODE_FAILED");
+              }
+
+              examCodes.push(...examResponse.data);
+              remainingForTest -= examResponse.data.length;
+              fetched = true;
+            } catch (err) {
+              attempt++;
+              if (attempt > MAX_RETRY) {
+                throw err;
+              }
+              await sleep(1000 * attempt);
+            }
           }
         }
       }
 
-      if (examCodes.length < validatedData.length) {
-        messageApi.error("Сервертэй холбогдоход алдаа гарлаа.");
-        setIsLoading(false);
-        return;
+      if (examCodes.length < totalNeeded) {
+        throw new Error("INSUFFICIENT_EXAM_CODES");
       }
 
+      /* =====================================================
+       * 2. PREPARE PAYLOAD
+       * ===================================================== */
       const links = validatedData.map((item, index) => ({
-        email: item.email.toLowerCase(),
-        lastname: item.lastname,
-        firstname: item.firstname,
-        phone: item.phone,
+        email: item.email.toLowerCase().trim(),
+        lastname: item.lastname?.trim(),
+        firstname: item.firstname?.trim(),
+        phone: item.phone?.trim(),
         code: examCodes[index],
         visible: show,
+        key: item.key,
       }));
 
-      const response = await sendInvite(links);
+      /* =====================================================
+       * 3. SEND INVITES (20 BY 20, SEQUENTIAL)
+       * ===================================================== */
+      const inviteBatches = chunkArray(links, BATCH_SIZE);
 
-      if (response.success) {
-        messageApi.success(`${links.length} шалгуулагч уригдлаа.`);
+      for (let i = 0; i < inviteBatches.length; i++) {
+        const batch = inviteBatches[i];
+        let attempt = 0;
+        let sent = false;
 
-        // Remove sent rows from the table
-        if (selectedRowKeys.length > 0) {
-          setData(data.filter((item) => !selectedRowKeys.includes(item.key)));
-          setSelectedRowKeys([]);
-        } else {
-          setData(
-            data.filter(
-              (row) => !validatedData.some((vRow) => vRow.key === row.key)
-            )
-          );
+        while (!sent && attempt <= MAX_RETRY) {
+          try {
+            const response = await sendInvite(batch);
+
+            if (!response?.success) {
+              throw new Error("SEND_INVITE_FAILED");
+            }
+
+            sent = true;
+
+            messageApi.info(
+              `${Math.min((i + 1) * BATCH_SIZE, links.length)}/${
+                links.length
+              } амжилттай илгээгдлээ.`
+            );
+          } catch (err) {
+            attempt++;
+            if (attempt > MAX_RETRY) {
+              messageApi.error(
+                `${i * BATCH_SIZE + 1}–${
+                  i * BATCH_SIZE + batch.length
+                } мөр илгээхэд алдаа гарлаа.`
+              );
+              throw err;
+            }
+            await sleep(1000 * attempt);
+          }
         }
-
-        setIsConfirmModalVisible(false);
-        await onSuccess();
-      } else {
-        messageApi.error(response.message || "Алдаа гарлаа.");
       }
+
+      /* =====================================================
+       * 4. UI CLEANUP
+       * ===================================================== */
+      messageApi.success(`${links.length} шалгуулагч амжилттай уригдлаа.`);
+
+      setData((prev) =>
+        prev.filter(
+          (row) => !validatedData.some((vRow) => vRow.key === row.key)
+        )
+      );
+
+      setSelectedRowKeys([]);
+      setIsConfirmModalVisible(false);
+      await onSuccess();
     } catch (error) {
-      console.error("Send error:", error);
-      messageApi.error("Урилга илгээхэд алдаа гарлаа.");
+      console.error("handleSend error:", error);
+
+      if (error.message === "INSUFFICIENT_EXAM_CODES") {
+        messageApi.error("Шалгалтын код хүрэлцэхгүй байна.");
+      } else {
+        messageApi.error("Урилга илгээх явцад алдаа гарлаа.");
+      }
     } finally {
       setIsLoading(false);
+      messageApi.success("Бүх урилга амжилттай илгээгдсэн.");
     }
   };
 
