@@ -254,41 +254,77 @@ const AnimatedCounter = ({ value, duration = 2, loading = false }) => {
   );
 };
 
+const MobileMarquee = ({ logos }) => {
+  const rows = [];
+  for (let i = 0; i < logos.length; i += 3) {
+    rows.push(logos.slice(i, i + 3));
+  }
+
+  return (
+    <div className="sm:hidden bg-white/95 backdrop-blur-md px-6 pb-3">
+      <div className="flex flex-col gap-4">
+        {rows.map((row, rowIndex) => (
+          <div
+            key={`row-${rowIndex}`}
+            className={`flex gap-8 ${
+              row.length < 3 ? "justify-center" : "justify-between"
+            }`}
+          >
+            {row.map((logo, index) => (
+              <div
+                key={`logo-${rowIndex}-${index}`}
+                className="relative w-1/3 h-16 flex items-center justify-center"
+              >
+                <Image
+                  src={logo.src}
+                  alt="Company logo"
+                  fill
+                  className="object-contain filter grayscale hover:grayscale-0 transition duration-300"
+                  draggable={false}
+                />
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const Marquee = () => {
+  const baseLogos = [
+    { src: "/ufe.png" },
+    { src: "/axiom.png" },
+    { src: "/mnums.png" },
+    { src: "/factcheck.png" },
+    { src: "/semut.png", wide: true },
+  ];
+
   const logos = Array.from({ length: 12 }, (_, i) => {
-    const files = ["/mnums.png", "/ufe.png", "/axiom.png", "/factcheck.png"];
-    return files[i % files.length];
+    return baseLogos[i % baseLogos.length];
   });
 
   return (
-    <div className="bg-white/95 backdrop-blur-md border-y border-gray-200 py-6 overflow-hidden">
-      <div className="relative space-y-4">
+    <div className="bg-white/95 backdrop-blur-md border-y border-gray-200 py-6">
+      <div className="sm:hidden">
+        <MobileMarquee logos={baseLogos} />
+      </div>
+
+      <div className="hidden sm:block relative overflow-hidden">
         <div className="flex animate-marquee">
-          {logos.map((logo, index) => (
+          {[...logos, ...logos].map((logo, index) => (
             <div
-              key={`row1-${index}`}
-              className="flex-shrink-0 mx-8 w-32 h-16 relative opacity-60 hover:opacity-100 transition-opacity duration-300"
+              key={`desktop-${index}`}
+              className={`flex-shrink-0 mx-8 ${
+                logo.wide ? "w-56" : "w-32"
+              } h-16 relative opacity-60 hover:opacity-100 transition-opacity`}
             >
               <Image
                 draggable={false}
-                src={logo}
+                src={logo.src}
                 alt="Company logo"
                 fill
-                className="object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
-              />
-            </div>
-          ))}
-          {logos.map((logo, index) => (
-            <div
-              key={`row1-duplicate-${index}`}
-              className="flex-shrink-0 mx-8 w-32 h-16 relative opacity-60 hover:opacity-100 transition-opacity duration-300"
-            >
-              <Image
-                draggable={false}
-                src={logo}
-                alt="Company logo"
-                fill
-                className="object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+                className="object-contain filter grayscale hover:grayscale-0 transition-all"
               />
             </div>
           ))}
