@@ -4,8 +4,15 @@ Allow: /test/*
 Allow: /api/auth/session
 Allow: /api/auth/providers
 Allow: /api/auth/csrf
+Allow: /api/test/
 Disallow: /api/
 Disallow: /exam/*
 Disallow: /admin/*
+
+User-agent: Twitterbot
+Allow: /api/test/
+
+User-agent: facebookexternalhit
+Allow: /api/test/
 
 Sitemap: https://hire.mn/sitemap.xml
