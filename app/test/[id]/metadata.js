@@ -36,7 +36,7 @@ export async function generateTestMetadata({ params }) {
     },
     twitter: {
       card: "summary_large_image",
-      images: [`https://hire.mn/api/test/${testId}`],
+      images: `https://hire.mn/api/test/${testId}`,
     },
     alternates: {
       canonical: `https://hire.mn/test/${testId}`,

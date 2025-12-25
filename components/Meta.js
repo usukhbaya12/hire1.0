@@ -23,6 +23,11 @@ export default function DynamicMetaTags({ metadata }) {
       updateMetaTag("og:url", metadata.url || `https://hire.mn${pathname}`);
       updateMetaTag("og:image", metadata.image || "https://hire.mn/misc.png");
       updateMetaTag("og:type", metadata.type || "website");
+      updateMetaTag("twitter:card", metadata.title || "Hire.mn");
+      updateMetaTag(
+        "twitter:image",
+        metadata.image || "https://hire.mn/misc.png"
+      );
     }
   }, [metadata, pathname]);
 
